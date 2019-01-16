@@ -1,0 +1,25 @@
+div.chat{
+    float : right;
+}
+div.card{
+    height: 600px;
+    width: 300px;
+    border-radius: 15px !important;
+}
+div.msg_card_body{
+    overflow-y: auto;
+}
+div.card-header{
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: 0 !important;
+}
+div.card-footer{
+    border-radius: 0 0 15px 15px !important;
+    border-top: 0 !important;
+}
+div.msg_cotainer{
+    margin-left: 10px;
+    border-radius: 25px;
+    padding: 10px;
+    position: relative;
+}

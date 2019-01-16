@@ -1,45 +1,67 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Incroyable chat</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-        <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-    </head>
+<head>
+    <meta charset="utf-8" />
+    <title>Incroyable chat</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 
-    <body>
-        <h1>Chat en temps réel</h1>
+    <link rel="stylesheet" href="../chat.css" />
+</head>
 
-        <div>
-          <input type="button" value="Envoyer" id="envoyerMessage" class="btn btn-raised btn-primary" />
-          <input type="text" id="message" />
+
+
+<body>
+<div class="col-md-8 col-xl-6 chat">
+    <div class="card">
+        <div class="card-header msg_head">
+            <div class="panel panel-primary">
+                <h1>Chat </h1>
+            </div>
         </div>
 
-        <div id="chat"></div>
+        <div class="card-body msg_card_body" >
+            <div class="d-flex justify-content-start mb-4">
+                <div id="chat"class="msg_cotainer" ></div>
+            </div>
+        </div>
 
 
-        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <div class="card-footer">
+            <div class="input-group">
+                <textarea class="form-control" placeholder="Envoyer un message" id="message" style="resize:none"></textarea>
+                <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-secondary btn-lg" />
+            </div>
+        </div>
 
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            var socket = io.connect('http://localhost:8080');
+    </div>
+</div>
+</div>
 
-            var pseudo = prompt('Quel est votre pseudo ?');
-            socket.emit('nouvellePersonne', pseudo);
 
-            socket.on('newMessage', function(message, pseudo) {
-              $('#chat').append("<p><b>" + pseudo + "</b> : " + message + "</p>");
-            })
 
-            socket.on('nouvelArrivant', function(message) {
-              alert(message);
-            })
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
-            $('#envoyerMessage').click(function () {
-                socket.emit('newMessage', $('#message').val());
-                $('#chat').append("<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>");
-                $('#message').val('');
-            })
-        </script>
-    </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://projetl3.alwaysdata.net/');
+
+    var pseudo = prompt('Quel est votre pseudo ?');
+    socket.emit('nouvellePersonne', pseudo);
+
+    socket.on('newMessage', function(message, pseudo) {
+        $('#chat').append("<p><b>" + pseudo + "</b> : " + message + "</p>");
+    })
+
+    socket.on('nouvelArrivant', function(message) {
+        alert(message);
+    })
+
+    $('#envoyerMessage').click(function () {
+        socket.emit('newMessage', $('#message').val());
+        $('#chat').append("<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>");
+        $('#message').val('');
+    })
+</script>
+</body>
 </html>
