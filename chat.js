@@ -3,6 +3,9 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 
+app.use(express.static(__dirname + '/public'));
+app.set('views', __dirname + '/public/views');
+
 app.use(function(req, res, next){
     res.render('chat.ejs');
 });
@@ -23,4 +26,4 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-server.listen(8100,"0.0.0.0");
+server.listen(8080); // 8100,"0.0.0.0"

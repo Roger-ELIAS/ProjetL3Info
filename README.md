@@ -1,1 +1,1 @@
-# ProjetL3Info
+# ProjetL3Info - Chat réalisé avec une facilité déconcertante
