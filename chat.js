@@ -26,4 +26,4 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-server.listen(8080); // 8100,"0.0.0.0"
+server.listen(8100,"0.0.0.0"); // 8100,"0.0.0.0" - 8080
