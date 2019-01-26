@@ -1,4 +1,5 @@
 var express = require('express');
+var ent = require('ent');
 
 var app = express();
 var server = require('http').createServer(app);
@@ -17,12 +18,12 @@ var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
 
     socket.on('newMessage', function (message) {
-      socket.broadcast.emit('newMessage', message, socket.pseudo);
+      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b> : " + ent.encode(message) + "</p>");
     })
 
     socket.on('nouvellePersonne', function(pseudo) {
-      socket.pseudo = pseudo;
-      socket.broadcast.emit('nouvelArrivant', socket.pseudo + ' vient de se connecter !');
+      socket.pseudo = ent.encode(pseudo);
+      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b> vient de se connecter !</p>");
     });
 });
 

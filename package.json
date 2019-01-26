@@ -9,6 +9,7 @@
   "homepage": "https://github.com/Roger-ELIAS/ProjetL3Info#readme",
   "dependencies": {
     "ejs": "^2.6.1",
+    "ent": "^2.2.0",
     "express": "^4.16.4",
     "socket.io": "^2.2.0"
   }
