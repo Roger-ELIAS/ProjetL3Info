@@ -11,18 +11,22 @@
 
     <body>
       <div class="card bg-light" id="chat">
-          <div class="card-body msg_card_body" id="chatBody">
+          <div class="card-header">
               <h6 class="card-subtitle mb-2 text-muted">Chat de la partie</h6>
+          </div>
+          <div class="card-body msg_card_body" id="chatBody">
               <div class="d-flex justify-content-start mb-1">
                   <div id="messages" class="msg_cotainer" ></div>
               </div>
           </div>
 
           <div class="card-footer bg-light" id="chatFooter">
-              <div class="input-group">
-                  <input class="form-control" id="message"></textarea>
-                  <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
-              </div>
+              <form id="formSendMessage">
+                <div class="input-group">
+                    <input class="form-control" id="message" />
+                    <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
+                </div>
+              </form>
           </div>
       </div>
 
@@ -31,12 +35,14 @@
       <script src="/socket.io/socket.io.js"></script>
       <script>
         var socket = io.connect('localhost:8080'); // http://projetl3.alwaysdata.net/
+        var chat = document.getElementById('messages');
 
         var pseudo = prompt('Quel est votre pseudo ?');
         socket.emit('nouvellePersonne', pseudo);
 
         socket.on('newMessage', function(message, pseudo) {
             $('#messages').append("<p><b>" + pseudo + "</b> : " + message + "</p>");
+            chat.scrollIntoView(false);
         })
 
         socket.on('nouvelArrivant', function(message) {
@@ -46,8 +52,13 @@
         $('#envoyerMessage').click(function () {
             socket.emit('newMessage', $('#message').val());
             $('#messages').append("<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>");
+            chat.scrollIntoView(false);
             $('#message').val('');
         })
+
+        $('#formSendMessage').submit(function () {
+          return false;
+        });
       </script>
   </body>
 </html>

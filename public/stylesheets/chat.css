@@ -25,6 +25,10 @@ body {
     padding: 10px;
 }
 
+#formSendMessage {
+  margin-bottom: auto;
+}
+
 #chatFooter {
     border-top: 0 !important;
 }
