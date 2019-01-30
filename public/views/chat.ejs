@@ -42,7 +42,8 @@
 
         socket.on('newMessage', function(message) {
             $('#messages').append(message);
-        })
+            chat.scrollIntoView(false);
+        });
 
         $('#formSendMessage').submit(function () {
           socket.emit('newMessage', $('#message').val());

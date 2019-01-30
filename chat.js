@@ -18,8 +18,8 @@ var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
 
     socket.on('newMessage', function (message) {
-      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b> : " + ent.encode(message) + "</p>");
-    })
+      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b>" + ent.encode(message) + "</p>");
+    });
 
     socket.on('nouvellePersonne', function(pseudo) {
       socket.pseudo = ent.encode(pseudo);
