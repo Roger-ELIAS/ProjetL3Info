@@ -19,10 +19,12 @@ body {
 
 #chatBody {
     overflow-y: auto;
+    width : 100%;
 }
 
 #messages {
     padding: 10px;
+    width: 100%;
 }
 
 #formSendMessage {
