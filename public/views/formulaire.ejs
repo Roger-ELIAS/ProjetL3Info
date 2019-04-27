@@ -12,10 +12,16 @@
 <body>
 
 
-<form method="post" action="">
-    p1=<input type="text" name="pseudo">
-    <input type="submit" value="post">
-</form>
+<div id="inscription">
+    <h2>Create an Account</h2>
+    <form id="forminscription" action="" method="post">
+        <fieldset>
+            <label for="pseudo">Pseudo</label> <input class="text" id="pseudo" type="text" name="pseudo" value="" />
+            <label for="email">Email</label> <input class="text" id="email" type="email" name="email" value="" />
+            <label for="mdp">Mot de passe</label> <input class="text" id="mdp" type="password" name="mdp" />
+            <button id="newuser" type="submit">Register</button></fieldset>
+    </form>
+</div>
 
 <!--
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
