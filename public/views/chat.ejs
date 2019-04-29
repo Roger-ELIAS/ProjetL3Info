@@ -38,10 +38,15 @@
         var chat = document.getElementById('messages');
 
         var pseudo = prompt('Quel est votre pseudo ?');
-        socket.emit('nouvellePersonne', pseudo);
+        socket.emit('newClient', pseudo);
 
-        socket.on('newMessage', function(message) {
-            $('#messages').append(message);
+        socket.on('newMessage', function(data) {
+            $('#messages').append("<p><b>" + data.pseudo + "</b> : " + data.message + "</p>");
+            chat.scrollIntoView(false);
+        });
+
+        socket.on('newClient', function(pseudo) {
+            $('#messages').append("<p><b>" + pseudo + "</b> vient de se connecter !</p>");
             chat.scrollIntoView(false);
         });
 

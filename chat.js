@@ -18,12 +18,13 @@ var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
 
     socket.on('newMessage', function (message) {
-      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b>" + ent.encode(message) + "</p>");
+      message = ent.encode(message);
+      socket.broadcast.emit('newMessage', { pseudo: socket.pseudo, message: message });
     });
 
-    socket.on('nouvellePersonne', function(pseudo) {
+    socket.on('newClient', function(pseudo) {
       socket.pseudo = ent.encode(pseudo);
-      socket.broadcast.emit('newMessage', "<p><b>" + socket.pseudo + "</b> vient de se connecter !</p>");
+      socket.broadcast.emit('newClient', socket.pseudo);
     });
 });
 
