@@ -10,7 +10,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<style>
-		body {
+		html, body {
 			height: 100%;
 			margin: 0;
 			padding: 0;
@@ -22,7 +22,7 @@
 			display: block;
 			margin-left: auto;
 			margin-right: auto;
-			width: 70%;
+			width: 60%;
 		}
 		
 		.create{
@@ -31,24 +31,29 @@
 		
 		.login{
 			width: 40%;
-			float: left;
+			float: right;
 		}
 		
 		.signin{
 			width: 40%;
-			float: right;
+			float: left;
+		}
+		
+		.forgot{
+			color: white;
+			width: 60%;
+			float: left;
 		}
 		
 		#button-container{
-			margin-top: 5%;
 			text-align: center;
 		}
 		
 		.centered {
 			position: absolute;
-			top: 20%;
+			top: 10%;
 			left: 50%;
-			transform: translate(-50%, -20%);
+			transform: translate(-50%, -10%);
 		}
 		
 		#title{
@@ -56,10 +61,6 @@
 			font-size: 100px;
 			font-weight: bold;
 			text-shadow: rgb(255, 255, 255) 3px 0px 0px, rgb(255, 255, 255) 2.83487px 0.981584px 0px, rgb(255, 255, 255) 2.35766px 1.85511px 0px, rgb(255, 255, 255) 1.62091px 2.52441px 0px, rgb(255, 255, 255) 0.705713px 2.91581px 0px, rgb(255, 255, 255) -0.287171px 2.98622px 0px, rgb(255, 255, 255) -1.24844px 2.72789px 0px, rgb(255, 255, 255) -2.07227px 2.16926px 0px, rgb(255, 255, 255) -2.66798px 1.37182px 0px, rgb(255, 255, 255) -2.96998px 0.42336px 0px, rgb(255, 255, 255) -2.94502px -0.571704px 0px, rgb(255, 255, 255) -2.59586px -1.50383px 0px, rgb(255, 255, 255) -1.96093px -2.27041px 0px, rgb(255, 255, 255) -1.11013px -2.78704px 0px, rgb(255, 255, 255) -0.137119px -2.99686px 0px, rgb(255, 255, 255) 0.850987px -2.87677px 0px, rgb(255, 255, 255) 1.74541px -2.43999px 0px, rgb(255, 255, 255) 2.44769px -1.73459px 0px, rgb(255, 255, 255) 2.88051px -0.838247px 0px;
-		}
-		
-		#inscription{
-			margin-top: 25%;
 		}
 		
 		.validate{
@@ -79,14 +80,31 @@
 			padding-right: 10%;
 		}
 		
+		#connexion{
+			margin-top: 17%;
+			display: none;
+		}
+		
+		#inscription{
+			margin-top: 17%;
+			display: none;
+		}
+		
+		.container-fluid{
+			height: 100%;
+		}
+		
+		.row{
+			
+		}
 	</style>
 </head>
 <body>
 	<div class="container-fluid">
-		<div class="row">
+		<div class="row" style="height: 100%;">
 			<div class="col-sm-4">
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-4" style="height: 100%;">
 				<img src="title.png" class="mx-auto d-block">
 				<div class="centered">
 					<p id="title">CARDS</p>
@@ -104,13 +122,14 @@
 										</i>
 									</span>
 								</div>
-								<input type="text" class="form-control" placeholder="Pseudo">
+								<input type="text" class="form-control" placeholder="Pseudo" required>
 							</div>
-							<button type="submit" class="create btn btn-danger">Créer une partie</button>
+							<button type="submit" class="create btn mb-3 btn-danger">Créer une partie</button>
+							<button type="submit" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
 						</form>
-						<div id="button-container">
-							<button type="submit" class="login btn btn-danger">Connexion</button>
-							<button type="submit" class="signin btn btn-danger">Inscription</button>
+						<div id="button-container mb-3">
+							<button onclick="displayInscription()" class="signin btn btn-danger">Inscription</button>
+							<button onclick="displayConnexion()" class="login btn btn-danger">Connexion</button>
 						</div>
 						<form id="inscription" action="/action_page.php">
 							<div class="input-group mb-3">
@@ -141,7 +160,7 @@
 										</i>
 									</span>
 								</div>
-								<input type="text" class="form-control" placeholder="Mot de passe">
+								<input type="password" class="form-control" placeholder="Mot de passe">
 							</div>
 							<div class="input-group mb-3">
 								<div class="input-group-prepend">
@@ -151,9 +170,35 @@
 										</i>
 									</span>
 								</div>
-								<input type="text" class="form-control" placeholder="Confirmation mot de passe">
+								<input type="password" class="form-control" placeholder="Confirmation mot de passe">
 							</div>
 							<button type="submit" class="validate btn btn-danger">Valider</button>
+						</form>
+						<form id="connexion" action="/action_page.php">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											alternate_email
+										</i>
+									</span>
+								</div>
+								<input type="text" class="form-control" placeholder="Email">
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											lock
+										</i>
+									</span>
+								</div>
+								<input type="password" class="form-control" placeholder="Mot de passe">
+							</div>
+							<div id="button-container mb-3">
+								<button type="submit" class="forgot btn">Mot de passe oublié</button>
+								<button type="submit" class="login btn btn-danger">Valider</button>
+							</div>
 						</form>
 					</div>
 					<div class="col-sm-2">
@@ -162,58 +207,89 @@
 			</div>
 			<div class="col-sm-4">
 				<form id="partie" action="/action_page.php">
-							<div class="input-group mb-3">
-								<div class="input-group-prepend">
-									<span class="input-group-text">
-										Type de jeu
-									</span>
-								</div>
-								  <select class="form-control">
-									<option>Blitz</option>
-								  </select>
-							</div>
-							<div class="input-group mb-3">
-								<div class="input-group-prepend">
-									<span class="input-group-text">
-										Nombre de joueurs
-									</span>
-								</div>
-								  <select class="form-control">
-									<option>1</option>
-									<option>2</option>
-									<option>3</option>
-									<option>4</option>
-									<option>5</option>
-									<option>6</option>
-								  </select>
-							</div>
-							<div class="input-group mb-3">
-								<div class="input-group-prepend">
-									<span class="input-group-text">
-										Chat
-									</span>
-								</div>
-								  <select class="form-control">
-									<option>Oui</option>
-									<option>Non</option>
-								  </select>
-							</div>
-							<div class="input-group mb-3">
-								<div class="input-group-prepend">
-									<span class="input-group-text">
-										Style de cartes
-									</span>
-								</div>
-								  <select class="form-control">
-									<option>Classique</option>
-									<option>Future</option>
-								  </select>
-							</div>
-							<button type="submit" class="validate btn btn-danger">Valider</button>
-						</form>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text">
+								Type de jeu
+							</span>
+						</div>
+						  <select class="form-control">
+							<option>Blitz</option>
+						  </select>
+					</div>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text">
+								Nombre de joueurs
+							</span>
+						</div>
+						  <select class="form-control">
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+							<option>6</option>
+						  </select>
+					</div>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text">
+								Chat
+							</span>
+						</div>
+						  <select class="form-control">
+							<option>Oui</option>
+							<option>Non</option>
+						  </select>
+					</div>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<span class="input-group-text">
+								Style de cartes
+							</span>
+						</div>
+						  <select class="form-control">
+							<option>Classique</option>
+							<option>Future</option>
+						  </select>
+					</div>
+					<button type="submit" class="validate btn btn-danger">Valider</button>
+				</form>
 			</div>
 		</div>	
 	</div>
+	<script>
+		var connexionDisplayed = false;
+		var inscriptionDisplayed = false;
+		
+		function displayConnexion() {
+			if(connexionDisplayed == false){
+				if(inscriptionDisplayed == true){
+					displayInscription();
+				}
+				document.getElementById("connexion").style.display = "block";
+				connexionDisplayed = true;
+			} else {
+				document.getElementById("connexion").style.display = "none";
+				connexionDisplayed = false;
+			}
+		}
+		
+		function displayInscription() {
+			if(inscriptionDisplayed == false){
+				if(connexionDisplayed == true){
+					displayConnexion();
+				}
+				document.getElementById("inscription").style.display = "block";
+				inscriptionDisplayed = true;
+			} else {
+				document.getElementById("inscription").style.display = "none";
+				inscriptionDisplayed = false;
+			}
+		}
+
+	</script>
 </body>
 </html>
 
