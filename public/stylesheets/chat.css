@@ -9,6 +9,9 @@ body {
   padding: 1%;
 }
 
+
+/* ----- CHAT ----- */
+
 #chat {
     float : right;
     height : 85%;
@@ -33,4 +36,11 @@ body {
 
 #chatFooter {
     border-top: 0 !important;
+}
+
+
+/* ----- TESTS GAMES CREATION ----- */
+
+#games {
+    float : left;
 }
