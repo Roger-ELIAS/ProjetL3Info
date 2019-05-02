@@ -115,7 +115,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('createAccount', function (data) {
-        console.log(data.username);
+
         con.connect(function(err) {
 
             if (err) throw err;

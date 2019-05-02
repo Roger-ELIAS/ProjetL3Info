@@ -20,6 +20,7 @@
                 <label for="pseudo">Pseudo</label> <input class="text" id="pseudo" type="text" name="pseudo" value="" />
                 <label for="email">Email</label> <input class="text" id="email" type="email" name="email" value="" />
                 <label for="mdp">Mot de passe</label> <input class="text" id="mdp" type="password" name="mdp" />
+                <label for="confirmation">Confirmation de mot de passe</label> <input class="text" id="confirmation" type="password" name="confirmation" />
                 <button id="newuser" type="submit">Register</button></fieldset>
         </form>
     </div>
@@ -56,7 +57,7 @@
 
 
 
-        var pseudo = prompt('Quel est votre pseudo ?');
+        //var pseudo = prompt('Quel est votre pseudo ?');
         socket.emit('nouvellePersonne', pseudo);
 
         socket.on('newMessage', function(message) {
@@ -72,10 +73,15 @@
         });
 
         $( "#forminscription" ).submit(function(  ) {
+            if($('#mdp').val() == $('#confirmation').val()){
 
-            socket.emit('createAccount',{ username : $('#pseudo').val() ,
-                                            email : $('#email').val() ,
-                                            password : $('#mdp').val() });
+                socket.emit('createAccount',{ username : $('#pseudo').val() ,
+                    email : $('#email').val() ,
+                    password : $('#mdp').val() });
+            } else {
+                alert('les deux mots de passe ne sont pas identiques');
+            }
+
 
         });
 
