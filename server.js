@@ -18,12 +18,17 @@ var gamesList = {};
 
 // Quand un client se connecte, on le note dans la console
 io.sockets.on('connection', function (socket) {
-    socket.on('newMessage', function (message) {
-      message = ent.encode(message);
+    socket.on('newMessage', function (data) {
+      message = ent.encode(data.message);
       newMessage = { pseudo: socket.pseudo, message: message };
 
-      socket.broadcast.emit('newMessage', newMessage);
+      gamesList[data.gameName].players.forEach(function(playerSocket) {
+          if (playerSocket.pseudo != socket.pseudo) {
+              playerSocket.emit('newMessage', newMessage);
+          }
+      });
     });
+
 
     socket.on('newGame', function(data) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
@@ -34,27 +39,39 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('newGame', newGame)
     });
 
+
     socket.on('joinGame', function(data) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
-        gamesList[data.gameName].nbPlayers = data.nbPlayers;
+        gamesList[data.gameName].nbPlayers += 1;
         gamesList[data.gameName].players.push(socket);
 
         gamesList[data.gameName].players.forEach(function(playerSocket) {
-            console.log(playerSocket.pseudo);
             if (playerSocket.pseudo != socket.pseudo) {
                 playerSocket.emit('newPlayer', socket.pseudo);
             }
-        })
+        });
 
-        if (data.nbPlayers == data.nbPlayersMax) {
-            gameFull = { gameName: data.gameName, nbPlayers: data.nbPlayers };
-            socket.broadcast.emit('gameFull', gameFull);
+        gameUpdated = { gameName: data.gameName,
+                        nbPlayers: gamesList[data.gameName].nbPlayers,
+                        nbPlayersMax: gamesList[data.gameName].nbPlayersMax };
+
+        socket.broadcast.emit('updateGame', gameUpdated);
+    });
+
+
+    socket.on('askGames', function() {
+        var games = [];
+        for (var gameName in gamesList) {
+            var game = [];
+            game.push(gameName);
+            game.push(gamesList[gameName].nbPlayers);
+            game.push(gamesList[gameName].nbPlayersMax);
+
+            games.push(game);
         }
-        else {
-            gameUpdated = { gameName: data.gameName, nbPlayers: parseInt(data.nbPlayers, 10), nbPlayersMax: data.nbPlayersMax };
-            socket.broadcast.emit('updateGame', gameUpdated);
-        }
+
+        socket.emit('gamesAsked', games);
     })
 });
 

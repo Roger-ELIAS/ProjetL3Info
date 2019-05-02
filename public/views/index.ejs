@@ -238,28 +238,6 @@
                   <th id="joueurs">Joueurs</th>
                   <th id="btnRejoindre"></th>
                 </tr>
-                <tr>
-                  <td>MaPartie1</td>
-                  <td>2/4</td>
-                  <td>
-                    <button type="submit" class="validate btn btn-danger">
-                      <i class="material-icons">
-                        play_arrow
-                      </i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>MaPartie2</td>
-                  <td>2/4</td>
-                  <td>
-                    <button type="submit" class="validate btn btn-danger">
-                      <i class="material-icons">
-                        play_arrow
-                      </i>
-                    </button>
-                  </td>
-                </tr>
               </table>
             </div>
           </div>
@@ -274,41 +252,41 @@
             <div class="col-sm-4" style="height: 100%;">
             </div>
             <!-- Colonne principale droite -->
-            <div class="col-sm-4">
-                <div class="card bg-light" id="chat">
-                    <div class="card-header">
-                        <h6 class="card-subtitle mb-2 text-muted">Chat de la partie</h6>
+            <div class="col-sm-4 chat-window" id="chat_window_1">
+                <div class="panel panel-default" id="chat" ><!--style="display:none">-->
+                    <div class="panel-heading top-bar">
+                        <div class="col-sm-12">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat de la partie</h3>
+                        </div>
                     </div>
-                    <div class="card-body msg_card_body" id="chatBody">
-                        <div class="d-flex justify-content-start mb-1">
-                            <div id="messages" class="msg_cotainer" ></div>
+                    <div class="panel-body msg_container_base" id="messages">
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <form id="formSendMessage">
+                            <div class="input-group">
+                                <input class="form-control" id="message" placeholder="Message..." />
+                                <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
                             </div>
-                        </div>
-                        <div class="card-footer bg-light" id="chatFooter">
-                            <form id="formSendMessage">
-                                <div class="input-group">
-                                    <input class="form-control" id="message" />
-                                    <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
-                                </div>
-                            </form>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io.connect('localhost:8080'); // http://projetl3.alwaysdata.net/ - localhost:8080
-          var chat = $('#messages')[0];
+          var socket = io.connect('localhost:8080'); // online : http://projetl3.alwaysdata.net/ - local : localhost:8080
           var pseudo = "";
-          //var pseudo = prompt('Quel est votre pseudo ?');
 
-          var connexionDisplayed = false;
-          var inscriptionDisplayed = false;
-          var creationDisplayed = false;
-          var rejoindreDisplayed = false;
+          var connexionDisplayed = false; // état du menu de connexion
+          var inscriptionDisplayed = false; // état du menu d'inscription
+          var creationDisplayed = false; // état du menu de création de partie
+          var rejoindreDisplayed = false; // état du menu des parties en cours
 
           var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
+
+          var actualGameName = ""; // nom de la partie acutelle jouée 
 
 
           /*
@@ -400,11 +378,13 @@
                           displayMenu("creation");
                         }
 
+                        socket.emit("askGames");
                         $("#rejoindre").show();
                         rejoindreDisplayed = true;
                       }
                       else {
                         $("#rejoindre").hide();
+                        $('.gameTr').remove();
                         rejoindreDisplayed = false;
                       }
                       break;
@@ -424,7 +404,7 @@
                     $("#board").fadeIn();
                 });
 
-                $(this).attr("nbPlayers", parseInt($(this).attr("nbPlayers"), 10) + 1);
+                actualGameName = $(this).attr("gameName");
 
                 socket.emit("joinGame", { gameName: $(this).attr("gameName"),
                                           nbPlayers: $(this).attr("nbPlayers"),
@@ -447,14 +427,15 @@
               à $(this).attr("nomAttributARecup").
           */
 
-          function appendGame (gameName, nbPlayersMax) {
-            let tr = $('<tr />').attr('id', gameName);
+          function appendGame (gameName, nbPlayers, nbPlayersMax) {
+            let tr = $('<tr />').attr('id', gameName)
+                                .attr('class', "gameTr");
 
             let tdGamename = $('<td />');
             tr.append(tdGamename.html(gameName));
 
             let tdNbPlayers = $('<td />');
-            tr.append(tdNbPlayers.html("1/" + nbPlayersMax));
+            tr.append(tdNbPlayers.html(nbPlayers + "/" + nbPlayersMax));
 
             let i = $('<i />').html("play_arrow")
                               .attr("class", "material-icons");
@@ -462,11 +443,18 @@
 
             button.append(i);
 
+            if (nbPlayers == nbPlayersMax) {
+                button.attr("disabled", true)
+                      .attr("class", "validate btn btn-secondary")
+            }
+            else {
+                button.attr("class", "validate btn btn-danger")
+            }
+
             let tdButton = $('<td />');
             tr.append(tdButton.append(button.attr("gameName", gameName)
                                             .attr("nbPlayersMax", nbPlayersMax.toString())
-                                            .attr("nbPlayers", 1)
-                                            .attr("class", "validate btn btn-danger")
+                                            .attr("nbPlayers", nbPlayers)
                                             .click(joinGame)));
 
             $('#rejoindre').append(tr);
@@ -478,8 +466,22 @@
               Ce-dernier est simplement append dans le chat qui a ici pour id "messages".
           */
 
-          function appendMessage (pseudo, message) {
-              $('#messages').append("<p><b>" + pseudo + "</b> : " + message + "</p>");
+          function appendMessage (pseudo, message, isNewPlayer) {
+              let div1 = $('<div />').attr("class", "row msg_container base_receive");
+              let div2 = $('<div />').attr("class", "col-sm-12");
+              let div3 = $('<div />').attr("class", "messages msg_receive");
+
+              if (!isNewPlayer) {
+                  div3.append("<p><b>" + pseudo + "</b> : " + message + "</p>");
+              }
+              else {
+                  div3.append("<p>Le joueur <b>" + pseudo + "</b> vient de se connecter !</p>");
+              }
+
+              div2.append(div3);
+              div1.append(div2);
+
+              $('#messages').append(div1);
           };
 
 
@@ -505,12 +507,15 @@
                       })
                   }
                   else if (index == 2) {
+                      if (nbPlayers == nbPlayersMax) {
+                          $(this).children(":first").attr("disabled", true)
+                                                    .attr("class", "validate btn btn-secondary");
+                      }
                       $(this).attr("nbPlayers", nbPlayers);
-                      // rendre la partie inacessible si cette-dernière est pleine.
                   }
 
                   index += 1;
-              });
+            });
           };
 
 
@@ -518,31 +523,71 @@
               --------------- LISTEN EVENTS ---------------
           */
 
+
+          /*
+              Évènement reçu lorsqu'un nouveau message est reçu. Ce-dernier est par conséquent ajouté
+              dans le chat.
+          */
+
           socket.on('newMessage', function(data) {
-              appendMessage(data.pseudo, data.message);
-              chat.scrollIntoView(false);
+              console.log(data);
+              appendMessage(data.pseudo, data.message, false);
+              document.getElementById("messages").lastChild.scrollIntoView(false);
           });
 
+
+          /*
+              Évènement reçu lorsqu'un nouveau joueur se connecte dans la partie. Un message de connexion est
+              alors ajouté dans le chat.
+          */
 
           socket.on('newPlayer', function(pseudo) {
-              $('#messages').append("<p><b>" + pseudo + "</b> vient de se connecter !</p>");
-              chat.scrollIntoView(false);
+              appendMessage(pseudo, "", true);
+              document.getElementById("messages").lastChild.scrollIntoView(false);
           });
 
 
+          /*
+              Évènement reçu lorsqu'une nouvelle partie est créée. Cette dernière est ajoutée à la liste des parties.
+
+              À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
+              de ne pas réaliser des tâches en fonds pour des questions d'optimisation, bien que dans notre cas,
+              peu de parties seront jouées en simultanées.
+          */
+
           socket.on('newGame', function(data) {
-              appendGame(data.gameName, data.nbPlayersMax);
-          })
+              if (rejoindreDisplayed) {
+                  appendGame(data.gameName, 1, data.nbPlayersMax);
+              }
+          });
 
 
-          socket.on('gameFull', function(data) {
-            updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayers);
-          })
+          /*
+              Évènement reçu lorsque des informations sur une parties doivent être modifiées,
+              lorsqu'un joueur s'est connecté à cette dernière.
 
+              À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
+              de ne pas réaliser des tâches en fonds pour des questions d'optimisation, bien que dans notre cas,
+              peu de parties seront jouées en simultanées.
+          */
 
           socket.on('updateGame', function(data) {
-            updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayersMax);
-          })
+              if (rejoindreDisplayed)  {
+                  updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayersMax);
+              }
+          });
+
+
+          /*
+              Évènement reçu lorsque les informations sur les parties actuelles ont été demandées. Permet
+              d'afficher la liste des parties en cours.
+          */
+
+          socket.on('gamesAsked', function(games) {
+              games.forEach(function(game) {
+                  appendGame(game[0], game[1], game[2]);
+              });
+          });
 
 
           /*
@@ -550,11 +595,9 @@
           */
 
 
-          /* $("#formBtnsMenu input").click(function(e) {
-              buttonId = $(this).attr("id");
-              displayMenu(buttonId.substring(0, buttonId.length - 3));
-          }) */
-
+          /*
+              Affiche le menu de création de partie lorsque le bouton creation est enclenché.
+          */
 
           $("#creationBtn").click(function(e) {
               displayMenu("creation");
@@ -562,35 +605,62 @@
           });
 
 
+          /*
+              Affiche le menu des parties lorsque le bouton rejoindre est enclenché.
+          */
+
           $("#rejoindreBtn").click(function(e) {
               displayMenu("rejoindre");
               return false;
           });
 
 
+          /*
+              Affiche le menu d'inscription lorsque le bouton inscription est enclenché.
+          */
+
           $("#inscriptionBtn").click(function(e) {
               displayMenu("inscription");
           });
 
+
+          /*
+              Affiche le menu de connexion lorsque le bouton connexion est enclenché.
+          */
 
           $("#connexionBtn").click(function(e) {
               displayMenu("connexion");
           });
 
 
+          /*
+              Appelé lorsque un message est envoyé, ce-dernier est transmis au serveur afin d'être distribué
+              à tous les uatres joueurs de la partie actuelle, et ajoute ce message au chat de la personne qui
+              l'envoie, sans passer par le serveur.
+          */
+
           $('#formSendMessage').submit(function () {
-            socket.emit('newMessage', $('#message').val());
+            socket.emit('newMessage', { gameName: actualGameName,
+                                        message: $('#message').val() });
             appendMessage(pseudo, $('#message').val());
 
-            chat.scrollIntoView(false);
+
+            document.getElementById("messages").lastChild.scrollIntoView(false);
             $('#message').val('');
 
             return false;
           });
 
 
+          /*
+              Appelé lors de la création d'une partie lorsque le formulaire de création est submit.
+              Envoie l'information au serveur qu'une nouvelle partie a été crée, et switch l'écran actuel
+              du menu au plateau de jeu.
+          */
+
           $('#creation').submit(function () {
             if (hasPseudo()) {
+              actualGameName = $('#gameName').val();
               socket.emit('newGame', { gameName: $('#gameName').val(),
                                        nbPlayersMax: parseInt($('#nbPlayersMax').val()),
                                        pseudo: pseudo });
@@ -601,8 +671,6 @@
               });
             }
 
-            // Si le joueur quitte la partie il récupère les infos de toutes les parties, pas besoin d'actualiser les infos derrière
-            // appendGame($('#gameName').val(), parseInt($('#nbPlayersMax').val()));
             return false;
           });
         </script>
