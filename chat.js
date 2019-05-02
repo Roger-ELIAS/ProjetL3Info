@@ -116,16 +116,16 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('createAccount', function (data) {
 
-        con.connect(function(err) {
 
-            if (err) throw err;
+
+
             console.log("Connected!");
             var sql = "INSERT INTO User (Username, Mail, Password, Confirmed) VALUES ('" + data.username + "', '" + data.email + "', '" + data.password + "', '" + 0 + "')";
             con.query(sql, function (err, result) {
                 if (err) throw err;
                 console.log("1 user add");
             });
-        }); // inscription
+            // inscription
 
 
     });
