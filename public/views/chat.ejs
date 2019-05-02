@@ -72,9 +72,10 @@
         });
 
         $( "#forminscription" ).submit(function(  ) {
+
             socket.emit('createAccount',{ username : $('#pseudo').val() ,
                                             email : $('#email').val() ,
-                                            password : $('#mdp').val()  });
+                                            password : $('#mdp').val() });
 
         });
 
