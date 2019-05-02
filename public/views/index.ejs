@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+         <title>Cards</title>
+
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+         <link rel="stylesheet" href="/stylesheets/css.css" />
+
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid" id="menu">
+          <div class="row" style="height: 100%;">
+            <!-- Colonne principale gauche -->
+            <div class="col-sm-4">
+            </div>
+            <!-- Colonne principale centrale -->
+            <div class="col-sm-4" style="height: 100%;">
+              <!-- Image logo -->
+              <img src="images/title.png" class="mx-auto d-block">
+              <!-- Texte logo -->
+              <div class="centered">
+                <p id="title">CARDS</p>
+              </div>
+              <div class="row">
+                <!-- Colonne secondaire gauche -->
+                <div class="col-sm-2">
+                </div>
+                <!-- Colonne secondaire centrale -->
+                <div class="col-sm-8">
+                  <!-- Formulaire pseudo + creer/rejoindre partie -->
+                  <form id="formBtnsMenu">
+                    <!-- Pseudo -->
+                    <div class="input-group mb-3">
+                      <!-- Logo bonhomme -->
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            perm_identity
+                          </i>
+                        </span>
+                      </div>
+                      <!-- Input pseudo -->
+                      <input type="text" class="form-control" placeholder="Pseudo">
+                    </div>
+                    <!-- Boutons creer/rejoindre -->
+                    <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
+                    <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
+                  </form>
+                  <!-- Boutons inscription/connexion -->
+                  <div id="button-container mb-3">
+                    <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
+                    <button id="connexionBtn" class="login btn btn-danger">Connexion</button>
+                  </div>
+                  <!-- Formulaire inscription -->
+						<form id="inscription" action="/action_page.php">
+							<!-- Pseudo -->
+							<div class="input-group mb-3">
+								<!-- Logo bonhomme -->
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											perm_identity
+										</i>
+									</span>
+								</div>
+								<!-- Input pseudo -->
+								<input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
+							</div>
+							<!-- Email -->
+							<div class="input-group mb-3">
+								<!-- Logo email -->
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											alternate_email
+										</i>
+									</span>
+								</div>
+								<!-- Input email -->
+								<input type="text" id="email" class="form-control" placeholder="Email">
+							</div>
+							<!-- Mot de passe -->
+							<div class="input-group mb-3">
+								<!-- Logo cadenas -->
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											lock
+										</i>
+									</span>
+								</div>
+								<!-- Input mot de passe -->
+								<input type="password" id="pwd" class="form-control" placeholder="Mot de passe">
+							</div>
+							<!-- Confirmation mot de passe -->
+							<div class="input-group mb-3">
+								<!-- Logo cadenas -->
+								<div class="input-group-prepend">
+									<span class="input-group-text">
+										<i class="material-icons">
+											lock
+										</i>
+									</span>
+								</div>
+								<!-- Input confirmation mot de passe -->
+								<input type="password" id="conf_pwd" class="form-control" placeholder="Confirmation mot de passe">
+							</div>
+							<!-- Bouton valider -->
+							<button type="submit" class="validate btn btn-danger">Valider</button>
+						</form>
+                  <!-- Formulaire connexion -->
+                  <form id="connexion" action="/action_page.php">
+                    <!-- Email -->
+                    <div class="input-group mb-3">
+                      <!-- Logo email -->
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            alternate_email
+                          </i>
+                        </span>
+                      </div>
+                      <!-- Input email -->
+                      <input type="text" class="form-control" placeholder="Email">
+                    </div>
+                    <!-- Mot de passe -->
+                    <div class="input-group mb-3">
+                      <!-- Logo cadenas -->
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                      </div>
+                      <!-- Input mot de passe -->
+                      <input type="password" class="form-control" placeholder="Mot de passe">
+                    </div>
+                    <!-- Boutons mot de passe oublié/valider -->
+                    <div id="button-container mb-3">
+                      <button type="submit" class="forgot btn">Mot de passe oublié ?</button>
+                      <button type="submit" class="login btn btn-danger">Valider</button>
+                    </div>
+                  </form>
+                </div>
+                <!-- Colonne secondaire droite -->
+                <div class="col-sm-2">
+                </div>
+              </div>
+            </div>
+            <!-- Colonne principale droite -->
+            <div class="col-sm-4">
+              <!-- Formulaire creation partie -->
+              <form id="creation">
+                <!-- Nom de la partie -->
+                <div class="input-group mb-3">
+                  <!-- Texte nom de la partie -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Nom de la partie
+                    </span>
+                  </div>
+                  <!-- Choix type de jeu -->
+                  <input type="text" id="gameName" class="form-control" placeholder="Ex : ma partie" required>
+                </div>
+                <!-- Type de jeu -->
+                <div class="input-group mb-3">
+                  <!-- Texte type de jeu -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Type de jeu
+                    </span>
+                  </div>
+                  <!-- Choix type de jeu -->
+                  <select class="form-control">
+                    <option>Blitz</option>
+                  </select>
+                </div>
+                <!-- Nombre de joueurs -->
+                <div class="input-group mb-3">
+                  <!-- Texte nombre de joueurs -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Nombre de joueurs
+                    </span>
+                  </div>
+                  <!-- Choix nombre de joueurs -->
+                  <select class="form-control" id="nbPlayersMax">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                  </select>
+                </div>
+                <!-- Chat -->
+                <div class="input-group mb-3">
+                  <!-- Texte chat -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Chat
+                    </span>
+                  </div>
+                  <!-- Choix chat -->
+                  <select class="form-control">
+                    <option>Oui</option>
+                    <option>Non</option>
+                  </select>
+                </div>
+                <!-- Style de cartes -->
+                <div class="input-group mb-3">
+                  <!-- Texte style de cartes -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Style de cartes
+                    </span>
+                  </div>
+                  <!-- Choix style de cartes -->
+                  <select class="form-control">
+                    <option>Classique</option>
+                    <option>Future</option>
+                  </select>
+                </div>
+                <!-- Bouton valider -->
+                <button type="submit" class="validate btn btn-danger">Valider</button>
+              </form>
+              <!-- Tableau rejoindre partie -->
+              <table class="table rounded" id="rejoindre">
+                <tr>
+                  <th id="nomPartie">Nom</th>
+                  <th id="joueurs">Joueurs</th>
+                  <th id="btnRejoindre"></th>
+                </tr>
+                <tr>
+                  <td>MaPartie1</td>
+                  <td>2/4</td>
+                  <td>
+                    <button type="submit" class="validate btn btn-danger">
+                      <i class="material-icons">
+                        play_arrow
+                      </i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>MaPartie2</td>
+                  <td>2/4</td>
+                  <td>
+                    <button type="submit" class="validate btn btn-danger">
+                      <i class="material-icons">
+                        play_arrow
+                      </i>
+                    </button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid" id="board" style="display:none">
+        <div class="row" style="height: 100%;">
+            <!-- Colonne principale gauche -->
+            <div class="col-sm-4">
+            </div>
+            <!-- Colonne principale centrale -->
+            <div class="col-sm-4" style="height: 100%;">
+            </div>
+            <!-- Colonne principale droite -->
+            <div class="col-sm-4">
+                <div class="card bg-light" id="chat">
+                    <div class="card-header">
+                        <h6 class="card-subtitle mb-2 text-muted">Chat de la partie</h6>
+                    </div>
+                    <div class="card-body msg_card_body" id="chatBody">
+                        <div class="d-flex justify-content-start mb-1">
+                            <div id="messages" class="msg_cotainer" ></div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light" id="chatFooter">
+                            <form id="formSendMessage">
+                                <div class="input-group">
+                                    <input class="form-control" id="message" />
+                                    <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+          var socket = io.connect('localhost:8080'); // http://projetl3.alwaysdata.net/ - localhost:8080
+          var chat = $('#messages')[0];
+          var pseudo = "";
+          //var pseudo = prompt('Quel est votre pseudo ?');
+
+          var connexionDisplayed = false;
+          var inscriptionDisplayed = false;
+          var creationDisplayed = false;
+          var rejoindreDisplayed = false;
+
+          var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
+
+
+          /*
+              --------------- FUNCTIONS ---------------
+          */
+
+
+          /*
+              Renvoie true si l'input correspondant au pseudo d'invité est rempli, et assigne à la var pseudo
+              la valeur correspondante.
+          */
+
+          function hasGuestPseudo() {
+              if ($("#pseudo").val().length > 0 && $("#pseudo").val().length < 15) {
+                  pseudo = "guest_" + $("#pseudo").val();
+                  return true;
+              }
+
+              return false;
+          }
+
+
+          /*
+              Renvoie true si le joueur est connecté ou s'il a choisi un pseudo d'invité (ce qui signifie
+              que l'input correspondant au pseudo d'invité est rempli).
+          */
+
+          function hasPseudo() {
+              return isConnected || hasGuestPseudo();
+          }
+
+
+          /*
+              Fonction utilisée afin de gérer le menu principal : par exemple, l'ouverture
+              du menu de création de partie provoque la fermeture de celui destiné à rejoindre
+              une partie.
+          */
+
+          function displayMenu(action) {
+            switch (action) {
+              case "connexion":
+                if (!connexionDisplayed) {
+                  if (inscriptionDisplayed) {
+                    displayMenu("inscription");
+                  }
+
+                  $("#connexion").show();
+                  connexionDisplayed = true;
+                }
+                else {
+                  $("#connexion").hide();
+                  connexionDisplayed = false;
+                }
+                break;
+
+                case "inscription":
+                  if (!inscriptionDisplayed) {
+                    if (connexionDisplayed) {
+                      displayMenu("connexion");
+                    }
+
+                    $("#inscription").show();
+                    inscriptionDisplayed = true;
+                  }
+                  else {
+                    $("#inscription").hide();
+                    inscriptionDisplayed = false;
+                  }
+                  break;
+
+                  case "creation":
+                    if (!creationDisplayed) {
+                      if (rejoindreDisplayed) {
+                        displayMenu("rejoindre");
+                      }
+
+                      $("#creation").show();
+                      creationDisplayed = true;
+                    }
+                    else {
+                      $("#creation").hide();
+                      creationDisplayed = false;
+                    }
+                    break;
+
+                    case "rejoindre":
+                      if (!rejoindreDisplayed) {
+                        if (creationDisplayed) {
+                          displayMenu("creation");
+                        }
+
+                        $("#rejoindre").show();
+                        rejoindreDisplayed = true;
+                      }
+                      else {
+                        $("#rejoindre").hide();
+                        rejoindreDisplayed = false;
+                      }
+                      break;
+              }
+          }
+
+
+          /*
+              Fonction appelée lorsque le bouton "rejoindre" est sollicité. Émet par conséquent au serveur
+              un event "joinGame" signifiant qu'une personne a rejoint une partie, et lui envoyant les informations
+              de cette partie contenues dans les attributs du bouton que sont "gameName", "nbPlayers" et "nbPlayersMax".
+          */
+
+          function joinGame () {
+              if (hasPseudo()) {
+                $("#menu").fadeOut(function() {
+                    $("#board").fadeIn();
+                });
+
+                $(this).attr("nbPlayers", parseInt($(this).attr("nbPlayers"), 10) + 1);
+
+                socket.emit("joinGame", { gameName: $(this).attr("gameName"),
+                                          nbPlayers: $(this).attr("nbPlayers"),
+                                          nbPlayersMax: $(this).attr("nbPlayersMax"),
+                                          pseudo: pseudo });
+              }
+          };
+
+
+          /*
+              Fonction appelée lorqu'il est nécessaire de rajouter une partie à la liste des parties. L'idée est que
+              un tableau avec des lignes (tr) et des colonnes (td) est utilisé. Il y a 3 colonnes, utilisées
+              respectivement pour le nom de la partie, le nombre de joueurs et le placement du bouton rejoindre.
+
+              A noter que l'id de chaque ligne est le nom de la partie, chose qui nous servira plus tard afin
+              d'identifier chacunes des lignes et de récupérer des informations.
+
+              De plus, les informations de la parties sont "stockées" dans les attributs du boutons, de telle sorte que
+              lorsque ce-dernier est utilisé, nous puissions récupérer les différentes informations en faisant appel
+              à $(this).attr("nomAttributARecup").
+          */
+
+          function appendGame (gameName, nbPlayersMax) {
+            let tr = $('<tr />').attr('id', gameName);
+
+            let tdGamename = $('<td />');
+            tr.append(tdGamename.html(gameName));
+
+            let tdNbPlayers = $('<td />');
+            tr.append(tdNbPlayers.html("1/" + nbPlayersMax));
+
+            let i = $('<i />').html("play_arrow")
+                              .attr("class", "material-icons");
+            let button = $('<button />');
+
+            button.append(i);
+
+            let tdButton = $('<td />');
+            tr.append(tdButton.append(button.attr("gameName", gameName)
+                                            .attr("nbPlayersMax", nbPlayersMax.toString())
+                                            .attr("nbPlayers", 1)
+                                            .attr("class", "validate btn btn-danger")
+                                            .click(joinGame)));
+
+            $('#rejoindre').append(tr);
+          };
+
+
+          /*
+              Fonction appelée lorsqu'un message doit être affiché dans le chat, dans le cas d'un event "newMessage".
+              Ce-dernier est simplement append dans le chat qui a ici pour id "messages".
+          */
+
+          function appendMessage (pseudo, message) {
+              $('#messages').append("<p><b>" + pseudo + "</b> : " + message + "</p>");
+          };
+
+
+          /*
+              Fonction permettant de modifier les informations sur une game lorsque par exemple un nouveau joueur a rejoint
+              la partie, ou que cette-dernière est pleine et qu'il est nécessaire de al rendre inacessible a plus de joueurs.
+
+              L'idée est que seules les deux dernières colonnes sont à modifier. En effet, le nom de la partie qui est la première
+              colonne ne changera pas. Cependant, la deuxième colonne, qui est le nombre de joueurs, doit être modifié à chaque connexion
+              de joueurs. Enfin, la dernière colonne, qui est celle du bouton, doit être également modifiée. En effet, le bouton contient
+              dans ses attributs les informations de la partie, et il est donc nécessaire de modifier le nombre de joueurs.
+          */
+
+          function updateGameDatas (gameName, nbPlayers, nbPlayersMax) {
+            tr = "#" + gameName;
+            index = 0;
+
+            $(tr).find('td').each(function() {
+                  if (index == 1) {
+                      $(this).fadeOut(function() {
+                          $(this).html(nbPlayers.toString() + "/" + nbPlayersMax.toString());
+                          $(this).fadeIn();
+                      })
+                  }
+                  else if (index == 2) {
+                      $(this).attr("nbPlayers", nbPlayers);
+                      // rendre la partie inacessible si cette-dernière est pleine.
+                  }
+
+                  index += 1;
+              });
+          };
+
+
+          /*
+              --------------- LISTEN EVENTS ---------------
+          */
+
+          socket.on('newMessage', function(data) {
+              appendMessage(data.pseudo, data.message);
+              chat.scrollIntoView(false);
+          });
+
+
+          socket.on('newPlayer', function(pseudo) {
+              $('#messages').append("<p><b>" + pseudo + "</b> vient de se connecter !</p>");
+              chat.scrollIntoView(false);
+          });
+
+
+          socket.on('newGame', function(data) {
+              appendGame(data.gameName, data.nbPlayersMax);
+          })
+
+
+          socket.on('gameFull', function(data) {
+            updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayers);
+          })
+
+
+          socket.on('updateGame', function(data) {
+            updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayersMax);
+          })
+
+
+          /*
+              --------------- LISTEN ACTIONS OF PLAYER ---------------
+          */
+
+
+          /* $("#formBtnsMenu input").click(function(e) {
+              buttonId = $(this).attr("id");
+              displayMenu(buttonId.substring(0, buttonId.length - 3));
+          }) */
+
+
+          $("#creationBtn").click(function(e) {
+              displayMenu("creation");
+              return false;
+          });
+
+
+          $("#rejoindreBtn").click(function(e) {
+              displayMenu("rejoindre");
+              return false;
+          });
+
+
+          $("#inscriptionBtn").click(function(e) {
+              displayMenu("inscription");
+          });
+
+
+          $("#connexionBtn").click(function(e) {
+              displayMenu("connexion");
+          });
+
+
+          $('#formSendMessage').submit(function () {
+            socket.emit('newMessage', $('#message').val());
+            appendMessage(pseudo, $('#message').val());
+
+            chat.scrollIntoView(false);
+            $('#message').val('');
+
+            return false;
+          });
+
+
+          $('#creation').submit(function () {
+            if (hasPseudo()) {
+              socket.emit('newGame', { gameName: $('#gameName').val(),
+                                       nbPlayersMax: parseInt($('#nbPlayersMax').val()),
+                                       pseudo: pseudo });
+
+              $("#menu").fadeOut(function() {
+                  $('#gameName').val('');
+                  $("#board").fadeIn();
+              });
+            }
+
+            // Si le joueur quitte la partie il récupère les infos de toutes les parties, pas besoin d'actualiser les infos derrière
+            // appendGame($('#gameName').val(), parseInt($('#nbPlayersMax').val()));
+            return false;
+          });
+		  
+		  $( "#inscription" ).submit(function(  ) {
+				if($('#pwd').val() == $('#conf_pwd').val()){
+					socket.emit('createAccount',{ username : $('#pseudo').val() ,
+						email : $('#email').val() ,
+						password : $('#pwd').val() });
+				} else {
+					alert('les deux mots de passe ne sont pas identiques');
+				}
+			}); 
+        </script>
+    </body>
+</html>
