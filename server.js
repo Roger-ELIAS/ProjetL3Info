@@ -8,7 +8,7 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/public/views');
 
 app.use(function(req, res, next){
-    res.render('chat.ejs');
+    res.render('index.ejs');
 });
 
 // Chargement de socket.io
