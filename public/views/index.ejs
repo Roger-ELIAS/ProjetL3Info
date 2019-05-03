@@ -54,12 +54,12 @@
                     <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
                   </form>
                   <!-- Boutons inscription/connexion -->
-                  <div id="button-container mb-3">
+                  <div id="button-container mb-3" id="btnsInscrCo">
                     <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
                     <button id="connexionBtn" class="login btn btn-danger">Connexion</button>
                   </div>
                   <!-- Formulaire inscription -->
-                  <form id="inscription" action="/action_page.php">
+                  <form id="inscription">
         							<!-- Pseudo -->
         							<div class="input-group mb-3">
         								<!-- Logo bonhomme -->
@@ -116,7 +116,7 @@
         							<button type="submit" class="validate btn btn-danger">Valider</button>
         						</form>
                   <!-- Formulaire connexion -->
-                  <form id="connexion" action="/action_page.php">
+                  <form id="connexion">
                     <!-- Email -->
                     <div class="input-group mb-3">
                       <!-- Logo email -->
@@ -128,7 +128,7 @@
                         </span>
                       </div>
                       <!-- Input email -->
-                      <input type="text" class="form-control" placeholder="Email">
+                      <input type="text" id="email_con" class="form-control" placeholder="Email">
                     </div>
                     <!-- Mot de passe -->
                     <div class="input-group mb-3">
@@ -141,7 +141,7 @@
                         </span>
                       </div>
                       <!-- Input mot de passe -->
-                      <input type="password" class="form-control" placeholder="Mot de passe">
+                      <input type="password" id="pwd_con" class="form-control" placeholder="Mot de passe">
                     </div>
                     <!-- Boutons mot de passe oublié/valider -->
                     <div id="button-container mb-3">
@@ -281,6 +281,7 @@
             </div>
           </div>
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
           var socket = io.connect('localhost:8080'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
@@ -602,9 +603,19 @@
           */
 
           socket.on('newAlertMessage', function(message) {
-              // afficher le message d'alerte !!!
-              console.log(message);
+              $.notify(message, "warn");
           })
+
+
+          /*
+
+          */
+
+          socket.on('connexionOk', function(dataPseudo) {
+              pseudo = dataPseudo;
+              displayMenu("connexion");
+              $('#btnsInscrCo').fadeOut();
+          });
 
 
           /*
@@ -697,15 +708,35 @@
           */
 
           $("#inscription").submit(function() {
-      				if($('#pwd').val() == $('#conf_pwd').val()){
-                console.log("prout");
-      					socket.emit('createAccount',{ username : $('#pseudoInscription').val() ,
-      						email : $('#email').val() ,
-      						password : $('#pwd').val() });
-      				} else {
-      					alert('les deux mots de passe ne sont pas identiques');
+      				if ($('#pwd').val() == $('#conf_pwd').val()) {
+      					  socket.emit('createAccount', { username : $('#pseudoInscription').val() ,
+      						                               email : $('#email').val() ,
+      						                               password : $('#pwd').val() });
+
+                  displayMenu("inscription");
+                  $('#pseudoInscription').val('');
+                  $('#email').val('');
+                  $('#pwd').val('');
+                  $('#conf_pwd').val('');
       				}
+              else {
+      					    $.notify("Les mots de passes sont différents !", "warn");
+      				}
+
+              return false;
 			    });
+
+
+          /*
+
+          */
+
+          $("#connexion").submit(function() {
+              socket.emit('connexion', { email_con : $('#email_con').val() ,
+                                         pwd_con : $('#pwd_con').val() });
+
+              return false;
+          });
         </script>
     </body>
 </html>

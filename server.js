@@ -1,6 +1,5 @@
-var express = require('express');
-var ent = require('ent');
-// var bd = require('./bd.js');
+const express = require('express');
+const ent = require('ent');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 var saltRounds = 10;
@@ -27,9 +26,9 @@ var gamesList = {};
 
 var createAccount = function(username, email, pwd) {
     var hash = bcrypt.hashSync(pwd,saltRounds);
-    console.log(hash);
-    var sql = "INSERT INTO User (Username, Mail, Password, Confirmed) VALUES ('"
-            + username + "', '" + email + "', '" + hash + "', '" + 0 + "')";
+    rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
+    var sql = "INSERT INTO User (Username, Mail, Password, Confirmed, PwdConfirmation) VALUES ('"
+            + username + "', '" + email + "', '" + hash + "', '" + 0 + "', '" + rand + "')";
 
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -134,7 +133,6 @@ io.sockets.on('connection', function (socket) {
 
                 if(!usernameIsTaken && !emailIsTaken) {
                     createAccount(data.username, data.email, data.password)
-                    socket.pseudo = data.username;
                 }
                 else {
                     var alertMessage;
@@ -152,6 +150,37 @@ io.sockets.on('connection', function (socket) {
                     socket.emit("newAlertMessage", alertMessage);
                 }
             });
+        });
+    });
+
+
+    /*
+
+    */
+
+    socket.on('connexion', function (data) {
+        var sqlRequest = "SELECT Mail, Password, Username FROM User WHERE Mail = \"" + data.email_con + "\"";
+
+        con.query(sqlRequest, function (err, result) {
+            if (err) throw err;
+
+            var alertMessage;
+            if (result.length !== 1) {
+                alertMessage = "L'email n'existe pas";
+                socket.emit("newAlertMessage", alertMessage);
+            }
+            else {
+                bcrypt.compare(data.pwd_con, result[0].Password , function(err, res) {
+                    if (res) {
+                        socket.pseudo = result[0].Username;
+                        socket.emit("connexionOk", socket.pseudo);
+                    }
+                    else {
+                        alertMessage = "Mot de passe incorrect !";
+                        socket.emit("newAlertMessage", alertMessage);
+                    }
+                });
+            }
         });
     });
 });
