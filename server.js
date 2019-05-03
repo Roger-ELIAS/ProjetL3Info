@@ -1,7 +1,9 @@
 var express = require('express');
 var ent = require('ent');
 // var bd = require('./bd.js');
-var mysql = require('mysql');
+const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+var saltRounds = 10;
 
 var app = express();
 var server = require('http').createServer(app);
@@ -24,8 +26,10 @@ var io = require('socket.io').listen(server);
 var gamesList = {};
 
 var createAccount = function(username, email, pwd) {
+    var hash = bcrypt.hashSync(pwd,saltRounds);
+    console.log(hash);
     var sql = "INSERT INTO User (Username, Mail, Password, Confirmed) VALUES ('"
-            + username + "', '" + email + "', '" + pwd + "', '" + 0 + "')";
+            + username + "', '" + email + "', '" + hash + "', '" + 0 + "')";
 
     con.query(sql, function (err, result) {
         if (err) throw err;
