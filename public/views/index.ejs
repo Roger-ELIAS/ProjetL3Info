@@ -244,39 +244,46 @@
         </div>
 
         <div class="container-fluid" id="board" style="display:none">
-        <div class="row" style="height: 100%;">
-            <!-- Colonne principale gauche -->
-            <div class="col-sm-4">
+          <div class="row" style="height: 100%;">
+            <div class="col-sm-8">
             </div>
-            <!-- Colonne principale centrale -->
-            <div class="col-sm-4" style="height: 100%;">
+            <div class="col-sm-1">
             </div>
-            <!-- Colonne principale droite -->
-            <div class="col-sm-4 chat-window" id="chat_window_1">
-                <div class="panel panel-default" id="chat" ><!--style="display:none">-->
+            <div class="col-sm-3 chat-window" id="chat_window_1">
+              <div class="row" id="chat_row">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-9">
+                  <div class="panel panel-default" id="chat" ><!--style="display:none">-->
                     <div class="panel-heading top-bar">
-                        <div class="col-sm-12">
-                            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat de la partie</h3>
-                        </div>
+                      <div class="col-sm-12">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat de la partie</h3>
+                      </div>
                     </div>
                     <div class="panel-body msg_container_base" id="messages">
+
                     </div>
-                </div>
-                <div class="panel-footer">
+                  </div>
+                  <div class="panel-footer">
                     <div class="input-group">
-                        <form id="formSendMessage">
-                            <div class="input-group">
-                                <input class="form-control" id="message" placeholder="Message..." />
-                                <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
-                            </div>
-                        </form>
+                      <form id="formSendMessage" style="width: 100%;">
+                        <div class="input-group">
+                          <input class="form-control" id="message" placeholder="Message..." />
+                          <input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
+                        </div>
+                      </form>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io.connect('localhost:8080'); // online : http://projetl3.alwaysdata.net/ - local : localhost:8080
+          var socket = io.connect('https://jeudecarte.alwaysdata.net/', {secure:true}); // online : https://jeudecarte.alwaysdata.net/ - local : localhost:8080
           var pseudo = "";
 
           var connexionDisplayed = false; // état du menu de connexion
@@ -286,7 +293,7 @@
 
           var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
-          var actualGameName = ""; // nom de la partie acutelle jouée 
+          var actualGameName = ""; // nom de la partie acutelle jouée
 
 
           /*
