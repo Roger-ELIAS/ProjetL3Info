@@ -60,61 +60,61 @@
                   </div>
                   <!-- Formulaire inscription -->
                   <form id="inscription" action="/action_page.php">
-                    <!-- Pseudo -->
-                    <div class="input-group mb-3">
-                      <!-- Logo bonhomme -->
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">
-                            perm_identity
-                          </i>
-                        </span>
-                      </div>
-                      <!-- Input pseudo -->
-                      <input type="text" class="form-control" placeholder="Pseudo">
-                    </div>
-                    <!-- Email -->
-                    <div class="input-group mb-3">
-                      <!-- Logo email -->
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">
-                            alternate_email
-                          </i>
-                        </span>
-                      </div>
-                      <!-- Input email -->
-                      <input type="text" class="form-control" placeholder="Email">
-                    </div>
-                    <!-- Mot de passe -->
-                    <div class="input-group mb-3">
-                      <!-- Logo cadenas -->
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">
-                            lock
-                          </i>
-                        </span>
-                      </div>
-                      <!-- Input mot de passe -->
-                      <input type="password" class="form-control" placeholder="Mot de passe">
-                    </div>
-                    <!-- Confirmation mot de passe -->
-                    <div class="input-group mb-3">
-                      <!-- Logo cadenas -->
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">
-                            lock
-                          </i>
-                        </span>
-                      </div>
-                      <!-- Input confirmation mot de passe -->
-                      <input type="password" class="form-control" placeholder="Confirmation mot de passe">
-                    </div>
-                    <!-- Bouton valider -->
-                    <button type="submit" class="validate btn btn-danger">Valider</button>
-                  </form>
+        							<!-- Pseudo -->
+        							<div class="input-group mb-3">
+        								<!-- Logo bonhomme -->
+        								<div class="input-group-prepend">
+        									<span class="input-group-text">
+        										<i class="material-icons">
+        											perm_identity
+        										</i>
+        									</span>
+        								</div>
+        								<!-- Input pseudo -->
+        								<input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
+        							</div>
+        							<!-- Email -->
+        							<div class="input-group mb-3">
+        								<!-- Logo email -->
+        								<div class="input-group-prepend">
+        									<span class="input-group-text">
+        										<i class="material-icons">
+        											alternate_email
+        										</i>
+        									</span>
+        								</div>
+        								<!-- Input email -->
+        								<input type="text" id="email" class="form-control" placeholder="Email">
+        							</div>
+        							<!-- Mot de passe -->
+        							<div class="input-group mb-3">
+        								<!-- Logo cadenas -->
+        								<div class="input-group-prepend">
+        									<span class="input-group-text">
+        										<i class="material-icons">
+        											lock
+        										</i>
+        									</span>
+        								</div>
+        								<!-- Input mot de passe -->
+        								<input type="password" id="pwd" class="form-control" placeholder="Mot de passe">
+        							</div>
+        							<!-- Confirmation mot de passe -->
+        							<div class="input-group mb-3">
+        								<!-- Logo cadenas -->
+        								<div class="input-group-prepend">
+        									<span class="input-group-text">
+        										<i class="material-icons">
+        											lock
+        										</i>
+        									</span>
+        								</div>
+        								<!-- Input confirmation mot de passe -->
+        								<input type="password" id="conf_pwd" class="form-control" placeholder="Confirmation mot de passe">
+        							</div>
+        							<!-- Bouton valider -->
+        							<button type="submit" class="validate btn btn-danger">Valider</button>
+        						</form>
                   <!-- Formulaire connexion -->
                   <form id="connexion" action="/action_page.php">
                     <!-- Email -->
@@ -283,7 +283,7 @@
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io.connect('https://jeudecarte.alwaysdata.net/', {secure:true}); // online : https://jeudecarte.alwaysdata.net/ - local : localhost:8080
+          var socket = io.connect("localhost:8080"); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
           var pseudo = "";
 
           var connexionDisplayed = false; // état du menu de connexion
@@ -680,6 +680,21 @@
 
             return false;
           });
+
+
+          /*
+
+          */
+
+          $( "#inscription" ).submit(function(  ) {
+      				if($('#pwd').val() == $('#conf_pwd').val()){
+      					socket.emit('createAccount',{ username : $('#pseudo').val() ,
+      						email : $('#email').val() ,
+      						password : $('#pwd').val() });
+      				} else {
+      					alert('les deux mots de passe ne sont pas identiques');
+      				}
+			    });
         </script>
     </body>
 </html>
