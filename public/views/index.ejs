@@ -283,7 +283,7 @@
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io.connect('https://jeudecarte.alwaysdata.net/'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
+          var socket = io.connect('localhost:8080'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
           var pseudo = "";
 
           var connexionDisplayed = false; // état du menu de connexion
@@ -598,6 +598,16 @@
 
 
           /*
+
+          */
+
+          socket.on('newAlertMessage', function(message) {
+              // afficher le message d'alerte !!!
+              console.log(message);
+          })
+
+
+          /*
               --------------- LISTEN ACTIONS OF PLAYER ---------------
           */
 
@@ -686,8 +696,9 @@
 
           */
 
-          $( "#inscription" ).submit(function(  ) {
+          $("#inscription").submit(function() {
       				if($('#pwd').val() == $('#conf_pwd').val()){
+                console.log("prout");
       					socket.emit('createAccount',{ username : $('#pseudoInscription').val() ,
       						email : $('#email').val() ,
       						password : $('#pwd').val() });
