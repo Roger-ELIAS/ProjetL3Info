@@ -71,7 +71,7 @@
         									</span>
         								</div>
         								<!-- Input pseudo -->
-        								<input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
+        								<input type="text" id="pseudoInscription" class="form-control" placeholder="Pseudo">
         							</div>
         							<!-- Email -->
         							<div class="input-group mb-3">
@@ -283,7 +283,7 @@
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io.connect("localhost:8080"); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
+          var socket = io.connect('https://jeudecarte.alwaysdata.net/'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
           var pseudo = "";
 
           var connexionDisplayed = false; // état du menu de connexion
@@ -688,7 +688,7 @@
 
           $( "#inscription" ).submit(function(  ) {
       				if($('#pwd').val() == $('#conf_pwd').val()){
-      					socket.emit('createAccount',{ username : $('#pseudo').val() ,
+      					socket.emit('createAccount',{ username : $('#pseudoInscription').val() ,
       						email : $('#email').val() ,
       						password : $('#pwd').val() });
       				} else {
