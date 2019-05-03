@@ -1,9 +1,7 @@
 var express = require('express');
 var ent = require('ent');
-// var cors = require('cors')
 
 var app = express();
-// app.use(cors({credentials: false, origin: "http://localhost:8000"}));
 
 var server = require('http').createServer(app);
 
@@ -78,4 +76,4 @@ io.sockets.on('connection', function (socket) {
     })
 });
 
-server.listen(8100,"0.0.0.0"); // 8100,"0.0.0.0" - 8080
+server.listen(8080); // 8100,"0.0.0.0" - 8080
