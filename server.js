@@ -2,6 +2,7 @@ const express = require('express');
 const ent = require('ent');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 var saltRounds = 10;
 
 var app = express();
@@ -24,6 +25,14 @@ app.use(function(req, res, next){
 var io = require('socket.io').listen(server);
 var gamesList = {};
 
+var transporter = nodemailer.createTransport({
+  service: 'outlook',
+  auth: {
+    user: 'jeudecartel3@outlook.fr',
+    pass: 'projetl3'
+  }
+});
+
 var createAccount = function(username, email, pwd) {
     var hash = bcrypt.hashSync(pwd,saltRounds);
     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
@@ -32,6 +41,19 @@ var createAccount = function(username, email, pwd) {
 
     con.query(sql, function (err, result) {
         if (err) throw err;
+		var mailOptions = {
+			  from: 'jeudecartel3@outlook.fr',
+			  to: email,
+			  subject: "CARDS, verification email",
+			  html : "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
+		};
+		transporter.sendMail(mailOptions, function(error, info){
+		  if (error) {
+			console.log(error);
+		  } else {
+			console.log('Email sent: ' + info.response);
+		  }
+		});
         return true;
     });
 };
@@ -159,7 +181,7 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('connexion', function (data) {
-        var sqlRequest = "SELECT Mail, Password, Username FROM User WHERE Mail = \"" + data.email_con + "\"";
+        var sqlRequest = "SELECT Mail, Password, Username, Confirmed FROM User WHERE Mail = \"" + data.email_con + "\"";
 
         con.query(sqlRequest, function (err, result) {
             if (err) throw err;
@@ -173,7 +195,8 @@ io.sockets.on('connection', function (socket) {
                 bcrypt.compare(data.pwd_con, result[0].Password , function(err, res) {
                     if (res) {
                         socket.pseudo = result[0].Username;
-                        socket.emit("connexionOk", socket.pseudo);
+						socket.confirmed = result[0].Confirmed;
+                        socket.emit("connexionOk", { pseudo: socket.pseudo, confirmed: socket.confirmed });
                     }
                     else {
                         alertMessage = "Mot de passe incorrect !";
@@ -181,6 +204,26 @@ io.sockets.on('connection', function (socket) {
                     }
                 });
             }
+        });
+    });
+
+	socket.on('confirmation', function (data) {
+        var sqlRequest = "SELECT PwdConfirmation FROM User WHERE Username = \"" + data.pseudo + "\"";
+
+		var alertMessage;
+        con.query(sqlRequest, function (err, result) {
+            if (err) throw err;
+			if(data.codeConfirmation == result[0].PwdConfirmation){
+				var sqlUpdate = "UPDATE User SET Confirmed = " + 1 + " WHERE Username = \"" + data.pseudo + "\" AND PwdConfirmation = " + data.codeConfirmation;
+				con.query(sqlUpdate, function(err,result){
+					if (err) throw err;
+
+          socket.emit("confirmationOK");
+				});
+			} else {
+				alertMessage = "Code de confirmation ne correspond pas";
+				socket.emit("newAlertMessage", alertMessage);
+			}
         });
     });
 });
