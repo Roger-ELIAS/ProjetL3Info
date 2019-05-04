@@ -330,12 +330,17 @@
     */
 
     function hasGuestPseudo() {
-        if ($("#pseudo").val().length > 0 && $("#pseudo").val().length < 15) {
-            pseudo = "guest_" + $("#pseudo").val();
-            return true;
+        if ($("#pseudo").val().length == 0) {
+            $.notify("Renseignez votre pseudo guest ou connectez vous !", "warn");
+            return false;
+        }
+        else if ($("#pseudo").val().length >= 20) {
+            $.notify("Votre pseudo est un peu trop long !", "warn");
+            return false;
         }
 
-        return false;
+        pseudo = "guest_" + $("#pseudo").val();
+        return true;
     }
 
 
