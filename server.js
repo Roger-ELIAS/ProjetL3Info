@@ -26,34 +26,34 @@ var io = require('socket.io').listen(server);
 var gamesList = {};
 
 var transporter = nodemailer.createTransport({
-  service: 'outlook',
-  auth: {
-    user: 'jeudecartel3@outlook.fr',
-    pass: 'projetl3'
-  }
+    service: 'outlook',
+    auth: {
+        user: 'jeudecartel3@outlook.fr',
+        pass: 'projetl3'
+    }
 });
 
 var createAccount = function(username, email, pwd) {
     var hash = bcrypt.hashSync(pwd,saltRounds);
     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
     var sql = "INSERT INTO User (Username, Mail, Password, Confirmed, PwdConfirmation) VALUES ('"
-            + username + "', '" + email + "', '" + hash + "', '" + 0 + "', '" + rand + "')";
+        + username + "', '" + email + "', '" + hash + "', '" + 0 + "', '" + rand + "')";
 
     con.query(sql, function (err, result) {
         if (err) throw err;
-		var mailOptions = {
-			  from: 'jeudecartel3@outlook.fr',
-			  to: email,
-			  subject: "CARDS, verification email",
-			  html : "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
-		};
-		transporter.sendMail(mailOptions, function(error, info){
-		  if (error) {
-			console.log(error);
-		  } else {
-			console.log('Email sent: ' + info.response);
-		  }
-		});
+        var mailOptions = {
+            from: 'jeudecartel3@outlook.fr',
+            to: email,
+            subject: "CARDS, verification email",
+            html : "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
         return true;
     });
 };
@@ -66,14 +66,14 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('newMessage', function (data) {
-      message = ent.encode(data.message);
-      newMessage = { pseudo: socket.pseudo, message: message };
+        message = ent.encode(data.message);
+        newMessage = { pseudo: socket.pseudo, message: message };
 
-      gamesList[data.gameName].players.forEach(function(playerSocket) {
-          if (playerSocket.pseudo != socket.pseudo) {
-              playerSocket.emit('newMessage', newMessage);
-          }
-      });
+        gamesList[data.gameName].players.forEach(function(playerSocket) {
+            if (playerSocket.pseudo != socket.pseudo) {
+                playerSocket.emit('newMessage', newMessage);
+            }
+        });
     });
 
 
@@ -108,8 +108,8 @@ io.sockets.on('connection', function (socket) {
         });
 
         gameUpdated = { gameName: data.gameName,
-                        nbPlayers: gamesList[data.gameName].nbPlayers,
-                        nbPlayersMax: gamesList[data.gameName].nbPlayersMax };
+            nbPlayers: gamesList[data.gameName].nbPlayers,
+            nbPlayersMax: gamesList[data.gameName].nbPlayersMax };
 
         socket.broadcast.emit('updateGame', gameUpdated);
     });
@@ -195,7 +195,7 @@ io.sockets.on('connection', function (socket) {
                 bcrypt.compare(data.pwd_con, result[0].Password , function(err, res) {
                     if (res) {
                         socket.pseudo = result[0].Username;
-						socket.confirmed = result[0].Confirmed;
+                        socket.confirmed = result[0].Confirmed;
                         socket.emit("connexionOk", { pseudo: socket.pseudo, confirmed: socket.confirmed });
                     }
                     else {
@@ -207,23 +207,23 @@ io.sockets.on('connection', function (socket) {
         });
     });
 
-	socket.on('confirmation', function (data) {
+    socket.on('confirmation', function (data) {
         var sqlRequest = "SELECT PwdConfirmation FROM User WHERE Username = \"" + data.pseudo + "\"";
 
-		var alertMessage;
+        var alertMessage;
         con.query(sqlRequest, function (err, result) {
             if (err) throw err;
-			if(data.codeConfirmation == result[0].PwdConfirmation){
-				var sqlUpdate = "UPDATE User SET Confirmed = " + 1 + " WHERE Username = \"" + data.pseudo + "\" AND PwdConfirmation = " + data.codeConfirmation;
-				con.query(sqlUpdate, function(err,result){
-					if (err) throw err;
+            if(data.codeConfirmation == result[0].PwdConfirmation){
+                var sqlUpdate = "UPDATE User SET Confirmed = " + 1 + " WHERE Username = \"" + data.pseudo + "\" AND PwdConfirmation = " + data.codeConfirmation;
+                con.query(sqlUpdate, function(err,result){
+                    if (err) throw err;
 
-          socket.emit("confirmationOK");
-				});
-			} else {
-				alertMessage = "Code de confirmation ne correspond pas";
-				socket.emit("newAlertMessage", alertMessage);
-			}
+                    socket.emit("confirmationOK");
+                });
+            } else {
+                alertMessage = "Code de confirmation ne correspond pas";
+                socket.emit("newAlertMessage", alertMessage);
+            }
         });
     });
 });
