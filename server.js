@@ -2,11 +2,13 @@ const express = require('express');
 const ent = require('ent');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const gameFunctions = require('./gameFunctions.js');
 const nodemailer = require('nodemailer');
 var saltRounds = 10;
 
 var app = express();
 var server = require('http').createServer(app);
+
 
 var con = mysql.createConnection({
     host: "mysql-projetl3.alwaysdata.net",
@@ -15,6 +17,7 @@ var con = mysql.createConnection({
     database: "jeudecarte_bd"
 });
 
+
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/public/views');
 
@@ -22,8 +25,10 @@ app.use(function(req, res, next){
     res.render('index.ejs');
 });
 
+
 var io = require('socket.io').listen(server);
-var gamesList = {};
+var gamesList = {}; // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: [sockets, hand[]], playerName2 ... },  }, gameName2 ..... }
+
 
 var transporter = nodemailer.createTransport({
     service: 'outlook',
@@ -32,6 +37,7 @@ var transporter = nodemailer.createTransport({
         pass: 'projetl3'
     }
 });
+
 
 var createAccount = function(username, email, pwd) {
     var hash = bcrypt.hashSync(pwd,saltRounds);
@@ -58,6 +64,7 @@ var createAccount = function(username, email, pwd) {
     });
 };
 
+
 io.sockets.on('connection', function (socket) {
 
 
@@ -66,14 +73,13 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('newMessage', function (data) {
-        message = ent.encode(data.message);
-        newMessage = { pseudo: socket.pseudo, message: message };
+        message = "<p><b>" + socket.pseudo + "</b> : " + ent.encode(data.message) + "</p>";
 
-        gamesList[data.gameName].players.forEach(function(playerSocket) {
-            if (playerSocket.pseudo != socket.pseudo) {
-                playerSocket.emit('newMessage', newMessage);
+        for (var playerName in gamesList[data.gameName].players) {
+            if (playerName != socket.pseudo) {
+                gamesList[data.gameName].players[playerName][0].emit('newMessage', message);
             }
-        });
+        }
     });
 
 
@@ -84,7 +90,8 @@ io.sockets.on('connection', function (socket) {
     socket.on('newGame', function(data) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
-        gamesList[data.gameName] = { nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: [socket] };
+        gamesList[data.gameName] = { hasStarted: false, timeouts: [], nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: {} };
+        gamesList[data.gameName].players[socket.pseudo] = [socket];
 
         newGame = { gameName: data.gameName, nbPlayersMax: data.nbPlayersMax };
         socket.broadcast.emit('newGame', newGame)
@@ -99,19 +106,52 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName].nbPlayers += 1;
-        gamesList[data.gameName].players.push(socket);
+        gamesList[data.gameName].players[socket.pseudo] = [socket];
 
-        gamesList[data.gameName].players.forEach(function(playerSocket) {
-            if (playerSocket.pseudo != socket.pseudo) {
-                playerSocket.emit('newPlayer', socket.pseudo);
+        var message = "<p>Le joueur <b>" +
+                      data.pseudo +
+                      "</b> vient de se connecter !  <b>" +
+                      gamesList[data.gameName].nbPlayers +
+                      "/" + gamesList[data.gameName].nbPlayersMax + "</b></p>"
+
+        for (var playerName in gamesList[data.gameName].players) {
+            if (playerName != socket.pseudo) {
+                gamesList[data.gameName].players[playerName][0].emit('newMessage', message);
             }
-        });
+        }
 
         gameUpdated = { gameName: data.gameName,
             nbPlayers: gamesList[data.gameName].nbPlayers,
             nbPlayersMax: gamesList[data.gameName].nbPlayersMax };
 
         socket.broadcast.emit('updateGame', gameUpdated);
+
+        if (gamesList[data.gameName].nbPlayers == gamesList[data.gameName].nbPlayersMax) {
+            gameFunctions.startGame(socket, 10, gamesList[data.gameName]);
+
+            gamesList[data.gameName].timeouts.push(setTimeout(function() {
+              gamesList[data.gameName].hasStarted = true;
+              var cards = gameFunctions.getCards(gamesList[data.gameName].nbPlayers);
+
+              gamesList[data.gameName]["packet"] = cards.packet;
+
+              var index = 0;
+              for (var playerName in gamesList[data.gameName].players) {
+                  gamesList[data.gameName].players[playerName].push(cards.hands[index]);
+                  gamesList[data.gameName].players[playerName][0].emit("dealingCards", cards.hands[index]);
+                  index += 1;
+              }
+
+              setTimeout(function() {
+                socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+                socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+
+                setTimeout(function() {
+                    gameFunctions.startTimerMemorization(socket, 10);
+                }, 1500);
+              }, 5050);
+            }, 10050));
+        }
     });
 
 
@@ -207,6 +247,11 @@ io.sockets.on('connection', function (socket) {
         });
     });
 
+
+    /*
+
+    */
+
     socket.on('confirmation', function (data) {
         var sqlRequest = "SELECT PwdConfirmation FROM User WHERE Username = \"" + data.pseudo + "\"";
 
@@ -226,6 +271,73 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
+
+
+    /*
+
+    */
+    // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: [socket, hand[]], playerName2 ... },  }, gameName2 ..... }
+    socket.on('disconnect', function() {
+      console.log('Got disconnect!');
+
+      if (socket.pseudo !== undefined) {
+          for (var game in gamesList) {
+              for (var player in gamesList[game].players) {
+                  if (player == socket.pseudo) {
+                      if (gamesList[game].nbPlayers < gamesList[game].nbPlayersMax) {
+                          gamesList[game].nbPlayers -= 1;
+                          var message = "<p>Le joueur <b>" +
+                                        socket.pseudo +
+                                        "</b> vient de se déconnecter !  <b>" +
+                                        gamesList[game].nbPlayers +
+                                        "/" + gamesList[game].nbPlayersMax + "</b></p>";
+
+                          gameUpdated = { gameName: game,
+                                          nbPlayers: gamesList[game].nbPlayers,
+                                          nbPlayersMax: gamesList[game].nbPlayersMax };
+
+                          for (var player in gamesList[game].players) {
+                              if (player != socket.pseudo) {
+                                  gamesList[game].players[player][0].emit("newMessage", message);
+                                  gamesList[game].players[player][0].emit('updateGame', gameUpdated);
+                              }
+                          }
+                      }
+                      else if (!gamesList[game].hasStarted) {
+                        for (var i = 0; i < gamesList[game].timeouts.length; i++) {
+                            clearTimeout(gamesList[game].timeouts[i]);
+                        }
+
+                        gamesList[game].timeouts = [];
+
+                        gamesList[game].nbPlayers -= 1;
+                        var message = "<p>Le joueur <b>" +
+                                      socket.pseudo +
+                                      "</b> vient de se déconnecter !  <b>" +
+                                      gamesList[game].nbPlayers +
+                                      "/" + gamesList[game].nbPlayersMax + "</b></p>";
+
+                        gameUpdated = { gameName: game,
+                                        nbPlayers: gamesList[game].nbPlayers,
+                                        nbPlayersMax: gamesList[game].nbPlayersMax };
+
+                        for (var player in gamesList[game].players) {
+                            if (player != socket.pseudo) {
+                                gamesList[game].players[player][0].emit("newMessage", message);
+                                gamesList[game].players[player][0].emit('updateGame', gameUpdated);
+                            }
+                        }
+                      }
+                      else {
+                        
+                      }
+                  }
+              }
+          }
+      }
+      /* var i = allClients.indexOf(socket);
+      allClients.splice(i, 1); */
+   });
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080

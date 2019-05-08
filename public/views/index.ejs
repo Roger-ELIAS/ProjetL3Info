@@ -262,21 +262,337 @@
             </table>
         </div>
     </div>
+    <!-- Menu mot de passe oublié -->
+		<div class="row" id="mdpoublie" style="display:none">
+			<!-- Colonne secondaire gauche -->
+			<div class="col-sm-2"></div>
+			<!-- Colonne secondaire centrale -->
+			<div class="col-sm-8">
+				<!-- Formulaire mot de passe oublié -->
+				<form id="mdp">
+					<!-- Pseudo -->
+					<div class="input-group mb-3">
+						<!-- Logo bonhomme -->
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="material-icons">perm_identity</i></span>
+						</div>
+						<!-- Input pseudo -->
+						<input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
+					</div>
+					<!-- Email -->
+					<div class="input-group mb-3">
+						<!-- Logo email -->
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="material-icons">alternate_email</i></span>
+						</div>
+						<!-- Input email -->
+						<input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
+					</div>
+					<!-- Boutons mot de passe oublié/valider -->
+					<div id="button-container mb-3">
+						<button type="submit" class="login btn btn-danger">Valider</button>
+					</div>
+				</form>
+			</div>
+			<!-- Colonne secondaire droite -->
+			<div class="col-sm-2">
+			</div>
+		</div>
 </div>
 
 <div class="container-fluid" id="board" style="display:none">
-    <div class="row" style="height: 100%;">
-        <div class="col-sm-8">
+  <!-- Menu de jeu -->
+    <div class="row playingCards fourColours rotateHand" style="height: 100%;">
+      <!-- Colonne 1 -->
+      <div class="col-sm-2">
+        <!-- Joueur 1 -->
+        <div class="playerArea" id="player1">
+          <!-- Pseudo -->
+          <p class="playerName">My name 1</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="col-sm-1">
+      </div>
+      <!-- Colonne 2 -->
+      <div class="col-sm-2">
+        <!-- Joueur 2 -->
+        <div class="playerArea" id="player2">
+          <!-- Pseudo -->
+          <p class="playerName">My name 2</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
+        <!-- Joueur principal -->
+        <div class="playerArea" id="mainPlayer">
+          <!-- Pseudo -->
+          <p class="playerName">YOU</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Colonne 3 -->
+      <div class="col-sm-2">
+        <!-- Joueur 3 -->
+        <div class="playerArea" id="player3">
+          <!-- Pseudo -->
+          <p class="playerName">My name 3</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Colonne 4 -->
+      <div class="col-sm-2">
+        <!-- Joueur 4 -->
+        <div class="playerArea" id="player4">
+          <!-- Pseudo -->
+          <p class="playerName">My name 4</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Pioche -->
+        <div class="playerArea" id="pioche">
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="deck">
+              <li>
+                <img src="/images/cards/red_back.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/red_back.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/red_back.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/red_back.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/red_back.png" height="175">
+              </li>
+              <!-- Carte du dessus -->
+              <li>
+                <a href="#">
+                  <img src="/images/cards/red_back.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Colonne 5 -->
+      <div class="col-sm-2">
+        <!-- Joueur 5 -->
+        <div class="playerArea" id="player5">
+          <!-- Pseudo -->
+          <p class="playerName">My name 5</p>
+          <!-- Cartes -->
+          <div class="cardDisplay">
+            <ul class="hand">
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+              <li>
+                <a href="#"  class="card">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Tas -->
+        <div class="playerArea" id="tas">
+          <!-- Tas -->
+          <div class="cardDisplay">
+            <ul class="deck">
+              <li>
+                <img src="/images/cards/1C.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/1C.png" height="175">
+              </li>
+              <li>
+                <img src="/images/cards/1C.png" height="175">
+              </li>
+              <!-- Carte du dessus -->
+              <li>
+                <a href="#">
+                  <img src="/images/cards/1C.png" height="175">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
         <div class="col-sm-3 chat-window" id="chat_window_1">
-            <div class="row" id="chat_row">
-                <div class="col-sm-2">
-                </div>
-                <div class="col-sm-1">
-                </div>
-                <div class="col-sm-9">
+          <!-- Chat -->
+          <div class="row" id="chat_row">
+            <div class="col-sm-12">
+              <!-- Menu de jeu -->
+              <div id="ingameMenu">
+                <input value="Accueil" class="btn btn-primary">
+                <input value="Règles" class="btn btn-primary">
+                <br>
+                <!-- Rotation des cartes en main -->
+                <input type="radio" name="Ligne"><p>Ligne</p>
+                <input type="radio" name="Rotation"><p>Rotation</p>
+              </div>
                     <div class="panel panel-default" id="chat" ><!--style="display:none">-->
                         <div class="panel-heading top-bar">
                             <div class="col-sm-12">
@@ -317,6 +633,8 @@
     var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
     var actualGameName = ""; // nom de la partie acutelle jouée
+
+    var cardBackStyle = "red_back.png";
 
 
     /*
@@ -519,18 +837,12 @@
         Ce-dernier est simplement append dans le chat qui a ici pour id "messages".
     */
 
-    function appendMessage (pseudo, message, isNewPlayer) {
+    function appendMessage (message) {
         let div1 = $('<div />').attr("class", "row msg_container base_receive");
         let div2 = $('<div />').attr("class", "col-sm-12");
         let div3 = $('<div />').attr("class", "messages msg_receive");
 
-        if (!isNewPlayer) {
-            div3.append("<p><b>" + pseudo + "</b> : " + message + "</p>");
-        }
-        else {
-            div3.append("<p>Le joueur <b>" + pseudo + "</b> vient de se connecter !</p>");
-        }
-
+        div3.append(message);
         div2.append(div3);
         div1.append(div2);
 
@@ -573,6 +885,37 @@
 
 
     /*
+
+    */
+
+    function dealCard(hand, index) {
+      var src = "/images/cards/";
+      var cardImg = $('<img />');
+
+      $('#mainJoueur').append(cardImg.attr("src", src + hand[index] + ".png")
+                                     .attr("class", "imageCarte")
+                                     .click(cardClicked)
+                                     .data("valeur", hand[index].substring(0, 1))
+      );
+
+      if (index + 1 <= hand.length - 1) {
+          setTimeout(function() {
+              dealCard(hand, index + 1 )
+          }, 1000)
+      }
+    }
+
+
+    /*
+
+    */
+
+    function cardClicked () {
+
+    }
+
+
+    /*
         --------------- LISTEN EVENTS ---------------
     */
 
@@ -582,19 +925,8 @@
         dans le chat.
     */
 
-    socket.on('newMessage', function(data) {
-        appendMessage(data.pseudo, data.message, false);
-        document.getElementById("messages").lastChild.scrollIntoView(false);
-    });
-
-
-    /*
-        Évènement reçu lorsqu'un nouveau joueur se connecte dans la partie. Un message de connexion est
-        alors ajouté dans le chat.
-    */
-
-    socket.on('newPlayer', function(pseudo) {
-        appendMessage(pseudo, "", true);
+    socket.on('newMessage', function(message) {
+        appendMessage(message);
         document.getElementById("messages").lastChild.scrollIntoView(false);
     });
 
@@ -687,6 +1019,17 @@
 
 
     /*
+
+    */
+
+    socket.on('dealingCards', function(hand) {
+        setTimeout(function() {
+            dealCard(hand, 0)
+        }, 1000);
+    })
+
+
+    /*
         --------------- LISTEN ACTIONS OF PLAYER ---------------
     */
 
@@ -735,13 +1078,16 @@
     */
 
     $('#formSendMessage').submit(function () {
-        socket.emit('newMessage', { gameName: actualGameName,
-            message: $('#message').val() });
-        appendMessage(pseudo, $('#message').val());
+        if ($('#message').val().length > 0) {
+          socket.emit('newMessage', { gameName: actualGameName,
+              message: $('#message').val() });
 
+          var message = "<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>"
+          appendMessage(message);
 
-        document.getElementById("messages").lastChild.scrollIntoView(false);
-        $('#message').val('');
+          document.getElementById("messages").lastChild.scrollIntoView(false);
+          $('#message').val('');
+        }
 
         return false;
     });
