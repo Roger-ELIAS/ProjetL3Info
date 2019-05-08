@@ -309,11 +309,11 @@
         <!-- Joueur 1 -->
         <div class="playerArea" id="player1">
           <!-- Pseudo -->
-          <p class="playerName">My name 1</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -337,7 +337,7 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -347,11 +347,11 @@
         <!-- Joueur 2 -->
         <div class="playerArea" id="player2">
           <!-- Pseudo -->
-          <p class="playerName">My name 2</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -375,18 +375,18 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
         <!-- Joueur principal -->
         <div class="playerArea" id="mainPlayer">
           <!-- Pseudo -->
-          <p class="playerName">YOU</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -410,7 +410,7 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -420,11 +420,11 @@
         <!-- Joueur 3 -->
         <div class="playerArea" id="player3">
           <!-- Pseudo -->
-          <p class="playerName">My name 3</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -448,7 +448,7 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -458,11 +458,11 @@
         <!-- Joueur 4 -->
         <div class="playerArea" id="player4">
           <!-- Pseudo -->
-          <p class="playerName">My name 4</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -486,7 +486,7 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -525,11 +525,11 @@
         <!-- Joueur 5 -->
         <div class="playerArea" id="player5">
           <!-- Pseudo -->
-          <p class="playerName">My name 5</p>
+          <p class="playerName"></p>
           <!-- Cartes -->
           <div class="cardDisplay">
             <ul class="hand">
-              <li>
+              <!--<li>
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
@@ -553,7 +553,7 @@
                 <a href="#"  class="card">
                   <img src="/images/cards/1C.png" height="175">
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -889,19 +889,104 @@
 
     */
 
-    function dealCard(hand, index) {
-      var src = "/images/cards/";
-      var cardImg = $('<img />');
+    function fadeInPseudo(pseudo, index, idElement) {
+        $(idElement).html(pseudo.substring(0, index));
 
-      $('#mainJoueur').append(cardImg.attr("src", src + hand[index] + ".png")
-                                     .attr("class", "imageCarte")
-                                     .click(cardClicked)
-                                     .data("valeur", hand[index].substring(0, 1))
-      );
+        if (index + 1 <= pseudo.length) {
+          setTimeout(function() {
+              fadeInPseudo(pseudo, index + 1, idElement);
+          }, 50);
+        }
+    }
+
+
+    /*
+
+    */
+
+    function fadeInPseudosLoop(pseudos, nbToAdd) {
+        pseudos.forEach(function(pseudo, index) {
+            fadeInPseudo(pseudo, 1, "#player" + (index + nbToAdd).toString() + " p");
+        });
+    }
+
+
+    /*
+
+    */
+
+    function fadeInPseudos(pseudos) {
+        fadeInPseudo(pseudo, 1, "#mainPlayer p");
+
+        switch (pseudos.length) {
+          case 5 :
+          case 4 :
+              fadeInPseudosLoop(pseudos, 1);
+              break;
+
+          case 3 :
+          case 2 :
+          case 1 :
+              fadeInPseudosLoop(pseudos, 2);
+              break;
+        }
+    }
+
+
+    /*
+
+    */
+
+    function dealOtherCards(numPlayer, index) {
+      var src = "/images/cards/";
+      var li = $('<li />');
+
+      var a = $('<a />');
+      a.attr('href', "#")
+       .attr("class", "card")
+       .click(cardClicked);
+
+      var cardImg = $('<img />');
+      a.append(cardImg.attr("src", src + "red_back" + ".png")
+                      .attr("height", 175));
+
+      li.append(a);
+
+      var handElement = "#player" + numPlayer.toString() + " div ul";
+      $(handElement).append(li);
+
+      if (index + 1 <= 3) {
+          setTimeout(function() {
+              dealOtherCards(numPlayer, index + 1);
+          }, 1000);
+      }
+    }
+
+
+    /*
+
+    */
+
+    function dealMyCards(hand, index) {
+      var src = "/images/cards/";
+      var li = $('<li />');
+
+      var a = $('<a />');
+      a.attr('href', "#")
+       .attr("class", "card")
+       .click(cardClicked)
+       .data("valeur", hand[index].substring(0, 1));
+
+      var cardImg = $('<img />');
+      a.append(cardImg.attr("src", src + hand[index] + ".png")
+                      .attr("height", 175));
+
+      li.append(a);
+      $('#mainPlayer div ul').append(li);
 
       if (index + 1 <= hand.length - 1) {
           setTimeout(function() {
-              dealCard(hand, index + 1 )
+              dealMyCards(hand, index + 1);
           }, 1000)
       }
     }
@@ -911,8 +996,41 @@
 
     */
 
-    function cardClicked () {
+    function dealCardsLoop(startIndex, nbPlayers) {
+        for (var i = 0; i < nbPlayers; i++) {
+            dealOtherCards(i + startIndex, 0);
+        }
+    }
 
+
+    /*
+
+    */
+
+    function dealCards(hand, nbPlayers) {
+        dealMyCards(hand, 0);
+
+        switch (nbPlayers) {
+          case 5 :
+          case 4 :
+              dealCardsLoop(1, nbPlayers);
+              break;
+
+          case 3 :
+          case 2 :
+          case 1 :
+              dealCardsLoop(2, nbPlayers);
+              break;
+        }
+    }
+
+
+    /*
+
+    */
+
+    function cardClicked () {
+        // à faire
     }
 
 
@@ -1023,9 +1141,15 @@
 
     */
 
-    socket.on('dealingCards', function(hand) {
+    socket.on('dealingCards', function(data) {
+        var index = data.pseudos.indexOf(pseudo);    // <-- Not supported in <IE9
+        if (index !== -1) {
+          data.pseudos.splice(index, 1);
+        }
+
         setTimeout(function() {
-            dealCard(hand, 0)
+            fadeInPseudos(data.pseudos)
+            dealCards(data.hand, data.nbPlayers - 1);
         }, 1000);
     })
 
@@ -1152,6 +1276,7 @@
         return false;
     });
 
+
     /*
 
     */
@@ -1161,6 +1286,25 @@
             codeConfirmation : $('#codeConfirmation').val() });
 
         return false;
+    });
+
+
+    /*
+
+    */
+
+    $("#mdpoublie").submit(function() {
+        socket.emit('updatePwd', { username : $('#pseudoMdpOublie').val(),
+            email : $('#emailMdpOublie').val() });
+
+        return false;
+    });
+
+    $("#btnMdpOublie").click(function(e) {
+        $("#formBtnsMenu").hide();
+        $("#btnsInscrCo").hide();
+        $("#connexion").hide();
+        $("#mdpoublie").show();
     });
 </script>
 </body>

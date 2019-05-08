@@ -65,6 +65,30 @@ var createAccount = function(username, email, pwd) {
 };
 
 
+var updatePwd = function(username,mail,rand){
+    var hash = bcrypt.hashSync(rand.toString(),saltRounds);
+    console.log(hash);
+    var sqlUpdate = "UPDATE User SET Password = \"" + hash + "\" WHERE Username = \"" + username + "\" AND Mail = \"" + mail+ "\"";
+    con.query(sqlUpdate, function (err, result) {
+        if (err) throw err;
+        var mailOptions = {
+            from: 'jeudecartel3@outlook.fr',
+            to: mail,
+            subject: "CARDS, verification email",
+            html : "Bienvenue sur CARDS,<br> Votre nouveau mdp est <br><p><b>" + rand + "</b></p> veuillez le saisir site lors de votre prochaine connexion pour confirmer votre compte."
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    });
+    return true;
+};
+
+
 io.sockets.on('connection', function (socket) {
 
 
@@ -138,7 +162,9 @@ io.sockets.on('connection', function (socket) {
               var index = 0;
               for (var playerName in gamesList[data.gameName].players) {
                   gamesList[data.gameName].players[playerName].push(cards.hands[index]);
-                  gamesList[data.gameName].players[playerName][0].emit("dealingCards", cards.hands[index]);
+                  gamesList[data.gameName].players[playerName][0].emit("dealingCards", { hand: cards.hands[index],
+                                                                                         nbPlayers: gamesList[data.gameName].nbPlayersMax,
+                                                                                         pseudos: Object.keys(gamesList[data.gameName].players) });
                   index += 1;
               }
 
@@ -329,7 +355,7 @@ io.sockets.on('connection', function (socket) {
                         }
                       }
                       else {
-                        
+
                       }
                   }
               }
@@ -338,6 +364,49 @@ io.sockets.on('connection', function (socket) {
       /* var i = allClients.indexOf(socket);
       allClients.splice(i, 1); */
    });
+
+
+   /*
+
+   */
+
+   socket.on('updatePwd',function (data) {
+        var sqlEmail = "SELECT Mail FROM User WHERE Mail = \"" + data.email + "\"";
+        var emailIsTaken;
+
+        var sqlUsername = "SELECT Username FROM User WHERE Username = \"" + data.username + "\"";
+        var usernameIsTaken;
+
+        con.query(sqlEmail, function (err, result) {
+            if (err) throw err;
+            emailIsTaken = (result.length == 0);
+
+            con.query(sqlUsername, function (err, result) {
+                if (err) throw err;
+                usernameIsTaken = (result.length == 0);
+
+                if(!usernameIsTaken && !emailIsTaken) {
+                    rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
+                    updatePwd(data.username, data.email,rand);
+                }
+                else {
+                    var alertMessage;
+
+                    if (emailIsTaken && usernameIsTaken) {
+                        alertMessage = "Pseudo et email inexistant";
+                    }
+                    else if (emailIsTaken) {
+                        alertMessage = "Email incorrecte";
+                    }
+                    else {
+                        alertMessage = "Pseudo incorrecte";
+                    }
+
+                    socket.emit("newAlertMessage", alertMessage);
+                }
+            });
+        });
+    });
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080
