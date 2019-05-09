@@ -57,6 +57,39 @@
                         <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
                         <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
                     </form>
+                    <button id="updateBtn" class="signin btn btn-danger" style="display: none">Modifier mot de passe</button>
+                    <form id="newPwd" style="display: none" >
+                        <!-- Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="oldpassword" class="form-control" placeholder="Mot de passe">
+                        </div>
+                        <!-- New Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="newpassword" class="form-control" placeholder="Mot de passe">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
+                            <button type="submit" class="login btn btn-danger">Valider</button>
+                        </div>
+                    </form>
                     <!-- Boutons inscription/connexion -->
                     <div class="button-container mb-3" id="btnsInscrCo">
                         <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
@@ -264,336 +297,336 @@
         </div>
     </div>
     <!-- Menu mot de passe oublié -->
-		<div class="row" id="mdpoublie" style="display:none">
-			<!-- Colonne secondaire gauche -->
-			<div class="col-sm-2"></div>
-			<!-- Colonne secondaire centrale -->
-			<div class="col-sm-8">
-				<!-- Formulaire mot de passe oublié -->
-				<form id="mdp">
-					<!-- Pseudo -->
-					<div class="input-group mb-3">
-						<!-- Logo bonhomme -->
-						<div class="input-group-prepend">
-							<span class="input-group-text"><i class="material-icons">perm_identity</i></span>
-						</div>
-						<!-- Input pseudo -->
-						<input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
-					</div>
-					<!-- Email -->
-					<div class="input-group mb-3">
-						<!-- Logo email -->
-						<div class="input-group-prepend">
-							<span class="input-group-text"><i class="material-icons">alternate_email</i></span>
-						</div>
-						<!-- Input email -->
-						<input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
-					</div>
-					<!-- Boutons mot de passe oublié/valider -->
-					<div id="button-container mb-3">
-						<button type="submit" class="login btn btn-danger">Valider</button>
-					</div>
-				</form>
-			</div>
-			<!-- Colonne secondaire droite -->
-			<div class="col-sm-2">
-			</div>
-		</div>
+    <div class="row" id="mdpoublie" style="display:none">
+        <!-- Colonne secondaire gauche -->
+        <div class="col-sm-2"></div>
+        <!-- Colonne secondaire centrale -->
+        <div class="col-sm-8">
+            <!-- Formulaire mot de passe oublié -->
+            <form id="mdp">
+                <!-- Pseudo -->
+                <div class="input-group mb-3">
+                    <!-- Logo bonhomme -->
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="material-icons">perm_identity</i></span>
+                    </div>
+                    <!-- Input pseudo -->
+                    <input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
+                </div>
+                <!-- Email -->
+                <div class="input-group mb-3">
+                    <!-- Logo email -->
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="material-icons">alternate_email</i></span>
+                    </div>
+                    <!-- Input email -->
+                    <input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
+                </div>
+                <!-- Boutons mot de passe oublié/valider -->
+                <div id="button-container mb-3">
+                    <button type="submit" class="login btn btn-danger">Valider</button>
+                </div>
+            </form>
+        </div>
+        <!-- Colonne secondaire droite -->
+        <div class="col-sm-2">
+        </div>
+    </div>
 </div>
 
 <div class="container-fluid" id="board" style="display:none">
-  <!-- Menu de jeu -->
+    <!-- Menu de jeu -->
     <div class="row playingCards fourColours rotateHand" style="height: 100%;">
-      <!-- Colonne 1 -->
-      <div class="col-sm-2">
-        <!-- Joueur 1 -->
-        <div class="playerArea" id="player1">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        <!-- Colonne 1 -->
+        <div class="col-sm-2">
+            <!-- Joueur 1 -->
+            <div class="playerArea" id="player1">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Colonne 2 -->
-      <div class="col-sm-2">
-        <!-- Joueur 2 -->
-        <div class="playerArea" id="player2">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        <!-- Colonne 2 -->
+        <div class="col-sm-2">
+            <!-- Joueur 2 -->
+            <div class="playerArea" id="player2">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <!-- Joueur principal -->
+            <div class="playerArea" id="mainPlayer">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
         </div>
-        <!-- Joueur principal -->
-        <div class="playerArea" id="mainPlayer">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        <!-- Colonne 3 -->
+        <div class="col-sm-2">
+            <!-- Joueur 3 -->
+            <div class="playerArea" id="player3">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Colonne 3 -->
-      <div class="col-sm-2">
-        <!-- Joueur 3 -->
-        <div class="playerArea" id="player3">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        <!-- Colonne 4 -->
+        <div class="col-sm-2">
+            <!-- Joueur 4 -->
+            <div class="playerArea" id="player4">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <!-- Pioche -->
+            <div class="playerArea" id="pioche">
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="deck">
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <!-- Carte du dessus -->
+                        <li>
+                            <a href="#">
+                                <img src="/images/cards/red_back.png" height="175">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <!-- Colonne 4 -->
-      <div class="col-sm-2">
-        <!-- Joueur 4 -->
-        <div class="playerArea" id="player4">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        <!-- Colonne 5 -->
+        <div class="col-sm-2">
+            <!-- Joueur 5 -->
+            <div class="playerArea" id="player5">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <!-- Tas -->
+            <div class="playerArea" id="tas">
+                <!-- Tas -->
+                <div class="cardDisplay">
+                    <ul class="deck">
+                        <li>
+                            <img src="/images/cards/1C.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/1C.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/1C.png" height="175">
+                        </li>
+                        <!-- Carte du dessus -->
+                        <li>
+                            <a href="#">
+                                <img src="/images/cards/1C.png" height="175">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <!-- Pioche -->
-        <div class="playerArea" id="pioche">
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="deck">
-              <li>
-                <img src="/images/cards/red_back.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/red_back.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/red_back.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/red_back.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/red_back.png" height="175">
-              </li>
-              <!-- Carte du dessus -->
-              <li>
-                <a href="#">
-                  <img src="/images/cards/red_back.png" height="175">
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Colonne 5 -->
-      <div class="col-sm-2">
-        <!-- Joueur 5 -->
-        <div class="playerArea" id="player5">
-          <!-- Pseudo -->
-          <p class="playerName"></p>
-          <!-- Cartes -->
-          <div class="cardDisplay">
-            <ul class="hand">
-              <!--<li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-              <li>
-                <a href="#"  class="card">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li> -->
-            </ul>
-          </div>
-        </div>
-        <!-- Tas -->
-        <div class="playerArea" id="tas">
-          <!-- Tas -->
-          <div class="cardDisplay">
-            <ul class="deck">
-              <li>
-                <img src="/images/cards/1C.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/1C.png" height="175">
-              </li>
-              <li>
-                <img src="/images/cards/1C.png" height="175">
-              </li>
-              <!-- Carte du dessus -->
-              <li>
-                <a href="#">
-                  <img src="/images/cards/1C.png" height="175">
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
         <div class="col-sm-2 chat-window" id="chat_window_1">
-          <!-- Chat -->
-          <div class="row" id="chat_row">
-            <div class="col-sm-12">
-              <!-- Menu de jeu -->
-              <div id="ingameMenu">
-                <input value="Accueil" class="btn btn-primary">
-                <input value="Règles" class="btn btn-primary">
-                <br>
-                <!-- Rotation des cartes en main -->
-                <input type="radio" name="Ligne"><p>Ligne</p>
-                <input type="radio" name="Rotation"><p>Rotation</p>
-              </div>
+            <!-- Chat -->
+            <div class="row" id="chat_row">
+                <div class="col-sm-12">
+                    <!-- Menu de jeu -->
+                    <div id="ingameMenu">
+                        <input value="Accueil" class="btn btn-primary">
+                        <input value="Règles" class="btn btn-primary">
+                        <br>
+                        <!-- Rotation des cartes en main -->
+                        <input type="radio" name="Ligne"><p>Ligne</p>
+                        <input type="radio" name="Rotation"><p>Rotation</p>
+                    </div>
                     <div class="panel panel-default" id="chat" ><!--style="display:none">-->
                         <div class="panel-heading top-bar">
                             <div class="col-sm-12">
@@ -630,6 +663,7 @@
     var creationDisplayed = false; // état du menu de création de partie
     var rejoindreDisplayed = false; // état du menu des parties en cours
     var confirmationDisplayed = false;
+    var updateDisplayed = false;
 
     var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
@@ -758,6 +792,17 @@
                 else {
                     $("#confirmation").hide();
                     confirmationDisplayed = false;
+                }
+                break;
+
+            case "updatePwd":
+                if (!updateDisplayed) {
+                    $("#newPwd").show();
+                    updateDisplayed = true;
+                }
+                else {
+                    $("#newPwd").hide();
+                    updateDisplayed = false;
                 }
                 break;
         }
@@ -893,9 +938,9 @@
         $(idElement).html(pseudo.substring(0, index));
 
         if (index + 1 <= pseudo.length) {
-          setTimeout(function() {
-              fadeInPseudo(pseudo, index + 1, idElement);
-          }, 50);
+            setTimeout(function() {
+                fadeInPseudo(pseudo, index + 1, idElement);
+            }, 50);
         }
     }
 
@@ -919,16 +964,16 @@
         fadeInPseudo(pseudo, 1, "#mainPlayer p");
 
         switch (pseudos.length) {
-          case 5 :
-          case 4 :
-              fadeInPseudosLoop(pseudos, 1);
-              break;
+            case 5 :
+            case 4 :
+                fadeInPseudosLoop(pseudos, 1);
+                break;
 
-          case 3 :
-          case 2 :
-          case 1 :
-              fadeInPseudosLoop(pseudos, 2);
-              break;
+            case 3 :
+            case 2 :
+            case 1 :
+                fadeInPseudosLoop(pseudos, 2);
+                break;
         }
     }
 
@@ -938,28 +983,28 @@
     */
 
     function dealOtherCards(numPlayer, index) {
-      var src = "/images/cards/";
-      var li = $('<li />');
+        var src = "/images/cards/";
+        var li = $('<li />');
 
-      var a = $('<a />');
-      a.attr('href', "#")
-       .attr("class", "card")
-       .click(cardClicked);
+        var a = $('<a />');
+        a.attr('href', "#")
+            .attr("class", "card")
+            .click(cardClicked);
 
-      var cardImg = $('<img />');
-      a.append(cardImg.attr("src", src + "red_back" + ".png")
-                      .attr("height", 175));
+        var cardImg = $('<img />');
+        a.append(cardImg.attr("src", src + "red_back" + ".png")
+            .attr("height", 175));
 
-      li.append(a);
+        li.append(a);
 
-      var handElement = "#player" + numPlayer.toString() + " div ul";
-      $(handElement).append(li);
+        var handElement = "#player" + numPlayer.toString() + " div ul";
+        $(handElement).append(li);
 
-      if (index + 1 <= 3) {
-          setTimeout(function() {
-              dealOtherCards(numPlayer, index + 1);
-          }, 1000);
-      }
+        if (index + 1 <= 3) {
+            setTimeout(function() {
+                dealOtherCards(numPlayer, index + 1);
+            }, 1000);
+        }
     }
 
 
@@ -968,27 +1013,27 @@
     */
 
     function dealMyCards(hand, index) {
-      var src = "/images/cards/";
-      var li = $('<li />');
+        var src = "/images/cards/";
+        var li = $('<li />');
 
-      var a = $('<a />');
-      a.attr('href', "#")
-       .attr("class", "card")
-       .click(cardClicked)
-       .data("valeur", hand[index].substring(0, 1));
+        var a = $('<a />');
+        a.attr('href', "#")
+            .attr("class", "card")
+            .click(cardClicked)
+            .data("valeur", hand[index].substring(0, 1));
 
-      var cardImg = $('<img />');
-      a.append(cardImg.attr("src", src + hand[index] + ".png")
-                      .attr("height", 175));
+        var cardImg = $('<img />');
+        a.append(cardImg.attr("src", src + hand[index] + ".png")
+            .attr("height", 175));
 
-      li.append(a);
-      $('#mainPlayer div ul').append(li);
+        li.append(a);
+        $('#mainPlayer div ul').append(li);
 
-      if (index + 1 <= hand.length - 1) {
-          setTimeout(function() {
-              dealMyCards(hand, index + 1);
-          }, 1000)
-      }
+        if (index + 1 <= hand.length - 1) {
+            setTimeout(function() {
+                dealMyCards(hand, index + 1);
+            }, 1000)
+        }
     }
 
 
@@ -1011,16 +1056,16 @@
         dealMyCards(hand, 0);
 
         switch (nbPlayers) {
-          case 5 :
-          case 4 :
-              dealCardsLoop(1, nbPlayers);
-              break;
+            case 5 :
+            case 4 :
+                dealCardsLoop(1, nbPlayers);
+                break;
 
-          case 3 :
-          case 2 :
-          case 1 :
-              dealCardsLoop(2, nbPlayers);
-              break;
+            case 3 :
+            case 2 :
+            case 1 :
+                dealCardsLoop(2, nbPlayers);
+                break;
         }
     }
 
@@ -1116,7 +1161,7 @@
         var p = $("<p />");
         $("#affichagePseudo").append(p.html(pseudo));
         $("#affichagePseudo").show();
-
+        $("#updateBtn").show();
 
         displayMenu("connexion");
         if(confirmed == false){
@@ -1144,7 +1189,7 @@
     socket.on('dealingCards', function(data) {
         var index = data.pseudos.indexOf(pseudo);    // <-- Not supported in <IE9
         if (index !== -1) {
-          data.pseudos.splice(index, 1);
+            data.pseudos.splice(index, 1);
         }
 
         setTimeout(function() {
@@ -1197,6 +1242,12 @@
     });
 
     /*
+    */
+    $("#updateBtn").click(function(e) {
+        displayMenu("updatePwd");
+    });
+
+    /*
         Appelé lorsque un message est envoyé, ce-dernier est transmis au serveur afin d'être distribué
         à tous les uatres joueurs de la partie actuelle, et ajoute ce message au chat de la personne qui
         l'envoie, sans passer par le serveur.
@@ -1204,14 +1255,14 @@
 
     $('#formSendMessage').submit(function () {
         if ($('#message').val().length > 0) {
-          socket.emit('newMessage', { gameName: actualGameName,
-              message: $('#message').val() });
+            socket.emit('newMessage', { gameName: actualGameName,
+                message: $('#message').val() });
 
-          var message = "<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>"
-          appendMessage(message);
+            var message = "<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>"
+            appendMessage(message);
 
-          document.getElementById("messages").lastChild.scrollIntoView(false);
-          $('#message').val('');
+            document.getElementById("messages").lastChild.scrollIntoView(false);
+            $('#message').val('');
         }
 
         return false;
@@ -1306,6 +1357,14 @@
         $("#connexion").hide();
         $("#mdpoublie").show();
     });
+
+    $("#newPwd").submit(function() {
+        socket.emit('newPwd', { username: pseudo,
+            password: $('#oldpassword').val(),
+            newpwd: $('#newpassword').val()});
+        return false;
+    });
+
 </script>
 </body>
 </html>

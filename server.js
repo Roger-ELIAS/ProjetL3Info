@@ -39,7 +39,7 @@ var transporter = nodemailer.createTransport({
 });
 
 
-var createAccount = function(username, email, pwd) {
+var createAccount = function(username, email, pwd,send) {
     var hash = bcrypt.hashSync(pwd,saltRounds);
     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
     var sql = "INSERT INTO User (Username, Mail, Password, Confirmed, PwdConfirmation) VALUES ('"
@@ -51,9 +51,9 @@ var createAccount = function(username, email, pwd) {
             from: 'jeudecartel3@outlook.fr',
             to: email,
             subject: "CARDS, verification email",
-            html : "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
+            html: "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
         };
-        transporter.sendMail(mailOptions, function(error, info){
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
             } else {
@@ -65,25 +65,26 @@ var createAccount = function(username, email, pwd) {
 };
 
 
-var updatePwd = function(username,mail,rand){
+var updatePwd = function(username,mail,rand,send){
     var hash = bcrypt.hashSync(rand.toString(),saltRounds);
-    console.log(hash);
     var sqlUpdate = "UPDATE User SET Password = \"" + hash + "\" WHERE Username = \"" + username + "\" AND Mail = \"" + mail+ "\"";
     con.query(sqlUpdate, function (err, result) {
         if (err) throw err;
-        var mailOptions = {
-            from: 'jeudecartel3@outlook.fr',
-            to: mail,
-            subject: "CARDS, verification email",
-            html : "Bienvenue sur CARDS,<br> Votre nouveau mdp est <br><p><b>" + rand + "</b></p> veuillez le saisir site lors de votre prochaine connexion pour confirmer votre compte."
-        };
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
+        if(send) {
+            var mailOptions = {
+                from: 'jeudecartel3@outlook.fr',
+                to: mail,
+                subject: "CARDS, verification email",
+                html : "Bienvenue sur CARDS,<br> Votre nouveau mdp est <br><p><b>" + rand + "</b></p> veuillez le saisir site lors de votre prochaine connexion pour confirmer votre compte."
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+        }
     });
     return true;
 };
@@ -133,10 +134,10 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].players[socket.pseudo] = [socket];
 
         var message = "<p>Le joueur <b>" +
-                      data.pseudo +
-                      "</b> vient de se connecter !  <b>" +
-                      gamesList[data.gameName].nbPlayers +
-                      "/" + gamesList[data.gameName].nbPlayersMax + "</b></p>"
+            data.pseudo +
+            "</b> vient de se connecter !  <b>" +
+            gamesList[data.gameName].nbPlayers +
+            "/" + gamesList[data.gameName].nbPlayersMax + "</b></p>"
 
         for (var playerName in gamesList[data.gameName].players) {
             if (playerName != socket.pseudo) {
@@ -154,28 +155,28 @@ io.sockets.on('connection', function (socket) {
             gameFunctions.startGame(socket, 10, gamesList[data.gameName]);
 
             gamesList[data.gameName].timeouts.push(setTimeout(function() {
-              gamesList[data.gameName].hasStarted = true;
-              var cards = gameFunctions.getCards(gamesList[data.gameName].nbPlayers);
+                gamesList[data.gameName].hasStarted = true;
+                var cards = gameFunctions.getCards(gamesList[data.gameName].nbPlayers);
 
-              gamesList[data.gameName]["packet"] = cards.packet;
+                gamesList[data.gameName]["packet"] = cards.packet;
 
-              var index = 0;
-              for (var playerName in gamesList[data.gameName].players) {
-                  gamesList[data.gameName].players[playerName].push(cards.hands[index]);
-                  gamesList[data.gameName].players[playerName][0].emit("dealingCards", { hand: cards.hands[index],
-                                                                                         nbPlayers: gamesList[data.gameName].nbPlayersMax,
-                                                                                         pseudos: Object.keys(gamesList[data.gameName].players) });
-                  index += 1;
-              }
-
-              setTimeout(function() {
-                socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
-                socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+                var index = 0;
+                for (var playerName in gamesList[data.gameName].players) {
+                    gamesList[data.gameName].players[playerName].push(cards.hands[index]);
+                    gamesList[data.gameName].players[playerName][0].emit("dealingCards", { hand: cards.hands[index],
+                        nbPlayers: gamesList[data.gameName].nbPlayersMax,
+                        pseudos: Object.keys(gamesList[data.gameName].players) });
+                    index += 1;
+                }
 
                 setTimeout(function() {
-                    gameFunctions.startTimerMemorization(socket, 10);
-                }, 1500);
-              }, 5050);
+                    socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+                    socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+
+                    setTimeout(function() {
+                        gameFunctions.startTimerMemorization(socket, 10);
+                    }, 1500);
+                }, 5050);
             }, 10050));
         }
     });
@@ -304,73 +305,73 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: [socket, hand[]], playerName2 ... },  }, gameName2 ..... }
     socket.on('disconnect', function() {
-      console.log('Got disconnect!');
+        console.log('Got disconnect!');
 
-      if (socket.pseudo !== undefined) {
-          for (var game in gamesList) {
-              for (var player in gamesList[game].players) {
-                  if (player == socket.pseudo) {
-                      if (gamesList[game].nbPlayers < gamesList[game].nbPlayersMax) {
-                          gamesList[game].nbPlayers -= 1;
-                          var message = "<p>Le joueur <b>" +
-                                        socket.pseudo +
-                                        "</b> vient de se déconnecter !  <b>" +
-                                        gamesList[game].nbPlayers +
-                                        "/" + gamesList[game].nbPlayersMax + "</b></p>";
+        if (socket.pseudo !== undefined) {
+            for (var game in gamesList) {
+                for (var player in gamesList[game].players) {
+                    if (player == socket.pseudo) {
+                        if (gamesList[game].nbPlayers < gamesList[game].nbPlayersMax) {
+                            gamesList[game].nbPlayers -= 1;
+                            var message = "<p>Le joueur <b>" +
+                                socket.pseudo +
+                                "</b> vient de se déconnecter !  <b>" +
+                                gamesList[game].nbPlayers +
+                                "/" + gamesList[game].nbPlayersMax + "</b></p>";
 
-                          gameUpdated = { gameName: game,
-                                          nbPlayers: gamesList[game].nbPlayers,
-                                          nbPlayersMax: gamesList[game].nbPlayersMax };
+                            gameUpdated = { gameName: game,
+                                nbPlayers: gamesList[game].nbPlayers,
+                                nbPlayersMax: gamesList[game].nbPlayersMax };
 
-                          for (var player in gamesList[game].players) {
-                              if (player != socket.pseudo) {
-                                  gamesList[game].players[player][0].emit("newMessage", message);
-                                  gamesList[game].players[player][0].emit('updateGame', gameUpdated);
-                              }
-                          }
-                      }
-                      else if (!gamesList[game].hasStarted) {
-                        for (var i = 0; i < gamesList[game].timeouts.length; i++) {
-                            clearTimeout(gamesList[game].timeouts[i]);
-                        }
-
-                        gamesList[game].timeouts = [];
-
-                        gamesList[game].nbPlayers -= 1;
-                        var message = "<p>Le joueur <b>" +
-                                      socket.pseudo +
-                                      "</b> vient de se déconnecter !  <b>" +
-                                      gamesList[game].nbPlayers +
-                                      "/" + gamesList[game].nbPlayersMax + "</b></p>";
-
-                        gameUpdated = { gameName: game,
-                                        nbPlayers: gamesList[game].nbPlayers,
-                                        nbPlayersMax: gamesList[game].nbPlayersMax };
-
-                        for (var player in gamesList[game].players) {
-                            if (player != socket.pseudo) {
-                                gamesList[game].players[player][0].emit("newMessage", message);
-                                gamesList[game].players[player][0].emit('updateGame', gameUpdated);
+                            for (var player in gamesList[game].players) {
+                                if (player != socket.pseudo) {
+                                    gamesList[game].players[player][0].emit("newMessage", message);
+                                    gamesList[game].players[player][0].emit('updateGame', gameUpdated);
+                                }
                             }
                         }
-                      }
-                      else {
+                        else if (!gamesList[game].hasStarted) {
+                            for (var i = 0; i < gamesList[game].timeouts.length; i++) {
+                                clearTimeout(gamesList[game].timeouts[i]);
+                            }
 
-                      }
-                  }
-              }
-          }
-      }
-      /* var i = allClients.indexOf(socket);
-      allClients.splice(i, 1); */
-   });
+                            gamesList[game].timeouts = [];
+
+                            gamesList[game].nbPlayers -= 1;
+                            var message = "<p>Le joueur <b>" +
+                                socket.pseudo +
+                                "</b> vient de se déconnecter !  <b>" +
+                                gamesList[game].nbPlayers +
+                                "/" + gamesList[game].nbPlayersMax + "</b></p>";
+
+                            gameUpdated = { gameName: game,
+                                nbPlayers: gamesList[game].nbPlayers,
+                                nbPlayersMax: gamesList[game].nbPlayersMax };
+
+                            for (var player in gamesList[game].players) {
+                                if (player != socket.pseudo) {
+                                    gamesList[game].players[player][0].emit("newMessage", message);
+                                    gamesList[game].players[player][0].emit('updateGame', gameUpdated);
+                                }
+                            }
+                        }
+                        else {
+
+                        }
+                    }
+                }
+            }
+        }
+        /* var i = allClients.indexOf(socket);
+        allClients.splice(i, 1); */
+    });
 
 
-   /*
+    /*
 
-   */
+    */
 
-   socket.on('updatePwd',function (data) {
+    socket.on('updatePwd',function (data) {
         var sqlEmail = "SELECT Mail FROM User WHERE Mail = \"" + data.email + "\"";
         var emailIsTaken;
 
@@ -387,7 +388,7 @@ io.sockets.on('connection', function (socket) {
 
                 if(!usernameIsTaken && !emailIsTaken) {
                     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
-                    updatePwd(data.username, data.email,rand);
+                    updatePwd(data.username, data.email,rand,1);
                 }
                 else {
                     var alertMessage;
@@ -402,6 +403,24 @@ io.sockets.on('connection', function (socket) {
                         alertMessage = "Pseudo incorrecte";
                     }
 
+                    socket.emit("newAlertMessage", alertMessage);
+                }
+            });
+        });
+    });
+
+    socket.on('newPwd',function (data) {
+        var sql = "SELECT Mail,Password FROM User WHERE Username = \"" + data.username + "\"";
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+
+            bcrypt.compare(data.password, result[0].Password , function(err, res) {
+                if (res) {
+                    updatePwd(data.username, result[0].Mail,data.newpwd,0);
+                }
+                else {
+                    alertMessage = "Mot de passe incorrect !";
                     socket.emit("newAlertMessage", alertMessage);
                 }
             });
