@@ -111,12 +111,12 @@ var timerMemorization = function(socket, time) {
 */
 
 var startTimerMemorization = function (socket) {
-  socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
-  socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+    socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+    socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
 
-  setTimeout(function() {
-      timerMemorization(socket, 10);
-  }, 1000);
+    setTimeout(function() {
+        timerMemorization(socket, 10);
+    }, 1000);
 }
 
 
@@ -132,5 +132,6 @@ var play = function (players, index) {
 module.exports = {
     getCards: getCards,
     startGame: startGame,
-    startTimerMemorization: startTimerMemorization
+    startTimerMemorization: startTimerMemorization,
+    play: play
 }

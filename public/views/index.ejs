@@ -962,31 +962,6 @@
 
     */
 
-<<<<<<< HEAD
-=======
-    function fadeInPseudos(pseudos) {
-        fadeInPseudo(pseudo, 1, "#mainPlayer p");
-
-        switch (pseudos.length) {
-            case 5 :
-            case 4 :
-                fadeInPseudosLoop(pseudos, 1);
-                break;
-
-            case 3 :
-            case 2 :
-            case 1 :
-                fadeInPseudosLoop(pseudos, 2);
-                break;
-        }
-    }
-
-
-    /*
-
-    */
-
->>>>>>> df34c2032a7ff6693b8a413a6811594413a142cd
     function dealOtherCards(numPlayer, index) {
         var src = "/images/cards/";
         var li = $('<li />');
@@ -1018,7 +993,6 @@
     */
 
     function dealMyCards(hand, index) {
-<<<<<<< HEAD
       var src = "/images/cards/";
       var li = $('<li />');
 
@@ -1069,29 +1043,6 @@
               dealMyCards(hand, index + 1);
           }, 1000)
       }
-=======
-        var src = "/images/cards/";
-        var li = $('<li />');
-
-        var a = $('<a />');
-        a.attr('href', "#")
-            .attr("class", "card")
-            .click(cardClicked)
-            .data("valeur", hand[index].substring(0, 1));
-
-        var cardImg = $('<img />');
-        a.append(cardImg.attr("src", src + hand[index] + ".png")
-            .attr("height", 175));
-
-        li.append(a);
-        $('#mainPlayer div ul').append(li);
-
-        if (index + 1 <= hand.length - 1) {
-            setTimeout(function() {
-                dealMyCards(hand, index + 1);
-            }, 1000)
-        }
->>>>>>> df34c2032a7ff6693b8a413a6811594413a142cd
     }
 
 
@@ -1115,7 +1066,6 @@
         dealMyCards(hand, 0);
 
         switch (nbPlayers) {
-<<<<<<< HEAD
           case 5 :
           case 4 :
               dealCardsLoop(1, nbPlayers);
@@ -1128,18 +1078,6 @@
               dealCardsLoop(2, nbPlayers);
               fadeInPseudosLoop(pseudos, 2);
               break;
-=======
-            case 5 :
-            case 4 :
-                dealCardsLoop(1, nbPlayers);
-                break;
-
-            case 3 :
-            case 2 :
-            case 1 :
-                dealCardsLoop(2, nbPlayers);
-                break;
->>>>>>> df34c2032a7ff6693b8a413a6811594413a142cd
         }
     }
 
