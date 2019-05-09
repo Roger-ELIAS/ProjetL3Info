@@ -635,6 +635,8 @@
 
     var actualGameName = ""; // nom de la partie acutelle jouée
 
+    var hisMyTurn = false;
+
     var cardBackStyle = "red_back.png";
 
 
@@ -915,28 +917,6 @@
 
     */
 
-    function fadeInPseudos(pseudos) {
-        fadeInPseudo(pseudo, 1, "#mainPlayer p");
-
-        switch (pseudos.length) {
-          case 5 :
-          case 4 :
-              fadeInPseudosLoop(pseudos, 1);
-              break;
-
-          case 3 :
-          case 2 :
-          case 1 :
-              fadeInPseudosLoop(pseudos, 2);
-              break;
-        }
-    }
-
-
-    /*
-
-    */
-
     function dealOtherCards(numPlayer, index) {
       var src = "/images/cards/";
       var li = $('<li />');
@@ -971,11 +951,40 @@
       var src = "/images/cards/";
       var li = $('<li />');
 
+      var valeur;
+      var cardName;
+
+      if (hand[index].length == 3) {
+          switch (parseInt(hand[index].substring(0, 2), 10)) {
+            case 10:
+            case 11:
+            case 12:
+                valeur = 10;
+                break;
+
+            case 13:
+                if (hand[index] == "13H" || hand[index] == "13D") {
+                    valeur = -4;
+                }
+                else {
+                    valeur = 15;
+                }
+                break;
+          }
+
+          cardName = hand[index].substring(0, 2);
+      }
+      else {
+          valeur = parseInt(hand[index].substring(0, 1), 10);
+          cardName = hand[index].substring(0, 1);
+      }
+
       var a = $('<a />');
       a.attr('href', "#")
        .attr("class", "card")
        .click(cardClicked)
-       .data("valeur", hand[index].substring(0, 1));
+       .data("valeur", valeur)
+       .data("cardName", cardName);
 
       var cardImg = $('<img />');
       a.append(cardImg.attr("src", src + hand[index] + ".png")
@@ -1007,30 +1016,33 @@
 
     */
 
-    function dealCards(hand, nbPlayers) {
+    function startGame(pseudos, hand, nbPlayers) {
+        fadeInPseudo(pseudo, 1, "#mainPlayer p");
         dealMyCards(hand, 0);
 
         switch (nbPlayers) {
           case 5 :
           case 4 :
               dealCardsLoop(1, nbPlayers);
+              fadeInPseudosLoop(pseudos, 1);
               break;
 
           case 3 :
           case 2 :
           case 1 :
               dealCardsLoop(2, nbPlayers);
+              fadeInPseudosLoop(pseudos, 2);
               break;
         }
     }
-
 
     /*
 
     */
 
     function cardClicked () {
-        // à faire
+        console.log($(this).data("valeur").toString());
+        console.log($(this).data("cardName"));
     }
 
 
@@ -1148,11 +1160,36 @@
         }
 
         setTimeout(function() {
-            fadeInPseudos(data.pseudos)
-            dealCards(data.hand, data.nbPlayers - 1);
+            startGame(data.pseudos, data.hand, data.nbPlayers - 1);
         }, 1000);
-    })
+    });
 
+
+    /*
+
+    */
+
+    socket.on('hideCards', function() {
+        /* $("#mainPlayer ul").fadeOut(function() {
+            var imgList = $("#mainPlayer ul .card img");
+
+            for (var img of imgList) {
+              img.src = "/images/cards/red_back.png";
+            }
+
+            $("#mainPlayer ul").fadeIn();
+        }) */
+    });
+
+
+    /*
+
+    */
+
+    socket.on('yourTurn', function() {
+        appendMessage("<p><b>C'est ton tour de jouer !</b></p>");
+        hisMyTurn = true;
+    });
 
     /*
         --------------- LISTEN ACTIONS OF PLAYER ---------------
