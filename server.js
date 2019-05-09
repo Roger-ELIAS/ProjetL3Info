@@ -27,7 +27,7 @@ app.use(function(req, res, next){
 
 
 var io = require('socket.io').listen(server);
-var gamesList = {}; // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: [sockets, hand[]], playerName2 ... },  }, gameName2 ..... }
+var gamesList = {}; // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
 
 
 var transporter = nodemailer.createTransport({
@@ -303,7 +303,7 @@ io.sockets.on('connection', function (socket) {
     /*
 
     */
-    // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: [socket, hand[]], playerName2 ... },  }, gameName2 ..... }
+    // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on('disconnect', function() {
       console.log('Got disconnect!');
 
