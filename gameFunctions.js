@@ -37,11 +37,11 @@ var getRandomIntInclusive = function (min, max) {
 
 */
 
-var getCards = function (nbPlayers) {
+var getCards = function (game) {
   var packet = generatePacket();
-  var cards = { hands: [] };
+  var hands = [];
 
-  for (let i = 0; i < nbPlayers; ++i) {
+  for (let i = 0; i < game.nbPlayers; ++i) {
       var hand = [];
       for (let k = 0; k < 4; k++) {
         var rand = getRandomIntInclusive(0, packet.length - 1);
@@ -49,11 +49,17 @@ var getCards = function (nbPlayers) {
         packet.splice(rand, 1);
       }
 
-      cards.hands.push(hand);
+      hands.push(hand);
   }
 
-  cards["packet"] = packet;
-  return cards;
+  for (let k = 0; k <= 1; k++) {
+      var rand = getRandomIntInclusive(0, packet.length - 1);
+      game.tas.push(packet[rand]);
+      packet.splice(rand, 1);
+  }
+
+  game.packet = packet;
+  return hands;
 }
 
 

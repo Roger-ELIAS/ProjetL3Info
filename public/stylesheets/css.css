@@ -166,9 +166,10 @@ tbody{
 	background: #e5e5e5;
 	margin: 0;
 	padding: 10px 10px 10px;
-	max-height: 100%;
-	min-height: 100%;
+	/*max-height: 100%;
+	min-height: 100%;*/
 	overflow-x:hidden;
+	height: 556px !important;
 }
 .top-bar {
 	background: #666;
@@ -337,4 +338,10 @@ li img{
 
 #pioche img {
 	width: 70%;
+}
+
+.panel-body {
+	height: 620 px;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }

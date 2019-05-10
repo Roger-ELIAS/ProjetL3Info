@@ -524,7 +524,7 @@
                 </div>
             </div>
             <!-- Pioche -->
-            <div class="playerArea" id="pioche">
+            <div class="playerArea" id="pioche" style="display:none">
                 <!-- Cartes -->
                 <div class="cardDisplay">
                     <ul class="deck">
@@ -591,7 +591,7 @@
                 </div>
             </div>
             <!-- Tas -->
-            <div class="playerArea" id="tas">
+            <div class="playerArea" id="tas" style="display:none">
                 <!-- Tas -->
                 <div class="cardDisplay">
                     <ul class="deck">
@@ -599,15 +599,15 @@
                             <img src="/images/cards/1C.png" height="175">
                         </li>
                         <li>
-                            <img src="/images/cards/1C.png" height="175">
+                            <img src="/images/cards/2C.png" height="175">
                         </li>
                         <li>
-                            <img src="/images/cards/1C.png" height="175">
+                            <img src="/images/cards/3C.png" height="175" id="cardTas2">
                         </li>
                         <!-- Carte du dessus -->
                         <li>
                             <a href="#">
-                                <img src="/images/cards/1C.png" height="175">
+                                <img src="/images/cards/1C.png" height="175" id="cardTas1">
                             </a>
                         </li>
                     </ul>
@@ -1061,7 +1061,21 @@
 
     */
 
-    function startGame(pseudos, hand, nbPlayers) {
+    function setTas(cardsTas) {
+        $("#cardTas2").attr("src", "/images/cards/" + cardsTas[0] + ".png");
+        $("#cardTas1").attr("src", "/images/cards/" + cardsTas[1] + ".png");
+
+        $("#pioche").fadeIn();
+        $("#tas").fadeIn();
+    }
+
+
+    /*
+
+    */
+
+    function startGame(pseudos, hand, nbPlayers, cardsTas) {
+        setTas(cardsTas);
         fadeInPseudo(pseudo, 1, "#mainPlayer p");
         dealMyCards(hand, 0);
 
@@ -1086,8 +1100,15 @@
     */
 
     function cardClicked () {
-        console.log($(this).data("valeur").toString());
-        console.log($(this).data("cardName"));
+        var parent = $(this).parent();
+        console.log(parent.index())
+
+        if (hisMyTurn) {
+          // fsfds
+        }
+        else {
+          // fsqfqdsf
+        }
     }
 
 
@@ -1205,7 +1226,7 @@
         }
 
         setTimeout(function() {
-            startGame(data.pseudos, data.hand, data.nbPlayers - 1);
+            startGame(data.pseudos, data.hand, data.nbPlayers - 1, data.cardsTas);
         }, 1000);
     });
 
