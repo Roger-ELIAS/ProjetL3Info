@@ -27,7 +27,7 @@ app.use(function(req, res, next){
 
 
 var io = require('socket.io').listen(server);
-var gamesList = {}; // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
+var gamesList = {}; // { gameName : { hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
 
 
 var transporter = nodemailer.createTransport({
@@ -434,13 +434,13 @@ io.sockets.on('connection', function (socket) {
     /*
 
     */
-    // { gameName : { packet: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
+    // { gameName : { hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on('askCardValue', function(data) {
         var card = gamesList[data.gameName].players[data.pseudo].hand[data.index]
         var index = data.pseudos.indexOf(pseudo);    // <-- Not supported in <IE9
 
         socket.emit("cardValueAsked", card);
-    })
+    });
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080
