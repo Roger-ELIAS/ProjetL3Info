@@ -1513,19 +1513,20 @@
     socket.on("cardValueAsked", function(data) {
         var idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
         var imgList = $(idPlayer + " div ul img");
-        var img = $(imgList[data.cardIndex]);
+        var img = imgList[data.cardIndex];
 
-        img.fadeOut(function() {
-            img.attr("src", "/images/card/" + data.cardName + ".png");
-            img.fadeIn(function() {
-                img.fadeOut(function() {
-                    img.attr("src", "/images/card/red_back.png");
-                    img.fadeIn();
-                })
-            }, 3000);
-        });
+        img.src = "/images/cards/" + data.cardName + ".png";
+        setTimeout(function() {
+            img.src = "/images/cards/red_back.png";
+            hasPower = false;
 
-        hasPower = false;
+            setTimeout(function() {
+                appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+                isDiscardTime = true;
+        
+                socket.emit("nextPlayer", actualGameName);
+            }, 1000);
+        }, 3000);
     });
 
 
