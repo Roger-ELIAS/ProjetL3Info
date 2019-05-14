@@ -545,7 +545,7 @@
                         </li>
                         <!-- Carte du dessus -->
                         <li>
-                            <a href="#">
+                            <a href="#" id="cardPioche">
                                 <img src="/images/cards/red_back.png" height="175">
                             </a>
                         </li>
@@ -596,19 +596,9 @@
                 <div class="cardDisplay">
                     <ul class="deck">
                         <li>
-                            <img src="/images/cards/1C.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/2C.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/3C.png" height="175" id="cardTas2">
-                        </li>
-                        <!-- Carte du dessus -->
-                        <li>
-                            <a href="#">
-                                <img src="/images/cards/1C.png" height="175" id="cardTas1">
-                            </a>
+                          <a href="#" id="cardTas">
+                            <img src="/images/cards/3C.png" height="175">
+                          </a>
                         </li>
                     </ul>
                 </div>
@@ -670,6 +660,19 @@
     var actualGameName = ""; // nom de la partie acutelle jouée
 
     var hisMyTurn = false;
+    var isDiscardTime = false;
+    var hasDrawnCard = false;
+    var hasPower = false;
+    var power;
+
+    var cardPower11;
+    var hasCardPower11 = false;
+
+    var tas;
+
+    var cardDrawn;
+
+    var pseudos;
 
     var cardBackStyle = "red_back.png";
 
@@ -993,46 +996,24 @@
     */
 
     function dealMyCards(hand, index) {
-      var src = "/images/cards/";
       var li = $('<li />');
-
-      var valeur;
-      var cardName;
-
-      if (hand[index].length == 3) {
-          switch (parseInt(hand[index].substring(0, 2), 10)) {
-            case 10:
-            case 11:
-            case 12:
-                valeur = 10;
-                break;
-
-            case 13:
-                if (hand[index] == "13H" || hand[index] == "13D") {
-                    valeur = -4;
-                }
-                else {
-                    valeur = 15;
-                }
-                break;
-          }
-
-          cardName = hand[index].substring(0, 2);
-      }
-      else {
-          valeur = parseInt(hand[index].substring(0, 1), 10);
-          cardName = hand[index].substring(0, 1);
-      }
 
       var a = $('<a />');
       a.attr('href', "#")
        .attr("class", "card")
        .click(cardClicked)
-       .data("valeur", valeur)
-       .data("cardName", cardName);
+       .data("cardName", hand[index]);
+
+      var src;
+      if (index == 0 || index == 1) {
+          src = "/images/cards/" + hand[index] + ".png";
+      }
+      else {
+          src = "/images/cards/red_back.png";
+      }
 
       var cardImg = $('<img />');
-      a.append(cardImg.attr("src", src + hand[index] + ".png")
+      a.append(cardImg.attr("src", src)
                       .attr("height", 175));
 
       li.append(a);
@@ -1061,9 +1042,21 @@
 
     */
 
+    function setPioche() {
+        $("#cardPioche").click(cardClicked);
+    }
+
+
+    /*
+
+    */
+
     function setTas(cardsTas) {
-        $("#cardTas2").attr("src", "/images/cards/" + cardsTas[0] + ".png");
-        $("#cardTas1").attr("src", "/images/cards/" + cardsTas[1] + ".png");
+        tas = cardsTas;
+        $("#cardTas img").attr("src", "/images/cards/" + cardsTas[0] + ".png")
+                         .click(cardClicked);
+
+        $("#cardTas").data("cardName", cardsTas[0]);
 
         $("#pioche").fadeIn();
         $("#tas").fadeIn();
@@ -1075,6 +1068,7 @@
     */
 
     function startGame(pseudos, hand, nbPlayers, cardsTas) {
+        setPioche();
         setTas(cardsTas);
         fadeInPseudo(pseudo, 1, "#mainPlayer p");
         dealMyCards(hand, 0);
@@ -1095,22 +1089,216 @@
         }
     }
 
+
+    /*
+
+    */
+
+    function powerValet() {
+        console.log("valet");
+    }
+
+
+    /*
+
+    */
+
+    function power78() {
+        /* var playerPseudo = getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1, 1));
+        socket.emit("askCardValue", { gameName: actualGameName,
+                                      pseudo: playerPseudo,
+                                      index: li.index() }); */
+    }
+
+
+    /*
+
+    */
+
+    function getCardName(card) {
+        return card.substring(0, card.length - 1);
+    }
+
+
     /*
 
     */
 
     function cardClicked () {
-        var parent = $(this).parent();
-        console.log(parent.index())
+        var li = $(this).parent();
+        var idClicked = li.parent().parent().parent().attr("id");
 
-        if (hisMyTurn) {
-          // fsfds
+        if (hasPower && idClicked !== undefined && idClicked !== "pioche") {
+            if (power == 78) {
+                socket.emit("askCardValue", { gameName: actualGameName,
+                                              pseudo: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                                              index: li.index() });
+
+                hasPower = false;
+            }
+            else if (power == 11) {
+                if (hasCardPower11) {
+                    socket.emit("valet", { gameName: actualGameName,
+                                           pseudo1 : cardPower11.pseudo,
+                                           index1: cardPower11.index,
+                                           pseudo2: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                                           index2: li.index() });
+
+                    hasCardPower11 = false;
+                    hasPower = false;
+                }
+                else {
+                    cardPower11 = { pseudo: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                                    index: li.index() };
+
+                    hasCardPower11 = true;
+                }
+            }
         }
-        else {
-          // fsqfqdsf
+        else if (isDiscardTime && idClicked == "mainPlayer") {
+            console.log("carte du tas : " + $("#cardTas").data("cardName"));
+            console.log("carte de la main : " + $(this).data("cardName"));
+            if (getCardName($("#cardTas").data("cardName")) == getCardName($(this).data("cardName"))) {
+                socket.emit("cardRemoved", { gameName: actualGameName,
+                                             cardIndex: li.index() });
+
+                $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
+                $("#cardTas").data("cardName", $(this).data("cardName"));
+
+                socket.emit("depositeOnTas", { indexCardToPut: li.index(),
+                                               cardToPut: $(this).data("cardName"),
+                                               gameName: actualGameName });
+
+                li.remove();
+            }
+            else {
+                appendMessage("<p><b> FAIL ! Les cartes ne sont pas identiques, 5 points en plus ajoutés à ton score ! </b></p>");
+                socket.emit("playerFail", actualGameName);
+            }
+
+        }
+        else if (hisMyTurn) {
+            if (hasDrawnCard) {
+                if (idClicked == undefined) {
+                    socket.emit('depositeOnTas', { gameName: actualGameName,
+                                                   cardToPut: cardDrawn });
+
+                    $("#cardTas img").attr("src", "/images/cards/" + cardDrawn + ".png");
+                    $("#cardTas").data("cardName", cardDrawn);
+
+                    tas.push(cardDrawn);
+                }
+                else if (idClicked == "mainPlayer") {
+                    $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
+                    $("#cardTas").data("cardName", $(this).data("cardName"));
+
+                    tas.push($(this).data("cardName"));
+
+                    socket.emit("handModified", { gameName: actualGameName,
+                                                  cardIndex: li.index(),
+                                                  cardToPut: $(this).data("cardName") });
+
+                    socket.emit('depositeOnTas', { gameName: actualGameName,
+                                                   cardToPut: $(this).data("cardName") });
+
+                    $(this).data("cardName", cardDrawn);
+                }
+
+                switch (getCardName(tas[tas.length - 1])) {
+                  case "7":
+                  case "8":
+                    console.log("1");
+                    hasPower = true;
+                    power = 78;
+                    break;
+
+                  case "11":
+                    console.log("2");
+                    hasPower = true;
+                    power = 11;
+                    break;
+                }
+
+                hasDrawnCard = false;
+                hisMyTurn = false;
+
+                if (!hasPower)  {
+                    appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+                    isDiscardTime = true;
+
+                    socket.emit("nextPlayer", actualGameName);
+                }
+            }
+            else if (idClicked == undefined) {
+                hasDrawnCard = true;
+                cardDrawn = tas[tas.length - 1];
+
+                tas.splice(tas.length - 1, 1);
+
+                if (tas.length == 0) {
+                    $("#cardTas img").attr("src", "/images/cards/red_back.png");
+                }
+                else {
+                    $("#cardTas img").attr("src", "/images/cards/" + tas[tas.length - 1] + ".png");
+                }
+
+                socket.emit("drawTas", actualGameName);
+            }
+            else if (idClicked == "pioche") {
+                hasDrawnCard = true;
+                socket.emit("drawCard", actualGameName);
+            }
         }
     }
 
+
+    /*
+
+    */
+
+    function getPseudoWithPlayerNumber (playerNumber) {
+        console.log("playerNumber : " + playerNumber);
+        switch (pseudos.length) {
+          case 1:
+          case 2:
+          case 3:
+            console.log("1 : " + pseudos[playerNumber - 2]);
+            return pseudos[playerNumber - 2];
+            break;
+
+        case 4:
+        case 5:
+            console.log("2 : " + pseudos[playerNumber - 1]);
+            return pseudos[playerNumber - 1];
+            break;
+        }
+    }
+
+
+    /*
+
+    */
+
+    function getPlayerNumberWithPseudo (pseudoPlayer) {
+        console.log(pseudoPlayer);
+        var index = pseudos.indexOf(pseudoPlayer);
+        console.log(index);
+
+        switch (pseudos.length) {
+          case 1:
+          case 2:
+          case 3:
+            console.log("1");
+            return index + 2;
+            break;
+
+        case 4:
+        case 5:
+            console.log("2");
+            return index + 1;
+            break;
+        }
+    }
 
     /*
         --------------- LISTEN EVENTS ---------------
@@ -1225,6 +1413,8 @@
             data.pseudos.splice(index, 1);
         }
 
+        pseudos = data.pseudos;
+
         setTimeout(function() {
             startGame(data.pseudos, data.hand, data.nbPlayers - 1, data.cardsTas);
         }, 1000);
@@ -1236,7 +1426,7 @@
     */
 
     socket.on('hideCards', function() {
-        /* $("#mainPlayer ul").fadeOut(function() {
+        $("#mainPlayer ul").fadeOut(function() {
             var imgList = $("#mainPlayer ul .card img");
 
             for (var img of imgList) {
@@ -1244,7 +1434,7 @@
             }
 
             $("#mainPlayer ul").fadeIn();
-        }) */
+        });
     });
 
 
@@ -1253,9 +1443,91 @@
     */
 
     socket.on('yourTurn', function() {
-        appendMessage("<p><b>C'est ton tour de jouer !</b></p>");
+        appendMessage("<p><b>C'EST TON TOUR DE JOUER !</b></p>");
         hisMyTurn = true;
     });
+
+
+    /*
+
+    */
+
+    socket.on('cardDrawn', function(ccardDrawn) {
+        console.log("piochée : " + ccardDrawn);
+        cardDrawn = ccardDrawn;
+    });
+
+
+    /*
+
+    */
+
+    socket.on("cardRemoved", function(data) {
+        var idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        var listLi = $(idPlayer + " div ul li");
+
+        listLi[data.indexToRemove].remove();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("updateTas", function(tasUpdated) {
+        tas = tasUpdated;
+
+        if (tas.length == 0) {
+            $("#cardTas img").attr("src", "/images/cards/red_back.png");
+        }
+        else {
+            $("#cardTas img").attr("src", "/images/cards/" + tas[tas.length - 1] + ".png");
+        }
+    });
+
+
+    /*
+
+    */
+
+    socket.on("discardTime", function() {
+        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+        isDiscardTime = true;
+    });
+
+
+    /*
+
+    */
+
+    socket.on("endDiscardTime", function() {
+        appendMessage("<p><b>Fin de la période de défausse, place au joueur suivant !</p></b>");
+        isDiscardTime = false;
+    });
+
+
+    /*
+
+    */
+
+    socket.on("cardValueAsked", function(data) {
+        var idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        var imgList = $(idPlayer + " div ul img");
+        var img = $(imgList[data.cardIndex]);
+
+        img.fadeOut(function() {
+            img.attr("src", "/images/card/" + data.cardName + ".png");
+            img.fadeIn(function() {
+                img.fadeOut(function() {
+                    img.attr("src", "/images/card/red_back.png");
+                    img.fadeIn();
+                })
+            }, 3000);
+        });
+
+        hasPower = false;
+    });
+
 
     /*
         --------------- LISTEN ACTIONS OF PLAYER ---------------

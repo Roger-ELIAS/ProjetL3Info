@@ -52,14 +52,30 @@ var getCards = function (game) {
       hands.push(hand);
   }
 
-  for (let k = 0; k <= 1; k++) {
-      var rand = getRandomIntInclusive(0, packet.length - 1);
-      game.tas.push(packet[rand]);
-      packet.splice(rand, 1);
-  }
+  var rand = getRandomIntInclusive(0, packet.length - 1);
+  game.tas.push(packet[rand]);
+  packet.splice(rand, 1);
 
   game.packet = packet;
   return hands;
+}
+
+
+/*
+
+*/
+
+var drawCard = function (game){
+    var rand = getRandomIntInclusive(0, game.packet.length - 1);
+    var card = game.packet[rand];
+
+    game.packet.splice(rand, 1);
+
+    if (game.packet.length == 0) {
+        game.isFinished = true;
+    }
+
+    return card;
 }
 
 
@@ -130,8 +146,28 @@ var startTimerMemorization = function (socket) {
 
 */
 
-var play = function (players, index) {
+var discardTimer = function (socket, time) {
+    socket.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
+    socket.broadcast.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
 
+    if (time - 1 > 0) {
+        setTimeout(function() {
+            discardTimer(socket, time - 1);
+        }, 1000);
+    }
+}
+
+
+/*
+
+*/
+
+var discardTime = function (socket) {
+    socket.broadcast.emit("discardTime");
+
+    setTimeout(function() {
+        discardTimer(socket, 6);
+    }, 700);
 }
 
 
@@ -139,5 +175,6 @@ module.exports = {
     getCards: getCards,
     startGame: startGame,
     startTimerMemorization: startTimerMemorization,
-    play: play
+    drawCard: drawCard,
+    discardTime: discardTime
 }
