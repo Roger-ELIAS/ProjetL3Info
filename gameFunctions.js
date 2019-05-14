@@ -68,8 +68,8 @@ var getCards = function (game) {
 */
 
 var startGame = function (socket, time, gameObj) {
-  socket.emit("newMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
-  socket.broadcast.emit("newMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
+  socket.emit("newAlertMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
+  socket.broadcast.emit("newAlertMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
 
   if (time - 1 > 0) {
       gameObj.timeouts.push(setTimeout(function() {
@@ -78,8 +78,8 @@ var startGame = function (socket, time, gameObj) {
   }
   else {
     gameObj.timeouts.push(setTimeout(function() {
-        socket.broadcast.emit("newMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
-        socket.emit("newMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
+        socket.broadcast.emit("newAlertMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
+        socket.emit("newAlertMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
     }, 1000));
   }
 };
@@ -90,8 +90,8 @@ var startGame = function (socket, time, gameObj) {
 */
 
 var timerMemorization = function(socket, time) {
-  socket.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
-  socket.broadcast.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
+  socket.emit("newAlertMessage", "<p><b>" + time.toString() + "</b></p>");
+  socket.broadcast.emit("newAlertMessage", "<p><b>" + time.toString() + "</b></p>");
 
   if (time - 1 > 0) {
       setTimeout(function() {
@@ -100,8 +100,8 @@ var timerMemorization = function(socket, time) {
   }
   else {
     setTimeout(function() {
-        socket.broadcast.emit("newMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
-        socket.emit("newMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
+        socket.broadcast.emit("newAlertMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
+        socket.emit("newAlertMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
 
         setTimeout(function() {
           socket.broadcast.emit("hideCards");
@@ -117,8 +117,8 @@ var timerMemorization = function(socket, time) {
 */
 
 var startTimerMemorization = function (socket) {
-    socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
-    socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+    socket.emit("newAlertMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+    socket.broadcast.emit("newAlertMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
 
     setTimeout(function() {
         timerMemorization(socket, 10);
@@ -134,10 +134,18 @@ var play = function (players, index) {
 
 }
 
+/*
+
+ */
+var drawCard = function (packet){
+    var rand = getRandomIntInclusive(0, packet.length - 1);
+    return rand;
+}
 
 module.exports = {
     getCards: getCards,
     startGame: startGame,
     startTimerMemorization: startTimerMemorization,
+    drawCard : drawCard,
     play: play
 }

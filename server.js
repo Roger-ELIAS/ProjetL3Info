@@ -436,10 +436,73 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on('askCardValue', function(data) {
-        var card = gamesList[data.gameName].players[data.pseudo].hand[data.index]
-        var index = data.pseudos.indexOf(pseudo);    // <-- Not supported in <IE9
-
+        var card = gamesList[data.gameName].players[data.pseudo].hand[data.index];
         socket.emit("cardValueAsked", card);
+    });
+
+    /*
+
+     */
+    socket.on('drawCard',function (data) {
+        var newCard = gameFunctions.drawCard(gamesList[data.gameName].packet);
+        gamesList[data.gameName].packet = gamesList[data.gameName].packet.splice(newCard,1);
+        socket.emit("Carddraw", newCard);
+    });
+
+    /*
+
+    */
+    socket.on('drawTas',function (data) {
+        socket.broadcast.emit('lastCard',gamesList[data.gameName].tas = gamesList[data.gameName].tas.pop());
+    });
+
+    /*
+
+    */
+    socket.on('endGame',function (data){
+        var resultGame = [];
+        for (var player in gamesList[data.gameName].players){
+            var result;
+            for(var index in gamesList[data.gameName].players[player].hand){
+                if (gamesList[data.gameName].players[player].hand[index].length == 3) {
+                    switch (parseInt(hand[index].substring(0, 2), 10)) {
+                        case 10:
+                        case 11:
+                        case 12:
+                            valeur = 10;
+                            break;
+
+                        case 13:
+                            if (hand[index] == "13H" || hand[index] == "13D") {
+                                valeur = -4;
+                            }
+                            else {
+                                valeur = 15;
+                            }
+                            break;
+                    }
+                    cardName = hand[index].substring(0, 2);
+                }
+                else {
+                    valeur = parseInt(hand[index].substring(0, 1), 10);
+                    cardName = hand[index].substring(0, 1);
+                }
+                result = result + valeur;
+            }
+            resultGame.push(result);
+        }
+        socket.broadcast.emit(resultGame);
+    });
+
+    /*
+
+     */
+    socket.on("valet", function (data) {
+        var card = gamesList[data.gameName].players[data.pseudo1].hand[index1];
+        gamesList[data.gameName].players[data.pseudo1].hand[index1] =gamesList[data.gameName].players[data.pseudo2].hand[index2];
+        gamesList[data.gameName].players[data.pseudo2].hand[index2] = card;
+        socket.broadcast.emit();
+        socket.emit();
     });
 });
 
