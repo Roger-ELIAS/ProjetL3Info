@@ -264,9 +264,13 @@
                     </span>
                     </div>
                     <!-- Choix style de cartes -->
-                    <select class="form-control">
-                        <option>Classique</option>
-                        <option>Future</option>
+                    <select class="form-control" id="cardBack">
+                        <option value="blue">Bleu</option>
+                        <option value="gray">Gris</option>
+                        <option value="green">Vert</option>
+                        <option value="purple">Violet</option>
+                        <option value="red">Rouge</option>
+                        <option value="yellow">Jaune</option>
                     </select>
                 </div>
                 <!-- Bouton valider -->
@@ -661,7 +665,7 @@
 
     var pseudos;
 
-    var cardBackStyle = "red_back.png";
+    var cardBackStyle;
 
 
     /*
