@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="container-fluid" id="menu">
-    <div class="row" style="height: 100%;">
+    <div class="row" id="M" style="height: 100%;">
         <!-- Colonne principale gauche -->
         <div class="col-sm-4">
         </div>
@@ -70,7 +70,7 @@
                         </span>
                             </div>
                             <!-- Input mot de passe -->
-                            <input type="password" id="oldpassword" class="form-control" placeholder="Mot de passe">
+                            <input type="password" id="oldpassword" class="form-control" placeholder="Mot de passe actuel">
                         </div>
                         <!-- New Mot de passe -->
                         <div class="input-group mb-3">
@@ -83,7 +83,20 @@
                         </span>
                             </div>
                             <!-- Input mot de passe -->
-                            <input type="password" id="newpassword" class="form-control" placeholder="Mot de passe">
+                            <input type="password" id="newpassword" class="form-control" placeholder="Nouveau mot de passe">
+                        </div>
+                        <!-- Confirmation Nouveau mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="confirmationnewpwd" class="form-control" placeholder="Confirmation du nouveau mot de passe">
                         </div>
                         <!-- Boutons mot de passe oublié/valider -->
                         <div id="button-container mb-3">
@@ -182,7 +195,7 @@
                         </div>
                         <!-- Boutons mot de passe oublié/valider -->
                         <div id="button-container mb-3">
-                            <button type="submit" class="forgot btn">Mot de passe oublié ?</button>
+                            <button id="btnMdpOublie" class="forgot btn">Mot de passe oublié ?</button>
                             <button type="submit" class="login btn btn-danger">Valider</button>
                         </div>
                     </form>
@@ -225,19 +238,6 @@
                     <!-- Choix type de jeu -->
                     <input type="text" id="gameName" class="form-control" placeholder="Ex : ma partie" required>
                 </div>
-                <!-- Type de jeu -->
-                <div class="input-group mb-3">
-                    <!-- Texte type de jeu -->
-                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      Type de jeu
-                    </span>
-                    </div>
-                    <!-- Choix type de jeu -->
-                    <select class="form-control">
-                        <option>Blitz</option>
-                    </select>
-                </div>
                 <!-- Nombre de joueurs -->
                 <div class="input-group mb-3">
                     <!-- Texte nombre de joueurs -->
@@ -253,20 +253,6 @@
                         <option>4</option>
                         <option>5</option>
                         <option>6</option>
-                    </select>
-                </div>
-                <!-- Chat -->
-                <div class="input-group mb-3">
-                    <!-- Texte chat -->
-                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      Chat
-                    </span>
-                    </div>
-                    <!-- Choix chat -->
-                    <select class="form-control">
-                        <option>Oui</option>
-                        <option>Non</option>
                     </select>
                 </div>
                 <!-- Style de cartes -->
@@ -299,9 +285,9 @@
     <!-- Menu mot de passe oublié -->
     <div class="row" id="mdpoublie" style="display:none">
         <!-- Colonne secondaire gauche -->
-        <div class="col-sm-2"></div>
+        <div class="col-sm-4"></div>
         <!-- Colonne secondaire centrale -->
-        <div class="col-sm-8">
+        <div class="col-sm-4">
             <!-- Formulaire mot de passe oublié -->
             <form id="mdp">
                 <!-- Pseudo -->
@@ -329,7 +315,7 @@
             </form>
         </div>
         <!-- Colonne secondaire droite -->
-        <div class="col-sm-2">
+        <div class="col-sm-4">
         </div>
     </div>
 </div>
@@ -412,8 +398,40 @@
                     </ul>
                 </div>
             </div>
-            <!-- Joueur principal -->
-            <div class="playerArea" id="mainPlayer">
+            <!-- Pioche -->
+            <div class="playerArea" id="pioche" style="display:none">
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="deck">
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <!-- Carte du dessus -->
+                        <li>
+                            <a href="#" id="cardPioche">
+                                <img src="/images/cards/red_back.png" height="175">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Colonne 3 -->
+        <div class="col-sm-2">
+            <!-- Joueur 3 -->
+            <div class="playerArea" id="player3">
                 <!-- Pseudo -->
                 <p class="playerName"></p>
                 <!-- Cartes -->
@@ -447,11 +465,9 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <!-- Colonne 3 -->
-        <div class="col-sm-2">
-            <!-- Joueur 3 -->
-            <div class="playerArea" id="player3">
+            <div class="playerArea" id="info"><p>A VOTRE TOUR</p></div>
+            <!-- Joueur principal -->
+            <div class="playerArea" id="mainPlayer">
                 <!-- Pseudo -->
                 <p class="playerName"></p>
                 <!-- Cartes -->
@@ -523,30 +539,14 @@
                     </ul>
                 </div>
             </div>
-            <!-- Pioche -->
-            <div class="playerArea" id="pioche" style="display:none">
-                <!-- Cartes -->
+            <!-- Tas -->
+            <div class="playerArea" id="tas" style="display:none">
+                <!-- Tas -->
                 <div class="cardDisplay">
                     <ul class="deck">
                         <li>
-                            <img src="/images/cards/red_back.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/red_back.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/red_back.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/red_back.png" height="175">
-                        </li>
-                        <li>
-                            <img src="/images/cards/red_back.png" height="175">
-                        </li>
-                        <!-- Carte du dessus -->
-                        <li>
-                            <a href="#" id="cardPioche">
-                                <img src="/images/cards/red_back.png" height="175">
+                            <a href="#" id="cardTas">
+                                <img src="/images/cards/3C.png" height="175">
                             </a>
                         </li>
                     </ul>
@@ -587,19 +587,6 @@
                             <img src="/images/cards/1C.png" height="175">
                           </a>
                         </li> -->
-                    </ul>
-                </div>
-            </div>
-            <!-- Tas -->
-            <div class="playerArea" id="tas" style="display:none">
-                <!-- Tas -->
-                <div class="cardDisplay">
-                    <ul class="deck">
-                        <li>
-                          <a href="#" id="cardTas">
-                            <img src="/images/cards/3C.png" height="175">
-                          </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -1725,16 +1712,21 @@
     });
 
     $("#btnMdpOublie").click(function(e) {
-        $("#formBtnsMenu").hide();
-        $("#btnsInscrCo").hide();
-        $("#connexion").hide();
+        $("#M").hide();
         $("#mdpoublie").show();
     });
 
     $("#newPwd").submit(function() {
-        socket.emit('newPwd', { username: pseudo,
-            password: $('#oldpassword').val(),
-            newpwd: $('#newpassword').val()});
+        if ($('#newpassword').val() == $('#confirmationnewpwd').val()) {
+            socket.emit('newPwd', {
+                username: pseudo,
+                password: $('#oldpassword').val(),
+                newpwd: $('#newpassword').val()
+            });
+        }
+        else {
+            $.notify("Les mots de passes sont différents !", "warn");
+        }
         return false;
     });
 

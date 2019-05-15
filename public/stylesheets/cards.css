@@ -11,6 +11,7 @@
 ********************************************************************/
 
 .playingCards .card {
+	transition: bottom 0.5s;
     display: inline-block;
     width: 3.3em;
     height: 5.3em;
@@ -26,22 +27,25 @@
     font-weight: normal;
     font-family: Arial, sans-serif;
     position: relative;
-    background-color: #fff;
+    /*background-color: #fff;*/
     -moz-box-shadow: .2em .2em .5em #333;
     -webkit-box-shadow: .2em .2em .5em #333;
     box-shadow: .2em .2em .5em #333;
 }
 
 .playingCards a.card {
+	transition: bottom 0.5s;
     text-decoration: none;
 }
 /* selected and hover state */
 .playingCards a.card:hover,
 .playingCards label.card:hover,
 .playingCards strong .card {
+	transition: bottom 0.5s;
     bottom: 1em;
 }
 .playingCards a.active {
+	transition: bottom 0.5s;
     bottom: 1em;
 }
 .playingCards label.card {
@@ -50,7 +54,7 @@
 
 .playingCards .card.back {
     text-indent: -4000px;
-    background-color: #ccc;
+    /*background-color: #ccc;*/
     background-repeat: repeat;
     background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
     background-image: -moz-repeating-linear-gradient(34% 6% 135deg,#0F1E59, #75A1BF, #3E3E63 50%);
@@ -378,6 +382,7 @@
     word-spacing: normal;
     letter-spacing: normal;
     line-height: 1;
+	transition: bottom 0.5s;
 }
 .playingCards .card.rank-j .suit:after {
     content: "\265F";
@@ -406,6 +411,7 @@
     font-family: Arial, sans-serif;
     line-height: .9;
     bottom: .35em;
+	transition: bottom 0.5s;
 }
 .playingCards.simpleCards .card.diams .suit:after,
 .playingCards .card.rank-a.diams .suit:after {
@@ -488,6 +494,7 @@
     position: absolute;
 }
 .playingCards ul.hand li {
+	transition: bottom 0.5s;
     bottom: 0;
 }
 .playingCards ul.hand li:nth-child(1)  { left: 0; }
@@ -523,25 +530,25 @@
     -moz-transform: translate(1.9em, .9em) rotate(-42deg);
     -webkit-transform: translate(1.9em, .9em) rotate(-42deg);
     -o-transform: translate(1.9em, .9em) rotate(-42deg);
-    transform: translate(1.9em, .9em) rotate(-42deg);
+    transform: translate(1.9em, .9em) rotate(-42deg);/*-20*/
 }
 .playingCards.rotateHand ul.hand li:nth-child(2) {
     -moz-transform: translate(1.5em, .5em) rotate(-33deg);
     -webkit-transform: translate(1.5em, .5em) rotate(-33deg);
     -o-transform: translate(1.5em, .5em) rotate(-33deg);
-    transform: translate(1.5em, .5em) rotate(-33deg);
+    transform: translate(1.5em, .5em) rotate(-33deg);/*-10*/
 }
 .playingCards.rotateHand ul.hand li:nth-child(3) {
     -moz-transform: translate(1.1em, .3em) rotate(-24deg);
     -webkit-transform: translate(1.1em, .3em) rotate(-24deg);
     -o-transform: translate(1.1em, .3em) rotate(-24deg);
-    transform: translate(1.1em, .3em) rotate(-24deg);
+    transform: translate(1.1em, .3em) rotate(-24deg);/*0*/
 }
 .playingCards.rotateHand ul.hand li:nth-child(4) {
     -moz-transform: translate(.7em, .2em) rotate(-15deg);
     -webkit-transform: translate(.7em, .2em) rotate(-15deg);
     -o-transform: translate(.7em, .2em) rotate(-15deg);
-    transform: translate(.7em, .2em) rotate(-15deg);
+    transform: translate(.7em, .2em) rotate(-15deg);/*10*/
 }
 .playingCards.rotateHand ul.hand li:nth-child(5) {
     -moz-transform: translate(.3em, .1em) rotate(-6deg);
