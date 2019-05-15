@@ -171,6 +171,62 @@ var discardTime = function (socket) {
 }
 
 
+/*
+
+*/
+
+var getResults = function (players, isBlitz) {
+    var scoresList = [];
+
+    for (var player in players) {
+        for(var card in players[player].playerHand) {
+            if (card.length == 3) {
+                switch (parseInt(card.substring(0, 2), 10)) {
+                    case 10:
+                    case 11:
+                    case 12:
+                        gamesList[data.gameName].players[player].points += 10;
+                        break;
+
+                    case 13:
+                        if (card == "13S" || card == "13C") {
+                            gamesList[data.gameName].players[player].points += 15;
+                        }
+                        break;
+                }
+            }
+            else {
+                gamesList[data.gameName].players[player].points += parseInt(hand[index].substring(0, 1), 10);
+            }
+        }
+
+        var scoreObj = { pseudo: player,
+                         points: gamesList[data.gameName].players[player].points,
+                         hasBlitzed: gamesList[data.gameName].players[player].hasBlitzed,
+                         nbCards: gamesList[data.gameName].players[player].playerHand.length };
+
+        if (scoresList.length == 0) {
+            scoresList.push(scoreObj)
+        }
+        else {
+            scoresList.forEach(function (obj, index) {
+                if (obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
+                    scoresList.splice(index, 0, scoreObj);
+                }
+            });
+        }
+    }
+
+    if (isBlitz) {
+        // en cours de réalisation
+    }
+    else {
+        players.playerSocket.emit("endGameWithoutBlitz", scoresList);
+        players.playerSocket.broadcast.emit("endGameWithoutBlitz", scoresList);
+    }
+}
+
+
 module.exports = {
     getCards: getCards,
     startGame: startGame,

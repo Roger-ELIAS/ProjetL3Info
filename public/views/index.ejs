@@ -1129,9 +1129,18 @@
         var idClicked = li.parent().parent().parent().attr("id");
 
         if (hasPower && idClicked !== undefined && idClicked !== "pioche") {
+            var pseudoToSend;
+
+            if (idClicked == "mainPlayer") {
+               pseudoToSend = pseudo;
+            }
+            else {
+               pseudoToSend = getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1));
+            }
+
             if (power == 78) {
                 socket.emit("askCardValue", { gameName: actualGameName,
-                                              pseudo: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                                              pseudo: pseudoToSend,
                                               index: li.index() });
 
                 hasPower = false;
@@ -1141,14 +1150,21 @@
                     socket.emit("valet", { gameName: actualGameName,
                                            pseudo1 : cardPower11.pseudo,
                                            index1: cardPower11.index,
-                                           pseudo2: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                                           pseudo2: pseudoToSend,
                                            index2: li.index() });
 
                     hasCardPower11 = false;
                     hasPower = false;
+
+                    setTimeout(function() {
+                        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+                        isDiscardTime = true;
+
+                        socket.emit("nextPlayer", actualGameName);
+                    }, 1000);
                 }
                 else {
-                    cardPower11 = { pseudo: getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1)),
+                    cardPower11 = { pseudo: pseudoToSend,
                                     index: li.index() };
 
                     hasCardPower11 = true;
@@ -1156,8 +1172,6 @@
             }
         }
         else if (isDiscardTime && idClicked == "mainPlayer") {
-            console.log("carte du tas : " + $("#cardTas").data("cardName"));
-            console.log("carte de la main : " + $(this).data("cardName"));
             if (getCardName($("#cardTas").data("cardName")) == getCardName($(this).data("cardName"))) {
                 socket.emit("cardRemoved", { gameName: actualGameName,
                                              cardIndex: li.index() });
@@ -1207,13 +1221,11 @@
                 switch (getCardName(tas[tas.length - 1])) {
                   case "7":
                   case "8":
-                    console.log("1");
                     hasPower = true;
                     power = 78;
                     break;
 
                   case "11":
-                    console.log("2");
                     hasPower = true;
                     power = 11;
                     break;
@@ -1482,6 +1494,7 @@
         }
         else {
             $("#cardTas img").attr("src", "/images/cards/" + tas[tas.length - 1] + ".png");
+            $("#cardTas").data("cardName", tas[tas.length - 1]);
         }
     });
 
@@ -1511,7 +1524,15 @@
     */
 
     socket.on("cardValueAsked", function(data) {
-        var idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        var idPlayer;
+
+        if (data.pseudo == pseudo) {
+            idPlayer = "#mainPlayer";
+        }
+        else {
+            idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        }
+
         var imgList = $(idPlayer + " div ul img");
         var img = imgList[data.cardIndex];
 
@@ -1523,10 +1544,31 @@
             setTimeout(function() {
                 appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
                 isDiscardTime = true;
-        
+
                 socket.emit("nextPlayer", actualGameName);
             }, 1000);
         }, 3000);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("modifyCard", function(data) {
+        var aList = $("#mainPlayer div ul a");
+        var a = imgList[data.cardIndex];
+
+        $(a).data("cardName", data.cardName);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("deckEmpty", function(data) {
+        $("#pioche").hide();
     });
 
 

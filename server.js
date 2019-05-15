@@ -116,7 +116,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName] = { isFinished: false, hasStarted: false, turnNumber: 1, timeouts: [], packet: [], tas: [], nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: {} };
-        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { hasBlitzed: false, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         newGame = { gameName: data.gameName, nbPlayersMax: data.nbPlayersMax };
         socket.broadcast.emit('newGame', newGame)
@@ -131,7 +131,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName].nbPlayers += 1;
-        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { hasBlitzed: false, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         var message = "<p>Le joueur <b>" +
             data.pseudo +
@@ -449,6 +449,11 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('drawCard', function (gameName) {
         var card = gameFunctions.drawCard(gamesList[gameName]);
+
+        if (gamesList[gameName].packet.length == 0) {
+            gamesList[gameName].isFinished = true;
+        }
+
         socket.emit("cardDrawn", card);
     });
 
@@ -468,37 +473,7 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('endGame', function (data){
-        var resultGame = [];
 
-        for (var player in gamesList[data.gameName].players){
-            var result;
-
-            for(var card in gamesList[data.gameName].players[player].playerHand){
-                if (card.length == 3) {
-                    switch (parseInt(card.substring(0, 2), 10)) {
-                        case 10:
-                        case 11:
-                        case 12:
-                            result += 10;
-                            break;
-
-                        case 13:
-                            if (card == "13H" || card == "13D") {
-                                result -= 4;
-                            }
-                            else {
-                                result += 15;
-                            }
-                            break;
-                    }
-                }
-                else {
-                    result += parseInt(hand[index].substring(0, 1), 10);
-                }
-            }
-
-            resultGame.push(result);
-        }
 
         socket.broadcast.emit("finalResult", resultGame);
         socket.emit("finalResult", resultGame);
@@ -527,6 +502,11 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].tas.push(data.cardToPut);
 
         socket.broadcast.emit("updateTas", gamesList[data.gameName].tas);
+
+        if (gamesList[data.gameName].packet.length == 0) {
+            socket.emit("deckEmpty");
+            socket.broadcast.emit("deckEmpty");
+        }
     });
 
 
@@ -535,6 +515,8 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on("valet", function (data) {
+        console.log("Valet 1 :" + gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] + " / " + gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2]);
+
         var card = gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1];
         gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] = gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2];
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
@@ -543,9 +525,15 @@ io.sockets.on('connection', function (socket) {
                               "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
                               "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
 
-        socket.broadcast.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
-                              "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
-                              "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
+        socket.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
+                                  "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
+                                  "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
+
+        gamesList[data.gameName].players[data.pseudo1].playerSocket.emit("modifyCard", { cardIndex: data.index1,
+                                                                                         cardName: gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] });
+
+        gamesList[data.gameName].players[data.pseudo2].playerSocket.emit("modifyCard", { cardIndex: data.index2,
+                                                                                         cardName: gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] });
     });
 
 
@@ -563,7 +551,7 @@ io.sockets.on('connection', function (socket) {
     /*
 
     */
-    // { gameName : { turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
+    // { gameName : { isFinished: false, turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on("nextPlayer", function(gameName) {
         if (gamesList[gameName].isFinished) {
 
@@ -605,9 +593,14 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("cardRemoved", function(data) {
         gamesList[data.gameName].players[socket.pseudo].playerHand.splice(data.cardIndex, 1);
+
+        if (gamesList[data.gameName].players[socket.pseudo].playerHand.length == 0) {
+            gamesList[data.gameName].isFinished = true;
+        }
+
         socket.broadcast.emit("cardRemoved", { pseudo: socket.pseudo,
                                                indexToRemove: data.cardIndex });
-    })
+    });
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080
