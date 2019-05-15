@@ -1201,7 +1201,7 @@
 
                     socket.emit("handModified", { gameName: actualGameName,
                                                   cardIndex: li.index(),
-                                                  cardToPut: $(this).data("cardName") });
+                                                  cardToPut: cardDrawn });
 
                     socket.emit('depositeOnTas', { gameName: actualGameName,
                                                    cardToPut: $(this).data("cardName") });
@@ -1260,18 +1260,18 @@
     */
 
     function getPseudoWithPlayerNumber (playerNumber) {
-        console.log("playerNumber : " + playerNumber);
         switch (pseudos.length) {
           case 1:
+            return pseudos[playerNumber - 2];
+
           case 2:
+
           case 3:
-            console.log("1 : " + pseudos[playerNumber - 2]);
             return pseudos[playerNumber - 2];
             break;
 
         case 4:
         case 5:
-            console.log("2 : " + pseudos[playerNumber - 1]);
             return pseudos[playerNumber - 1];
             break;
         }
@@ -1548,7 +1548,7 @@
 
     socket.on("modifyCard", function(data) {
         var aList = $("#mainPlayer div ul a");
-        var a = imgList[data.cardIndex];
+        var a = aList[data.cardIndex];
 
         $(a).data("cardName", data.cardName);
     });

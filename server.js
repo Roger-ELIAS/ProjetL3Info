@@ -553,28 +553,28 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { isFinished: false, turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on("nextPlayer", function(gameName) {
-        if (gamesList[gameName].isFinished) {
+      gameFunctions.discardTime(socket);
 
+      setTimeout(function() {
+        socket.emit("endDiscardTime");
+        socket.broadcast.emit("endDiscardTime");
+
+        if (gamesList[gameName].isFinished) {
+            gameFunctions.calculateResults(gamesList[gameName].players, false);
         }
         else {
-            gameFunctions.discardTime(socket);
+          var players = Object.keys(gamesList[gameName].players);
+          var indexPlayer = players.indexOf(socket.pseudo);
 
-            setTimeout(function() {
-              socket.emit("endDiscardTime");
-              socket.broadcast.emit("endDiscardTime");
-
-              var players = Object.keys(gamesList[gameName].players);
-              var indexPlayer = players.indexOf(socket.pseudo);
-
-              if (indexPlayer == players.length - 1) {
-                  gamesList[gameName].turnNumber += 1;
-                  gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
-              }
-              else {
-                  gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
-              }
-            }, 7000);
-        }
+          if (indexPlayer == players.length - 1) {
+              gamesList[gameName].turnNumber += 1;
+              gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
+          }
+          else {
+              gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
+          }
+        }    
+      }, 7000);
     });
 
 

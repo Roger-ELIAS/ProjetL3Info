@@ -5,16 +5,16 @@
 var generatePacket = function () {
   var paquet = [];
 
-  for (let k = 1; k <= 13; ++k)
+  /* for (let k = 1; k <= 13; ++k)
       paquet.push(k + "D");
 
   for (let k = 1; k <= 13; ++k)
       paquet.push(k + "C");
 
   for (let k = 1; k <= 13; ++k)
-      paquet.push(k + "H");
+      paquet.push(k + "H"); */
 
-  for (let k = 1; k <= 13; ++k)
+  for (let k = 1; k <= 10; ++k)
       paquet.push(k + "S");
 
   return paquet;
@@ -166,7 +166,7 @@ var discardTime = function (socket) {
     socket.broadcast.emit("discardTime");
 
     setTimeout(function() {
-        discardTimer(socket, 6);
+        discardTimer(socket, 5);
     }, 700);
 }
 
@@ -175,7 +175,7 @@ var discardTime = function (socket) {
 
 */
 
-var getResults = function (players, isBlitz) {
+var calculateResults = function (players, isBlitz) {
     var scoresList = [];
 
     for (var player in players) {
@@ -185,44 +185,48 @@ var getResults = function (players, isBlitz) {
                     case 10:
                     case 11:
                     case 12:
-                        gamesList[data.gameName].players[player].points += 10;
+                        players[player].points += 10;
                         break;
 
                     case 13:
                         if (card == "13S" || card == "13C") {
-                            gamesList[data.gameName].players[player].points += 15;
+                            players[player].points += 15;
                         }
                         break;
                 }
             }
             else {
-                gamesList[data.gameName].players[player].points += parseInt(hand[index].substring(0, 1), 10);
+                players[player].points += parseInt(card.substring(0, 1), 10);
             }
         }
 
         var scoreObj = { pseudo: player,
-                         points: gamesList[data.gameName].players[player].points,
-                         hasBlitzed: gamesList[data.gameName].players[player].hasBlitzed,
-                         nbCards: gamesList[data.gameName].players[player].playerHand.length };
-
+                         points: players[player].points,
+                         hasBlitzed: players[player].hasBlitzed,
+                         nbCards: players[player].playerHand.length };
+        console.log(scoreObj);
+        console.log("taille: " + scoresList.length.toString());
         if (scoresList.length == 0) {
-            scoresList.push(scoreObj)
+            scoresList.push(scoreObj);
+            console.log("1");
         }
         else {
-            scoresList.forEach(function (obj, index) {
-                if (obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
-                    scoresList.splice(index, 0, scoreObj);
+            scoresList.forEach(function (obj, i) {
+                if ((obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
+                    scoresList.splice(i, 0, scoreObj);
+                    console.log("2");
                 }
             });
         }
     }
-
+    //console.log(scoresList);
     if (isBlitz) {
-        // en cours de réalisation
+        players[Object.keys(players)[0]].playerSocket.emit("endGameWithBlitz", scoresList);
+        players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithBlitz", scoresList);
     }
     else {
-        players.playerSocket.emit("endGameWithoutBlitz", scoresList);
-        players.playerSocket.broadcast.emit("endGameWithoutBlitz", scoresList);
+        players[Object.keys(players)[0]].playerSocket.emit("endGameWithoutBlitz", scoresList);
+        players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithoutBlitz", scoresList);
     }
 }
 
@@ -232,5 +236,6 @@ module.exports = {
     startGame: startGame,
     startTimerMemorization: startTimerMemorization,
     drawCard: drawCard,
-    discardTime: discardTime
+    discardTime: discardTime,
+    calculateResults: calculateResults
 }
