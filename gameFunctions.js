@@ -5,16 +5,16 @@
 var generatePacket = function () {
   var paquet = [];
 
-  /* for (let k = 1; k <= 13; ++k)
+  for (let k = 1; k <= 13; ++k)
       paquet.push(k + "D");
 
   for (let k = 1; k <= 13; ++k)
       paquet.push(k + "C");
 
   for (let k = 1; k <= 13; ++k)
-      paquet.push(k + "H"); */
+      paquet.push(k + "H");
 
-  for (let k = 1; k <= 10; ++k)
+  for (let k = 1; k <= 13; ++k)
       paquet.push(k + "S");
 
   return paquet;
@@ -79,25 +79,39 @@ var drawCard = function (game){
 }
 
 
+var timerStartGame = function (socket, time, gameObj) {
+    socket.emit("infosMsg2", time.toString());
+    socket.broadcast.emit("infosMsg2", time.toString());
+
+    if (time - 1 > 0) {
+        gameObj.timeouts.push(setTimeout(function() {
+            timerStartGame(socket, time - 1, gameObj);
+        }, 1000));
+    }
+    else {
+      gameObj.timeouts.push(setTimeout(function() {
+          socket.broadcast.emit("infosMsg1", "DISTRIBUTION DES CARTES");
+          socket.emit("infosMsg1", "DISTRIBUTION DES CARTES");
+
+          socket.broadcast.emit("infosMsg2", "");
+          socket.emit("infosMsg2", "");
+      }, 1000));
+    }
+}
+
+
 /*
 
 */
 
 var startGame = function (socket, time, gameObj) {
-  socket.emit("newMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
-  socket.broadcast.emit("newMessage", "<p>Début de la partie dans " + "<b>" + time.toString() + " ...</b></p>");
+  socket.emit("infosMsg1", "Début de la partie dans");
+  socket.broadcast.emit("infosMsg1", "Début de la partie dans");
 
-  if (time - 1 > 0) {
-      gameObj.timeouts.push(setTimeout(function() {
-          startGame(socket, time - 1, gameObj);
-      }, 1000));
-  }
-  else {
-    gameObj.timeouts.push(setTimeout(function() {
-        socket.broadcast.emit("newMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
-        socket.emit("newMessage", "<p><b>DISTRIBUTION DES CARTES</b></p>");
-    }, 1000));
-  }
+  gameObj.timeouts.push(setTimeout(function() {
+      timerStartGame(socket, 10, gameObj);
+  }, 1000));
+
 };
 
 
@@ -106,8 +120,8 @@ var startGame = function (socket, time, gameObj) {
 */
 
 var timerMemorization = function(socket, time) {
-  socket.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
-  socket.broadcast.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
+  socket.emit("infosMsg2", time.toString());
+  socket.broadcast.emit("infosMsg2", time.toString());
 
   if (time - 1 > 0) {
       setTimeout(function() {
@@ -116,8 +130,11 @@ var timerMemorization = function(socket, time) {
   }
   else {
     setTimeout(function() {
-        socket.broadcast.emit("newMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
-        socket.emit("newMessage", "<p><b>LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !</b></p>");
+        socket.broadcast.emit("infosMsg1", "LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !");
+        socket.emit("infosMsg1", "LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !");
+
+        socket.broadcast.emit("infosMsg2", "");
+        socket.emit("infosMsg2", "");
 
         setTimeout(function() {
           socket.broadcast.emit("hideCards");
@@ -133,8 +150,8 @@ var timerMemorization = function(socket, time) {
 */
 
 var startTimerMemorization = function (socket) {
-    socket.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
-    socket.broadcast.emit("newMessage", "<p><b>VOUS AVEZ 10 SECONDES POUR MÉMORISER VOS CARTES !</b></p>");
+    socket.emit("infosMsg1", "MÉMORISEZ VOS CARTES !");
+    socket.broadcast.emit("infosMsg1", "MÉMORISEZ VOS CARTES !");
 
     setTimeout(function() {
         timerMemorization(socket, 10);
@@ -147,8 +164,8 @@ var startTimerMemorization = function (socket) {
 */
 
 var discardTimer = function (socket, time) {
-    socket.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
-    socket.broadcast.emit("newMessage", "<p><b>" + time.toString() + "</b></p>");
+    socket.emit("infosMsg2", time.toString());
+    socket.broadcast.emit("infosMsg2", time.toString());
 
     if (time - 1 > 0) {
         setTimeout(function() {
@@ -164,6 +181,7 @@ var discardTimer = function (socket, time) {
 
 var discardTime = function (socket) {
     socket.broadcast.emit("discardTime");
+    socket.emit("discardTime");
 
     setTimeout(function() {
         discardTimer(socket, 5);
@@ -179,47 +197,42 @@ var calculateResults = function (players, isBlitz) {
     var scoresList = [];
 
     for (var player in players) {
-        for(var card in players[player].playerHand) {
-            if (card.length == 3) {
-                switch (parseInt(card.substring(0, 2), 10)) {
-                    case 10:
-                    case 11:
-                    case 12:
-                        players[player].points += 10;
-                        break;
+        players[player].playerHand.forEach(function(card) {
+          switch (card.substring(0, card.length - 1)) {
+              case "10":
+              case "11":
+              case "12":
+                  players[player].points += 10;
+                  break;
 
-                    case 13:
-                        if (card == "13S" || card == "13C") {
-                            players[player].points += 15;
-                        }
-                        break;
-                }
-            }
-            else {
-                players[player].points += parseInt(card.substring(0, 1), 10);
-            }
-        }
+              case "13":
+                  if (card == "13S" || card == "13C") {
+                      players[player].points += 15;
+                  }
+                  break;
+
+              default:
+                  players[player].points += parseInt(card.substring(0, card.length - 1), 10);
+          }
+        });
 
         var scoreObj = { pseudo: player,
                          points: players[player].points,
                          hasBlitzed: players[player].hasBlitzed,
                          nbCards: players[player].playerHand.length };
-        console.log(scoreObj);
-        console.log("taille: " + scoresList.length.toString());
+
         if (scoresList.length == 0) {
             scoresList.push(scoreObj);
-            console.log("1");
         }
         else {
             scoresList.forEach(function (obj, i) {
                 if ((obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
                     scoresList.splice(i, 0, scoreObj);
-                    console.log("2");
                 }
             });
         }
     }
-    //console.log(scoresList);
+
     if (isBlitz) {
         players[Object.keys(players)[0]].playerSocket.emit("endGameWithBlitz", scoresList);
         players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithBlitz", scoresList);

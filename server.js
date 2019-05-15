@@ -172,11 +172,19 @@ io.sockets.on('connection', function (socket) {
                 gameFunctions.startTimerMemorization(socket);
 
                 setTimeout(function() {
-                    gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].hisTurn = true;
-                    gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
-                }, 13000);
+                    gameFunctions.discardTime(socket);
+
+                    setTimeout(function() {
+                        socket.emit("endDiscardTime");
+                        socket.broadcast.emit("endDiscardTime");
+
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].hisTurn = true;
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
+                    }, 6500);
+                }, 14000);
               }, 5050);
-            }, 10050));
+            }, 11050));
         }
     });
 
@@ -437,9 +445,18 @@ io.sockets.on('connection', function (socket) {
     // { gameName : { turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on('askCardValue', function (data) {
         var card = gamesList[data.gameName].players[data.pseudo].playerHand[data.index];
+
         socket.emit("cardValueAsked", { cardName: card,
                                         cardIndex: data.index,
                                         pseudo: data.pseudo });
+
+        if (data.pseudo == socket.pseudo) {
+            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de sa main");
+        }
+        else {
+            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de " + data.pseudo); 
+        }
+
     });
 
 
@@ -455,6 +472,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         socket.emit("cardDrawn", card);
+        socket.broadcast.emit("infosMsg2", "A pioché une carte du paquet");
     });
 
 
@@ -465,6 +483,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('drawTas',function (gameName) {
         gamesList[gameName].tas.pop();
         socket.broadcast.emit('updateTas', gamesList[gameName].tas);
+        socket.broadcast.emit("infosMsg2", "A pioché une carte de la défausse");
     });
 
 
@@ -473,8 +492,6 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('endGame', function (data){
-
-
         socket.broadcast.emit("finalResult", resultGame);
         socket.emit("finalResult", resultGame);
     });
@@ -502,6 +519,7 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].tas.push(data.cardToPut);
 
         socket.broadcast.emit("updateTas", gamesList[data.gameName].tas);
+        socket.broadcast.emit("infosMsg2", "A défaussé la carte piochée");
 
         if (gamesList[data.gameName].packet.length == 0) {
             socket.emit("deckEmpty");
@@ -515,19 +533,12 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on("valet", function (data) {
-        console.log("Valet 1 :" + gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] + " / " + gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2]);
-
         var card = gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1];
         gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] = gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2];
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
 
-        socket.broadcast.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
-                              "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
-                              "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
-
-        socket.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
-                                  "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
-                                  "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
+        socket.broadcast.emit("infosMsg2", "Carte " + (data.index1 + 1).toString() + " de " + data.pseudo1 +
+                              "changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2);
 
         gamesList[data.gameName].players[data.pseudo1].playerSocket.emit("modifyCard", { cardIndex: data.index1,
                                                                                          cardName: gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] });
@@ -569,12 +580,14 @@ io.sockets.on('connection', function (socket) {
           if (indexPlayer == players.length - 1) {
               gamesList[gameName].turnNumber += 1;
               gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
+              gamesList[gameName].players[players[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[0]);
           }
           else {
               gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
+              gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[indexPlayer + 1]);
           }
-        }    
-      }, 7000);
+        }
+      }, 5800);
     });
 
 
@@ -584,6 +597,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("handModified", function(data) {
         gamesList[data.gameName].players[socket.pseudo].playerHand[data.cardIndex] = data.cardToPut;
+        socket.broadcast.emit("infosMsg2", "A pris la carte piochée à la place de sa " + data.cardIndex.toString() + "ème carte");
     });
 
 
@@ -600,6 +614,15 @@ io.sockets.on('connection', function (socket) {
 
         socket.broadcast.emit("cardRemoved", { pseudo: socket.pseudo,
                                                indexToRemove: data.cardIndex });
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg2", function(msg) {
+      socket.broadcast.emit("infosMsg2", msg);
     });
 });
 

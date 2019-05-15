@@ -326,7 +326,8 @@
 
 <div class="container-fluid" id="board" style="display:none">
     <!-- Menu de jeu -->
-    <div class="row playingCards fourColours rotateHand" style="height: 100%;">
+    <img id="fond" src="images/fond.png">
+    <div class="row playingCards fourColours" style="height: 100%;">
         <!-- Colonne 1 -->
         <div class="col-sm-2">
             <!-- Joueur 1 -->
@@ -469,7 +470,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="playerArea" id="info"><p>A VOTRE TOUR</p></div>
+            <div class="playerArea" id="info">
+              <p id="infosMsg1"></p>
+              <p id="infosMsg2"></p>
+            </div>
             <!-- Joueur principal -->
             <div class="playerArea" id="mainPlayer">
                 <!-- Pseudo -->
@@ -605,8 +609,11 @@
                         <input value="Règles" class="btn btn-primary">
                         <br>
                         <!-- Rotation des cartes en main -->
-                        <input type="radio" name="Ligne"><p>Ligne</p>
-                        <input type="radio" name="Rotation"><p>Rotation</p>
+                        <!-- Rotation des cartes en main -->
+                        <label class="switch">
+                          <input id="rotation" type="checkbox">
+                          <span class="slider round"></span>
+                        </label>
                     </div>
                     <div class="panel panel-default" id="chat" ><!--style="display:none">-->
                         <div class="panel-heading top-bar">
@@ -945,17 +952,6 @@
 
     */
 
-    function fadeInPseudosLoop(pseudos, nbToAdd) {
-        pseudos.forEach(function(pseudo, index) {
-            fadeInPseudo(pseudo, 1, "#player" + (index + nbToAdd).toString() + " p");
-        });
-    }
-
-
-    /*
-
-    */
-
     function dealOtherCards(numPlayer, index) {
         var src = "/images/cards/";
         var li = $('<li />');
@@ -1022,17 +1018,6 @@
 
     */
 
-    function dealCardsLoop(startIndex, nbPlayers) {
-        for (var i = 0; i < nbPlayers; i++) {
-            dealOtherCards(i + startIndex, 0);
-        }
-    }
-
-
-    /*
-
-    */
-
     function setPioche() {
         $("#cardPioche").click(cardClicked);
     }
@@ -1066,39 +1051,53 @@
 
         switch (nbPlayers) {
           case 5 :
+              for (var i = 1; i <= 5; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 1], 1, "#player" + i.toString() + " p");
+              }
+
+              break;
+
           case 4 :
-              dealCardsLoop(1, nbPlayers);
-              fadeInPseudosLoop(pseudos, 1);
+              for (var i = 1; i <= 2 ; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 1], 1, "#player" + i.toString() + " p");
+              }
+
+              for (var i = 4; i <= 5 ; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 2], 1, "#player" + i.toString() + " p");
+              }
+
               break;
 
           case 3 :
+              for (var i = 2; i <= 4; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 2], 1, "#player" + i.toString() + " p");
+              }
+
+              break;
+
           case 2 :
+              dealOtherCards(2, 0);
+              fadeInPseudo(pseudos[0], 1, "#player2 p");
+
+              dealOtherCards(4, 0);
+              fadeInPseudo(pseudos[1], 1, "#player4 p");
+
+              break;
+
           case 1 :
-              dealCardsLoop(2, nbPlayers);
-              fadeInPseudosLoop(pseudos, 2);
+              dealOtherCards(3, 0);
+              fadeInPseudo(pseudos[0], 1, "#player3 p");
+
               break;
         }
-    }
 
-
-    /*
-
-    */
-
-    function powerValet() {
-        console.log("valet");
-    }
-
-
-    /*
-
-    */
-
-    function power78() {
-        /* var playerPseudo = getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1, 1));
-        socket.emit("askCardValue", { gameName: actualGameName,
-                                      pseudo: playerPseudo,
-                                      index: li.index() }); */
+        setTimeout(function() {
+            canChangeStyle = true;
+        }, 5050);
     }
 
 
@@ -1148,11 +1147,10 @@
                     hasPower = false;
 
                     setTimeout(function() {
-                        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
                         isDiscardTime = true;
 
                         socket.emit("nextPlayer", actualGameName);
-                    }, 1000);
+                    }, 3000);
                 }
                 else {
                     cardPower11 = { pseudo: pseudoToSend,
@@ -1209,28 +1207,37 @@
                     $(this).data("cardName", cardDrawn);
                 }
 
-                switch (getCardName(tas[tas.length - 1])) {
-                  case "7":
-                  case "8":
-                    hasPower = true;
-                    power = 78;
-                    break;
+                setTimeout(function() {
+                  switch (getCardName(tas[tas.length - 1])) {
+                    case "7":
+                    case "8":
+                      hasPower = true;
+                      power = 78;
 
-                  case "11":
-                    hasPower = true;
-                    power = 11;
-                    break;
-                }
+                      $("#infosMsg1", "Utilisez le pouvoir de votre carte pour regarder une des cartes retournée !");
+                      socket.broadcast.emit("infosMsg2", "Regarde une carte retournée (pouvoir 7/8)");
 
-                hasDrawnCard = false;
-                hisMyTurn = false;
+                      break;
 
-                if (!hasPower)  {
-                    appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
-                    isDiscardTime = true;
+                    case "11":
+                      hasPower = true;
+                      power = 11;
 
-                    socket.emit("nextPlayer", actualGameName);
-                }
+                      $("#infosMsg1", "Utilisez le pouvoir de votre carte pour échangez les positions de deux cartes !");
+                      socket.broadcast.emit("infosMsg2", "Échange les positions de deux cartes (pouvoir 11)");
+
+                      break;
+                  }
+
+                  hasDrawnCard = false;
+                  hisMyTurn = false;
+
+                  if (!hasPower)  {
+                      isDiscardTime = true;
+
+                      socket.emit("nextPlayer", actualGameName);
+                  }
+                }, 1000)
             }
             else if (idClicked == undefined) {
                 hasDrawnCard = true;
@@ -1262,15 +1269,33 @@
     function getPseudoWithPlayerNumber (playerNumber) {
         switch (pseudos.length) {
           case 1:
-            return pseudos[playerNumber - 2];
+            return pseudos[playerNumber - 3];
+            break;
 
           case 2:
+            if (playerNumber == 2) {
+                return pseudos[0];
+            }
+            else {
+                return pseudos[1];
+            }
+
+            break;
 
           case 3:
             return pseudos[playerNumber - 2];
             break;
 
         case 4:
+            if (playerNumber == 1 || playerNumber == 2) {
+                return pseudos[playerNumber - 1];
+            }
+            else {
+                return pseudos[playerNumber - 2];
+            }
+
+            break;
+
         case 5:
             return pseudos[playerNumber - 1];
             break;
@@ -1283,21 +1308,38 @@
     */
 
     function getPlayerNumberWithPseudo (pseudoPlayer) {
-        console.log(pseudoPlayer);
         var index = pseudos.indexOf(pseudoPlayer);
-        console.log(index);
 
         switch (pseudos.length) {
           case 1:
+            return 3;
+            break;
+
           case 2:
+            if (index == 0) {
+                return 2;
+            }
+            else {
+                return 4;
+            }
+
+            break;
+
           case 3:
-            console.log("1");
             return index + 2;
             break;
 
         case 4:
+            if (index == 0 || index == 1) {
+                return index + 1;
+            }
+            else {
+                return index + 2;
+            }
+
+            break;
+
         case 5:
-            console.log("2");
             return index + 1;
             break;
         }
@@ -1446,7 +1488,7 @@
     */
 
     socket.on('yourTurn', function() {
-        appendMessage("<p><b>C'EST TON TOUR DE JOUER !</b></p>");
+        $("#infosMsg1").html("C'EST TON TOUR DE JOUER !");
         hisMyTurn = true;
     });
 
@@ -1495,7 +1537,8 @@
     */
 
     socket.on("discardTime", function() {
-        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+        $("#infosMsg1").html("DÉFAUSSEZ VOS CARTES !");
+
         isDiscardTime = true;
     });
 
@@ -1505,7 +1548,9 @@
     */
 
     socket.on("endDiscardTime", function() {
-        appendMessage("<p><b>Fin de la période de défausse, place au joueur suivant !</p></b>");
+        $("#infosMsg1").html("");
+        $("#infosMsg2").html("");
+
         isDiscardTime = false;
     });
 
@@ -1533,11 +1578,10 @@
             hasPower = false;
 
             setTimeout(function() {
-                appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
                 isDiscardTime = true;
 
                 socket.emit("nextPlayer", actualGameName);
-            }, 1000);
+            }, 3000);
         }, 3000);
     });
 
@@ -1560,6 +1604,24 @@
 
     socket.on("deckEmpty", function(data) {
         $("#pioche").hide();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg1", function(msg) {
+        $("#infosMsg1").html(msg);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg2", function(msg) {
+        $("#infosMsg2").html(msg);
     });
 
 
@@ -1734,6 +1796,21 @@
         return false;
     });
 
+
+    /*
+
+    */
+
+    var isRotated = false;
+    $("#rotation").click(function() {
+        if(!isRotated){
+            $("#board").children(":nth-child(2)").addClass("rotateHand");
+            isRotated = true;
+        } else{
+            $("#board").children(":nth-child(2)").removeClass("rotateHand");
+            isRotated = false;
+        }
+    });
 </script>
 </body>
 </html>
