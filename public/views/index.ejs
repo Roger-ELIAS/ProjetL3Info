@@ -51,8 +51,20 @@
                             <input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
                         </div>
                         <!-- Affichage pseudo -->
-                        <button type="button" class="btn btn-secondary" id="affichagePseudo" style="display: none;" disabled>
-                        </button>
+                        <div class="input-group mb-3" id="pseudoDisplay" style="display: none;">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  <i class="material-icons">
+									perm_identity
+								  </i>
+								</span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="text" id="affichagePseudo" class="form-control" placeholder="TEST" disabled>
+                            <!--<button type="button" class="create mb-3 btn btn-secondary form-control" id="affichagePseudo" style="display: none;" disabled>
+                            </button> -->
+                        </div>
                         <!-- Boutons creer/rejoindre -->
                         <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
                         <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
@@ -100,9 +112,10 @@
                         </div>
                         <!-- Boutons mot de passe oublié/valider -->
                         <div id="button-container mb-3">
-                            <button type="submit" class="login btn btn-danger">Valider</button>
+                            <button type="submit" class="login btn btn-danger" style="margin-bottom: 1em;">Valider</button>
                         </div>
                     </form>
+                    <button id="decoBtn" class="create btn mb-3 btn-danger" style="display: none">Deconnexion</button>
                     <!-- Boutons inscription/connexion -->
                     <div class="button-container mb-3" id="btnsInscrCo">
                         <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
@@ -195,7 +208,32 @@
                         </div>
                         <!-- Boutons mot de passe oublié/valider -->
                         <div id="button-container mb-3">
-                            <button id="btnMdpOublie" class="forgot btn">Mot de passe oublié ?</button>
+                            <button type="button" id="btnMdpOublie" class="forgot btn">Mot de passe oublié ?</button>
+                            <button type="submit" class="login btn btn-danger">Valider</button>
+                        </div>
+                    </form>
+                    <!-- Formulaire mot de passe oublié -->
+                    <form id="mdpoublie">
+                        <!-- Pseudo -->
+                        <div class="input-group mb-3">
+                            <!-- Logo bonhomme -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">perm_identity</i></span>
+                            </div>
+                            <!-- Input pseudo -->
+                            <input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
+                        </div>
+                        <!-- Email -->
+                        <div class="input-group mb-3">
+                            <!-- Logo email -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">alternate_email</i></span>
+                            </div>
+                            <!-- Input email -->
+                            <input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
                             <button type="submit" class="login btn btn-danger">Valider</button>
                         </div>
                     </form>
@@ -255,24 +293,6 @@
                         <option>6</option>
                     </select>
                 </div>
-                <!-- Style de cartes -->
-                <div class="input-group mb-3">
-                    <!-- Texte style de cartes -->
-                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      Style de cartes
-                    </span>
-                    </div>
-                    <!-- Choix style de cartes -->
-                    <select class="form-control" id="cardBack">
-                        <option value="blue">Bleu</option>
-                        <option value="gray">Gris</option>
-                        <option value="green">Vert</option>
-                        <option value="purple">Violet</option>
-                        <option value="red">Rouge</option>
-                        <option value="yellow">Jaune</option>
-                    </select>
-                </div>
                 <!-- Bouton valider -->
                 <button type="submit" class="validate btn btn-danger">Valider</button>
             </form>
@@ -284,42 +304,6 @@
                     <th id="btnRejoindre"></th>
                 </tr>
             </table>
-        </div>
-    </div>
-    <!-- Menu mot de passe oublié -->
-    <div class="row" id="mdpoublie" style="display:none">
-        <!-- Colonne secondaire gauche -->
-        <div class="col-sm-4"></div>
-        <!-- Colonne secondaire centrale -->
-        <div class="col-sm-4">
-            <!-- Formulaire mot de passe oublié -->
-            <form id="mdp">
-                <!-- Pseudo -->
-                <div class="input-group mb-3">
-                    <!-- Logo bonhomme -->
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="material-icons">perm_identity</i></span>
-                    </div>
-                    <!-- Input pseudo -->
-                    <input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
-                </div>
-                <!-- Email -->
-                <div class="input-group mb-3">
-                    <!-- Logo email -->
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="material-icons">alternate_email</i></span>
-                    </div>
-                    <!-- Input email -->
-                    <input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
-                </div>
-                <!-- Boutons mot de passe oublié/valider -->
-                <div id="button-container mb-3">
-                    <button type="submit" class="login btn btn-danger">Valider</button>
-                </div>
-            </form>
-        </div>
-        <!-- Colonne secondaire droite -->
-        <div class="col-sm-4">
         </div>
     </div>
 </div>
@@ -607,15 +591,41 @@
                     <div id="ingameMenu">
                         <input value="Accueil" class="btn btn-primary">
                         <input value="Règles" class="btn btn-primary">
+                        <!-- Style de cartes -->
+                        <div class="input-group mb-3">
+                            <!-- Texte style de cartes -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  Style de cartes
+								</span>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <select class="form-control" id="cardBack">
+                                <option value="red" selected>Rouge</option>
+                                <option value="blue">Bleu</option>
+                                <option value="gray">Gris</option>
+                                <option value="green">Vert</option>
+                                <option value="purple">Violet</option>
+                                <option value="yellow">Jaune</option>
+                            </select>
+                        </div>
                         <br>
                         <!-- Rotation des cartes en main -->
-                        <!-- Rotation des cartes en main -->
-                        <label class="switch">
-                          <input id="rotation" type="checkbox">
-                          <span class="slider round"></span>
-                        </label>
+                        <div class="input-group mb-3">
+                            <!-- Texte rotation cartes -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  Rotation cartes
+								</span>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <label class="switch">
+                                <input id="rotation" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="panel panel-default" id="chat" ><!--style="display:none">-->
+                    <div class="panel panel-default" id="chat"><!--style="display:none">-->
                         <div class="panel-heading top-bar">
                             <div class="col-sm-12">
                                 <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat de la partie</h3>
@@ -652,6 +662,7 @@
     var rejoindreDisplayed = false; // état du menu des parties en cours
     var confirmationDisplayed = false;
     var updateDisplayed = false;
+    var mdpoublieDisplayed = false;
 
     var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
@@ -672,7 +683,8 @@
 
     var pseudos;
 
-    var cardBackStyle;
+    var cardBackStyle = "red_back.png";
+    var canChangeStyle = false;
 
 
     /*
@@ -723,6 +735,9 @@
                     if (inscriptionDisplayed) {
                         displayMenu("inscription");
                     }
+                    if (mdpoublieDisplayed) {
+                        displayMenu("mdpoublie");
+                    }
 
                     $("#connexion").show();
                     connexionDisplayed = true;
@@ -738,6 +753,9 @@
                     if (connexionDisplayed) {
                         displayMenu("connexion");
                     }
+                    if (mdpoublieDisplayed) {
+                        displayMenu("mdpoublie");
+                    }
 
                     $("#inscription").show();
                     inscriptionDisplayed = true;
@@ -745,6 +763,23 @@
                 else {
                     $("#inscription").hide();
                     inscriptionDisplayed = false;
+                }
+                break;
+
+            case "mdpoublie":
+                if (!mdpoublieDisplayed) {
+                    if (connexionDisplayed) {
+                        displayMenu("connexion");
+                    }
+                    if (inscriptionDisplayed) {
+                        displayMenu("inscription");
+                    }
+                    $("#mdpoublie").show();
+                    mdpoublieDisplayed = true;
+                }
+                else {
+                    $("#mdpoublie").hide();
+                    mdpoublieDisplayed = false;
                 }
                 break;
 
@@ -1413,6 +1448,7 @@
     })
 
 
+
     /*
 
     */
@@ -1424,10 +1460,10 @@
 
         $("#inputPseudo").hide();
 
-        var p = $("<p />");
-        $("#affichagePseudo").append(p.html(pseudo));
-        $("#affichagePseudo").show();
+        $("#affichagePseudo").val(pseudo);
+        $("#pseudoDisplay").show();
         $("#updateBtn").show();
+        $("#decoBtn").show();
 
         displayMenu("connexion");
         if(confirmed == false){
@@ -1435,16 +1471,47 @@
             displayMenu("confirmation");
         }
         $('#btnsInscrCo').hide();
+        $.notify("Vous êtes connecté, bienvenue !", "success");
     });
 
 
     /*
 
-    */
+*/
 
     socket.on('confirmationOK', function() {
         displayMenu("confirmation");
         $('#formBtnsMenu').show();
+        $.notify("Compte confirmé, bienvenue !", "success");
+    });
+
+    /*
+
+    */
+
+    socket.on('mdpChange', function() {
+        $("#mdpoublie").hide();
+        $.notify("Un mail contenant le nouveau mot de passe a été envoyé !", "success");
+        $('#mdpoublie')[0].reset();
+    });
+
+    /*
+
+    */
+
+    socket.on('newMdpOk', function() {
+        displayMenu("updatePwd");
+        $.notify("Mot de passe mis à jour !", "success");
+        $('#newPwd')[0].reset();
+    });
+
+    /*
+
+    */
+
+    socket.on('newMdpIncorrect', function(message) {
+        $.notify(message, "warn");
+        $('#newPwd')[0].reset();
     });
 
 
@@ -1475,7 +1542,7 @@
             var imgList = $("#mainPlayer ul .card img");
 
             for (var img of imgList) {
-              img.src = "/images/cards/red_back.png";
+                img.src = "/images/cards/" + cardBackStyle;
             }
 
             $("#mainPlayer ul").fadeIn();
@@ -1574,7 +1641,7 @@
 
         img.src = "/images/cards/" + data.cardName + ".png";
         setTimeout(function() {
-            img.src = "/images/cards/red_back.png";
+            img.src = "/images/cards/" + cardBackStyle;
             hasPower = false;
 
             setTimeout(function() {
@@ -1729,13 +1796,12 @@
                 password : $('#pwd').val() });
 
             displayMenu("inscription");
-            $('#pseudoInscription').val('');
-            $('#email').val('');
-            $('#pwd').val('');
-            $('#conf_pwd').val('');
+            $('#inscription')[0].reset();
+            $.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
         }
         else {
             $.notify("Les mots de passes sont différents !", "warn");
+            $('#inscription')[0].reset();
         }
 
         return false;
@@ -1778,8 +1844,7 @@
     });
 
     $("#btnMdpOublie").click(function(e) {
-        $("#M").hide();
-        $("#mdpoublie").show();
+        displayMenu("mdpoublie");
     });
 
     $("#newPwd").submit(function() {
@@ -1809,6 +1874,39 @@
         } else{
             $("#board").children(":nth-child(2)").removeClass("rotateHand");
             isRotated = false;
+        }
+    });
+
+    /*
+
+*/
+
+    $("#cardBack").change(function() {
+        if(canChangeStyle){
+            cardBackStyle = $('#cardBack').val() + "_back.png"
+            socket.emit('cardBack', {
+                cardBack: cardBackStyle,
+                pseudo: pseudo
+            });
+        }else{
+            $.notify("Attendre la fin de la distribution des cartes!", "warn");
+        }
+    });
+
+    socket.on("changeCardBack", function(data){
+        var idPlayer;
+
+        if (data.pseudo == pseudo) {
+            idPlayer = "#mainPlayer";
+        }
+        else {
+            idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        }
+
+        var imgList = $(idPlayer + " div ul img");
+
+        for(var img of imgList){
+            img.src = "/images/cards/" + data.cardBack;
         }
     });
 </script>

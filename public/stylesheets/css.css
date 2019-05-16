@@ -141,6 +141,11 @@ img{
 	display: none;
 }
 
+#mdpoublie{
+	margin-top: 17%;
+	display: none;
+}
+
 .container-fluid{
 	height: 100%;
 }
@@ -453,7 +458,13 @@ input:checked + .slider:before {
 }
 
 
+#pseudoDisplay{
+	padding-bottom: 2em;
+}
 
+#updateBtn{
+	margin-top: 5em;
+}
 
 
 

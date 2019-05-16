@@ -395,6 +395,7 @@ io.sockets.on('connection', function (socket) {
                 if(!usernameIsTaken && !emailIsTaken) {
                     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
                     updatePwd(data.username, data.email,rand,1);
+                    socket.emit("mdpChange");
                 }
                 else {
                     var alertMessage;
@@ -432,7 +433,7 @@ io.sockets.on('connection', function (socket) {
                 }
                 else {
                     alertMessage = "Mot de passe incorrect !";
-                    socket.emit("newAlertMessage", alertMessage);
+                    socket.emit("newMdpIncorrect", alertMessage);
                 }
             });
         });
@@ -623,6 +624,16 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("infosMsg2", function(msg) {
       socket.broadcast.emit("infosMsg2", msg);
+    });
+
+    /*
+
+     */
+    socket.on("cardBack", function(data) {
+        socket.broadcast.emit("changeCardBack", {pseudo: data.pseudo,
+            cardBack: data.cardBack});
+        socket.emit("changeCardBack", {pseudo: data.pseudo,
+            cardBack: data.cardBack});
     });
 });
 
