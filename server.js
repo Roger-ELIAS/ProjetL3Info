@@ -172,7 +172,7 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('updateGame', gameUpdated);
 
         if (gamesList[data.gameName].nbPlayers == gamesList[data.gameName].nbPlayersMax) {
-            gameFunctions.startGame(socket, 10, gamesList[data.gameName], gamesList[data.gameName].players);
+            gameFunctions.startGame(socket, 10, gamesList[data.gameName]);
 
             gamesList[data.gameName].timeouts.push(setTimeout(function() {
               gamesList[data.gameName].hasStarted = true;
@@ -615,7 +615,7 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { isFinished: false, turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on("nextPlayer", function(gameName) {
-      gameFunctions.discardTime(socket);
+      gameFunctions.discardTime(socket, gamesList[gameName].players);
 
       setTimeout(function() {
         socket.emit("endDiscardTime");
@@ -631,11 +631,11 @@ io.sockets.on('connection', function (socket) {
           if (indexPlayer == players.length - 1) {
               gamesList[gameName].turnNumber += 1;
               gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
-              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[0], socket);
+              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[0], gamesList[gameName].players[players[0]].playerSocket);
           }
           else {
               gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
-              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[indexPlayer + 1], socket);
+              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[indexPlayer + 1], gamesList[gameName].players[players[indexPlayer + 1]].playerSocket);
           }
         }
       }, 5800);

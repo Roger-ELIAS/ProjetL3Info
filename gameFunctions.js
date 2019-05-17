@@ -105,18 +105,18 @@ var emitToLobby = function(players, eventName, content) {
 
 */
 
-var timerStartGame = function (socket, time, gameObj, players) {
-    emitToLobby(players, "infosMsg2", time.toString());
+var timerStartGame = function (socket, time, gameObj) {
+    emitToLobby(gameObj.players, "infosMsg2", time.toString());
 
     if (time - 1 > 0) {
         gameObj.timeouts.push(setTimeout(function() {
-            timerStartGame(socket, time - 1, gameObj, players);
+            timerStartGame(socket, time - 1, gameObj);
         }, 1000));
     }
     else {
       gameObj.timeouts.push(setTimeout(function() {
-          emitToLobby(players, "infosMsg1", "DISTRIBUTION DES CARTES");
-          emitToLobby(players, "infosMsg2", "");
+          emitToLobby(gameObj.players, "infosMsg1", "DISTRIBUTION DES CARTES");
+          emitToLobby(gameObj.players, "infosMsg2", "");
       }, 1000));
     }
 }
@@ -126,11 +126,11 @@ var timerStartGame = function (socket, time, gameObj, players) {
 
 */
 
-var startGame = function (socket, time, gameObj, players) {
-  emitToLobby(players, "infosMsg1", "Début de la partie dans");
+var startGame = function (socket, time, gameObj) {
+  emitToLobby(gameObj.players, "infosMsg1", "Début de la partie dans");
 
   gameObj.timeouts.push(setTimeout(function() {
-      timerStartGame(socket, 10, gameObj, players);
+      timerStartGame(socket, 10, gameObj);
   }, 1000));
 
 };
@@ -183,7 +183,7 @@ var discardTimer = function (socket, time, players) {
 
     if (time - 1 > 0) {
         setTimeout(function() {
-            discardTimer(socket, time - 1);
+            discardTimer(socket, time - 1, players);
         }, 1000);
     }
 }

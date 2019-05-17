@@ -1158,6 +1158,47 @@
 
     */
 
+    function searchForPower() {
+        setTimeout(function() {
+          switch (getCardName(tas[tas.length - 1])) {
+            case "7":
+            case "8":
+              hasPower = true;
+              power = 78;
+
+              $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour regarder une des cartes retournée !");
+              socket.emit("infosMsg2", { msg: "Regarde une carte retournée (pouvoir 7/8)",
+                                         gameName: actualGameName });
+
+              break;
+
+            case "11":
+              hasPower = true;
+              power = 11;
+
+              $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour échangez les positions de deux cartes !");
+              socket.emit("infosMsg2", { msg: "Échange les positions de deux cartes (pouvoir 11)",
+                                         gameName: actualGameName });
+
+              break;
+          }
+
+          hasDrawnCard = false;
+          hisMyTurn = false;
+
+          if (!hasPower)  {
+              isDiscardTime = true;
+
+              socket.emit("nextPlayer", actualGameName);
+          }
+        }, 3000);
+    }
+
+
+    /*
+
+    */
+
     function cardClicked () {
         var li = $(this).parent();
         var idClicked = li.parent().parent().parent().attr("id");
@@ -1236,6 +1277,8 @@
                     $("#cardTas").data("cardName", cardDrawn);
 
                     tas.push(cardDrawn);
+
+                    searchForPower();
                 }
                 else if (idClicked == "mainPlayer") {
                     $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
@@ -1251,41 +1294,9 @@
                                                    cardToPut: $(this).data("cardName") });
 
                     $(this).data("cardName", cardDrawn);
+
+                    searchForPower();
                 }
-
-                setTimeout(function() {
-                  switch (getCardName(tas[tas.length - 1])) {
-                    case "7":
-                    case "8":
-                      hasPower = true;
-                      power = 78;
-
-                      $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour regarder une des cartes retournée !");
-                      socket.emit("infosMsg2", { msg: "Regarde une carte retournée (pouvoir 7/8)",
-                                                 gameName: actualGameName });
-
-                      break;
-
-                    case "11":
-                      hasPower = true;
-                      power = 11;
-
-                      $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour échangez les positions de deux cartes !");
-                      socket.emit("infosMsg2", { msg: "Échange les positions de deux cartes (pouvoir 11)",
-                                                 gameName: actualGameName });
-
-                      break;
-                  }
-
-                  hasDrawnCard = false;
-                  hisMyTurn = false;
-
-                  if (!hasPower)  {
-                      isDiscardTime = true;
-
-                      socket.emit("nextPlayer", actualGameName);
-                  }
-                }, 3000);
             }
             else if (idClicked == undefined) {
                 hasDrawnCard = true;
