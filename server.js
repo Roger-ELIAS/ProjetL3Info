@@ -111,7 +111,23 @@ var emitToLobby = function(players, eventName, content, socket) {
       }
 }
 
+/*
+
+*/
+
+var score = function (socket) {
+    var sql = "SELECT Username, GamesPlayed, GamesWon, Points FROM Score ORDER BY Points DESC LIMIT 5";
+
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        socket.emit("scoreResult",result);
+    });
+};
+
+
 io.sockets.on('connection', function (socket) {
+
+    score(socket);
 
     /*
 

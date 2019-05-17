@@ -20,6 +20,15 @@
     <div class="row" id="M" style="height: 100%;">
         <!-- Colonne principale gauche -->
         <div class="col-sm-4">
+            <!-- Tableau des scores -->
+            <table class="table rounded" id="classement">
+                <tr>
+                    <th id="place">Place</th>
+                    <th id="nomJ">Nom</th>
+                    <th id="scoreJ">Score</th>
+                    <th id="victoiresJ">Ratio victoires</th>
+                </tr>
+            </table>
         </div>
         <!-- Colonne principale centrale -->
         <div class="col-sm-4" style="height: 100%;">
@@ -589,8 +598,8 @@
                 <div class="col-sm-12">
                     <!-- Menu de jeu -->
                     <div id="ingameMenu">
-                        <input value="Accueil" class="btn btn-primary">
-                        <input value="Règles" class="btn btn-primary">
+                        <input type="button" id="accueilBtn" value="Accueil" class="btn btn-primary">
+                        <input type="button" id="reglesBtn" value="Règles" class="btn btn-primary">
                         <!-- Style de cartes -->
                         <div class="input-group mb-3">
                             <!-- Texte style de cartes -->
@@ -648,6 +657,38 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="regles">
+        <p><br><b>Objectif d'une partie</b><br><br>
+            L'objectif d'une partie de blitz est de se débarrasser d'un maximum de cartes afin d'avoir un minimum de points lorsque
+            la partie se termine, ce qui arrive lorsque une main d'un des joueurs où que le paquet de cartes est vide.
+
+            <br><br><b>Déroulement d'une partie</b><br><br>
+
+            Une partie se déroule en plusieurs étapes, et se joue au tour par tour entre chaque joueurs. En premier lieu, et ce après
+            avoir distribué les cartes, une première période de défausse est entamée, cette dernière durant 5 secondes. Pendant ce laps
+            de temps, les joueurs ayant dans leur jeu une carte d'une valeur similaire à celle sur le haut de la défausse peuvent s'en
+            débarrasser. Cela étant, il verront leurs scores s’alourdir de 5 unités en cas d'erreur.
+            <br><br>
+            Vient ensuite le tour du premier joueur qui a deux choix potentiels : piocher la première carte de la défausse ou du paquet.
+            Une fois cette action réalisée, il a de nouveau deux choix qui s'offrent à lui : défausser cette carte ou la mettre dans son
+            jeu à la place d'une de ses cartes qui sera alors défaussée.
+            Lorsqu'une carte est défaussée, il se peut qu'un pouvoir soit activé, ces derniers étant au nombre de 2 :
+            - Les cartes 7 et 8 : elles permettent de voir la valeur d'une carte de sa main ou de la main d'un autre joueur
+            - Le valet : il permet d'échanger la position de deux cartes, qu'elles soient dans la main du joueur qui active le pouvoir ou dans
+            la main d'un autre joueur
+            <br><br>
+            A la fin de la partie, les points sont comptés, et en cas d'égalité, le nombre de cartes permet de départager les joueurs, celui en
+            ayant le moins étant logiquement le mieux placé.
+            <br><br><b>
+                Pour ce qui est des points, vous pouvez retrouver la valeur des cartes ci-dessous :<br>
+                <b>- De 1 à 10 : autant de points que la valeur de la carte (1 pour l'as, 2 pour la carte deux de cœur ...)<br>
+                    - Valet et Dame : ces deux cartes valent 10 points<br>
+                    - Roi rouge : cette carte est spéciale car elle ne vaut pas de points (0 points)<br>
+                    - Roi noir : débarrassez-vous rapidement de cette carte qui vaut 15 points !<br></b>
+        </p>
+    </div>
+    <div id="scores">
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
@@ -1949,6 +1990,54 @@
 
         for(var img of imgList){
             img.src = "/images/cards/" + data.cardBack;
+        }
+    });
+
+    $("#accueilBtn").click(function(){
+        location.reload();
+    });
+
+    var reglesDisplayed = false;
+    $("#reglesBtn").click(function(){
+        if(!reglesDisplayed){
+            $("#regles").show();
+            reglesDisplayed = true;
+        } else {
+            $("#regles").hide();
+            reglesDisplayed = false;
+        }
+    });
+
+    socket.on("generalScore",function () {
+        var sql = "SELECT * FROM Score ORDER BY Points LIMIT 5";
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            socket.broadcast.emit("scoreResult",result);
+        });
+    });
+
+    function appendScoreGame (pos,  pseudo, score, ratio) {
+        let tr = $('<tr />').attr('id', pos);
+
+        let tdPlace= $('<td />');
+        tr.append(tdPlace.html(pos));
+
+        let tdNomJ= $('<td />');
+        tr.append(tdNomJ.html(pseudo));
+
+        let tdScoreJ= $('<td />');
+        tr.append(tdScoreJ.html(score));
+
+        let tdVictoiresJ= $('<td />');
+        tr.append(tdVictoiresJ.html(ratio));
+
+        $('#classement').append(tr);
+    };
+
+    socket.on("scoreResult",function (data) {
+        for (var i = 0; i<data.length; i++){
+            appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
         }
     });
 </script>
