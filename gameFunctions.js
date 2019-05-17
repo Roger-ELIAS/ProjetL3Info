@@ -86,16 +86,12 @@ var drawCard = function (game){
 var emitToLobby = function(players, eventName, content) {
     if (content == "nothing") {
       for (var playerName in players) {
-          if (players[playerName].isConnected) {
-              players[playerName].playerSocket.emit(eventName);
-          }
+          players[playerName].playerSocket.emit(eventName);
       }
     }
     else {
       for (var playerName in players) {
-          if (players[playerName].isConnected) {
-              players[playerName].playerSocket.emit(eventName, content);
-          }
+          players[playerName].playerSocket.emit(eventName, content);
       }
     }
 }
@@ -247,15 +243,6 @@ var calculateResults = function (players, isBlitz) {
     }
 
     return scoresList;
-
-    /* if (isBlitz) {
-        players[Object.keys(players)[0]].playerSocket.emit("endGameWithBlitz", scoresList);
-        players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithBlitz", scoresList);
-    }
-    else {
-        players[Object.keys(players)[0]].playerSocket.emit("endGameWithoutBlitz", scoresList);
-        players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithoutBlitz", scoresList);
-    } */
 }
 
 

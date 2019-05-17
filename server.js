@@ -97,14 +97,14 @@ var updatePwd = function(username,mail,rand,send){
 var emitToLobby = function(players, eventName, content, socket) {
       if (content == "nothing") {
           for (var playerName in players) {
-              if (players[playerName].isConnected && playerName !== socket.pseudo) {
+              if (playerName !== socket.pseudo) {
                   players[playerName].playerSocket.emit(eventName);
               }
           }
       }
       else {
         for (var playerName in players) {
-            if (players[playerName].isConnected && playerName !== socket.pseudo) {
+            if (playerName !== socket.pseudo) {
                 players[playerName].playerSocket.emit(eventName, content);
             }
         }
@@ -150,6 +150,19 @@ var score = function (socket) {
     });
 };
 
+
+/*
+
+*/
+
+var initScore = function(pseudo) {
+   var sql = "INSERT INTO Score (Username, GamesPlayed, GamesWon, Points) VALUES ('"
+        + pseudo + "', '" + 0 + "', '" + 0 + "', '" + 0 + "')";
+   con.query(sql, function (err, result) {
+       if (err) throw err;
+   });
+}
+
 io.sockets.on('connection', function (socket) {
 
     score(socket);
@@ -177,7 +190,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName] = { isFinished: false, hasStarted: false, turnNumber: 1, timeouts: [], packet: [], tas: [], nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: {} };
-        gamesList[data.gameName].players[socket.pseudo] = { isConnected: true, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         newGame = { gameName: data.gameName, nbPlayersMax: data.nbPlayersMax };
         socket.broadcast.emit('newGame', newGame)
@@ -192,7 +205,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName].nbPlayers += 1;
-        gamesList[data.gameName].players[socket.pseudo] = { isConnected: true, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         var message = "<p>Le joueur <b>" +
             data.pseudo +
@@ -362,7 +375,7 @@ io.sockets.on('connection', function (socket) {
                 var sqlUpdate = "UPDATE User SET Confirmed = " + 1 + " WHERE Username = \"" + data.pseudo + "\" AND PwdConfirmation = " + data.codeConfirmation;
                 con.query(sqlUpdate, function(err,result){
                     if (err) throw err;
-
+                    initScore(data.pseudo);
                     socket.emit("confirmationOK");
                 });
             } else {
@@ -433,21 +446,16 @@ io.sockets.on('connection', function (socket) {
                         }
                       }
                       else {
-                          var playersConnected = [];
-                          gamesList[game].players[socket.pseudo].isConnected = false;
+                          delete gamesList[game].players[socket.pseudo];
+                          var players = Object.keys(gamesList[game].players);
 
-                          for (var p of Object.keys(gamesList[game].players)) {
-                              if (gamesList[game].players[p].isConnected) {
-                                  playersConnected.push({ pseudo: p, socket: gamesList[game].players[p].playerSocket });
-                              }
-                          }
-
-                          if (playersConnected.length < 2) {
-                              playersConnected[0].socket.emit("notEnoughPlayers");
+                          if (players.length < 2) {
+                              gamesList[game].players[players[0]].playerSocket.emit("notEnoughPlayers");
+                              // delete game here
                           }
                           else {
-                              for (var p of playersConnected) {
-                                  p.socket.emit("playerLeft", socket.pseudo);
+                              for (var p of players) {
+                                  gamesList[game].players[p].playerSocket.emit("playerLeft", socket.pseudo);
                               }
                           }
                       }

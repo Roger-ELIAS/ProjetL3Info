@@ -171,10 +171,6 @@ tbody{
 	background: #e5e5e5;
 	margin: 0;
 	padding: 10px 10px 10px;
-	/*max-height: 100%;
-	min-height: 100%;*/
-	overflow-x:hidden;
-	height: 556px !important;
 }
 .top-bar {
 	background: #666;
@@ -356,9 +352,13 @@ li img{
 }
 
 .panel-body {
-	height: 620 px;
+	height: 103%;
 	overflow-x: hidden;
 	overflow-y: scroll;
+}
+
+#messages{
+	overflow-x: hidden;
 }
 
 #info{
@@ -379,6 +379,9 @@ li img{
   display: inline-block;
   width: 54px;
   height: 27px;
+  margin-top: 0.3em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Hide default HTML checkbox */
@@ -519,16 +522,14 @@ input:checked + .slider:before {
 	width: 23%;
 }
 
+#chat_row .input-group-prepend{
+	width: 50%;
+}
 
+#chat_row .input-group-text{
+	width: 100%;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+label{
+	margin-bottom: 0;
+}
