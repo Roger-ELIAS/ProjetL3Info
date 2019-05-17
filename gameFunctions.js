@@ -14,7 +14,7 @@ var generatePacket = function () {
   for (let k = 1; k <= 13; ++k)
       paquet.push(k + "H");
 
-  for (let k = 1; k <= 13; ++k)
+  for (let k = 1; k <= 10; ++k)
       paquet.push(k + "S");
 
   return paquet;
@@ -246,17 +246,16 @@ var calculateResults = function (players, isBlitz) {
         }
     }
 
+    return scoresList;
 
-    if (isBlitz) {
+    /* if (isBlitz) {
         players[Object.keys(players)[0]].playerSocket.emit("endGameWithBlitz", scoresList);
         players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithBlitz", scoresList);
     }
     else {
         players[Object.keys(players)[0]].playerSocket.emit("endGameWithoutBlitz", scoresList);
         players[Object.keys(players)[0]].playerSocket.broadcast.emit("endGameWithoutBlitz", scoresList);
-    }
-
-
+    } */
 }
 
 

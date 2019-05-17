@@ -111,6 +111,31 @@ var emitToLobby = function(players, eventName, content, socket) {
       }
 }
 
+
+/*
+
+*/
+
+var updatePoints = function(points,pseudo,win){
+   console.log(pseudo);
+   console.log(points);
+   console.log(win);
+   var sql = "SELECT Points,GamesPlayed,GamesWon FROM Score Where Username = \"" + pseudo + "\"";
+   con.query(sql, function (err, result) {
+       if (err) throw err;
+       console.log(result);
+
+       var newpoints = result[0].Points + points;
+       var newwin = result[0].GamesWon + win;
+       var newplayed = result[0].GamesPlayed + 1;
+
+       var updatePoints = "UPDATE Score SET Points  = " + newpoints + ", GamesWon = " + newwin + ", GamesPlayed = "+ newplayed + " Where Username = \"" + pseudo + "\"";
+       con.query(updatePoints, function (err, result) {
+           if (err) throw err;
+       });
+   });
+};
+
 io.sockets.on('connection', function (socket) {
 
     /*
@@ -395,27 +420,25 @@ io.sockets.on('connection', function (socket) {
                           var playersConnected = [];
                           gamesList[game].players[socket.pseudo].isConnected = false;
 
-                          gamesList[game].players.forEach(function(p) {
-                              if (p.isConnected) {
-                                  playersConnected.push({ pseudo: p.pseudo, socket: p.playerSocket });
+                          for (var p of Object.keys(gamesList[game].players)) {
+                              if (gamesList[game].players[p].isConnected) {
+                                  playersConnected.push({ pseudo: p, socket: gamesList[game].players[p].playerSocket });
                               }
-                          });
+                          }
 
                           if (playersConnected.length < 2) {
                               playersConnected[0].socket.emit("notEnoughPlayers");
                           }
                           else {
-                              playersConnected.forEach(function(p) {
-                                  p.socket.emit("newMessage", "<p>Le joueur " + socket.pseudo + " a quitté la partie ...");
-                              })
+                              for (var p of playersConnected) {
+                                  p.socket.emit("playerLeft", socket.pseudo);
+                              }
                           }
                       }
                   }
               }
           }
       }
-      /* var i = allClients.indexOf(socket);
-      allClients.splice(i, 1); */
    });
 
 
@@ -589,7 +612,7 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
 
         emitToLobby(gamesList[data.gameName].players, "infosMsg2", "Carte " + (data.index1 + 1).toString() + " de " + data.pseudo1 +
-                                                                                 "changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2, socket);
+                                                                                 " changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2, socket);
 
         gamesList[data.gameName].players[data.pseudo1].playerSocket.emit("modifyCard", { cardIndex: data.index1,
                                                                                          cardName: gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] });
@@ -622,7 +645,18 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit("endDiscardTime");
 
         if (gamesList[gameName].isFinished) {
-            gameFunctions.calculateResults(gamesList[gameName].players, false);
+            var arrayPlayers = gameFunctions.calculateResults(gamesList[gameName].players, false);
+            var pointsToAdd = 1;
+            var points = 0;
+            var win =0;
+            console.log(arrayPlayers);
+            for (i = arrayPlayers.length -1 ; i >= 0; i--) {
+                if(i == 0)
+                    win = 1;
+                updatePoints(points + pointsToAdd, arrayPlayers[i].pseudo,win);
+                points = points + pointsToAdd;
+                pointsToAdd += 1;
+            }
         }
         else {
           var players = Object.keys(gamesList[gameName].players);
@@ -688,6 +722,7 @@ io.sockets.on('connection', function (socket) {
     socket.on("infosMsg2", function(data) {
       emitToLobby(gamesList[data.gameName].players, "infosMsg2", data.msg, socket);
     });
+
 
     /*
 

@@ -1273,14 +1273,20 @@
                     socket.emit('depositeOnTas', { gameName: actualGameName,
                                                    cardToPut: cardDrawn });
 
+                    $("#cardPioche img").attr("src", "/images/cards/" + cardBackStyle);
+
                     $("#cardTas img").attr("src", "/images/cards/" + cardDrawn + ".png");
                     $("#cardTas").data("cardName", cardDrawn);
+
+
 
                     tas.push(cardDrawn);
 
                     searchForPower();
                 }
                 else if (idClicked == "mainPlayer") {
+                    $("#cardPioche img").attr("src", "/images/cards/" + cardBackStyle);
+
                     $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
                     $("#cardTas").data("cardName", $(this).data("cardName"));
 
@@ -1312,6 +1318,7 @@
                 }
 
                 socket.emit("drawTas", actualGameName);
+                $("#cardPioche img").attr("src", "/images/cards/" + cardDrawn + ".png");
             }
             else if (idClicked == "pioche") {
                 hasDrawnCard = true;
@@ -1605,8 +1612,8 @@
     */
 
     socket.on('cardDrawn', function(ccardDrawn) {
-        console.log("piochée : " + ccardDrawn);
         cardDrawn = ccardDrawn;
+        $("#cardPioche img").attr("src", "/images/cards/" + cardDrawn + ".png");
     });
 
 
@@ -1679,10 +1686,11 @@
 
         var imgList = $(idPlayer + " div ul img");
         var img = imgList[data.cardIndex];
+        var previousSrc = img.src.substring(img.src.lastIndexOf("/"));
 
         img.src = "/images/cards/" + data.cardName + ".png";
         setTimeout(function() {
-            img.src = "/images/cards/" + cardBackStyle;
+            img.src = "/images/cards/" + previousSrc;
             hasPower = false;
 
             setTimeout(function() {
@@ -1729,8 +1737,28 @@
     */
 
     socket.on("infosMsg2", function(msg) {
-        console.log("salut");
         $("#infosMsg2").html(msg);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("playerLeft", function(player) {
+        appendMessage("<p>Le joueur <b>" + player + "</b> a quitté la partie ...");
+        var playerNumber = getPlayerNumberWithPseudo(player);
+
+        $("#player" + playerNumber.toString()).remove();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("notEnoughPlayers", function(msg) {
+
     });
 
 
