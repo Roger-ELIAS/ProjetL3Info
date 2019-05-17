@@ -33,8 +33,8 @@ var gamesList = {}; // { gameName : { hasStarted: false, timeouts: [], packet: [
 var transporter = nodemailer.createTransport({
     service: 'outlook',
     auth: {
-        user: 'cardsl3@laposte.net',
-        pass: 'projetL3'
+        user: 'cardsl3@outlook.fr',
+        pass: 'projetl3'
     }
 });
 
@@ -48,7 +48,7 @@ var createAccount = function(username, email, pwd,send) {
     con.query(sql, function (err, result) {
         if (err) throw err;
         var mailOptions = {
-            from: 'jeudecartel3@outlook.fr',
+            from: 'cardsl3@outlook.fr',
             to: email,
             subject: "CARDS, verification email",
             html: "Bienvenue sur CARDS,<br> Veuillez renseigner le code ci-dessous sur le site lors de votre prochaine connexion pour confirmer votre compte.<br><p><b>" + rand + "</b></p>"
@@ -72,7 +72,7 @@ var updatePwd = function(username,mail,rand,send){
         if (err) throw err;
         if(send) {
             var mailOptions = {
-                from: 'jeudecartel3@outlook.fr',
+                from: 'cardsl3@outlook.fr',
                 to: mail,
                 subject: "CARDS, mot de passe oublié",
                 html : "Bonjour,<br> Votre nouveau mot de passe est <br><p><b>" + rand + "</b></p> veuillez le saisir sur le site lors de votre prochaine connexion. <br> Une fois connecté, vous pourrez le modifier en allant dans \"Modifier mot de passe\"."

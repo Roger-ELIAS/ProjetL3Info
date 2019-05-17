@@ -1563,9 +1563,7 @@
 
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
-        $("#updateBtn").show();
-        $("#decoBtn").show();
-
+        
         displayMenu("connexion");
         if(confirmed == false){
             $('#formBtnsMenu').hide();
@@ -1574,6 +1572,8 @@
             displayMenu("confirmation");
         }
         $('#btnsInscrCo').hide();
+		$("#updateBtn").show();
+        $("#decoBtn").show();
         $.notify("Vous êtes connecté, bienvenue !", "success");
     });
 
