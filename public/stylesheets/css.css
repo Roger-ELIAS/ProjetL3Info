@@ -457,6 +457,7 @@ input:checked + .slider:before {
 	margin-top: 20%;
 }
 
+
 #pseudoDisplay{
 	padding-bottom: 2em;
 }
@@ -465,12 +466,58 @@ input:checked + .slider:before {
 	margin-top: 5em;
 }
 
+#regles{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 36.3%;
+	height: 91%;
+	margin-top: 1%;
+	margin-left: 48%;
+	display: none;
+	background-image: url("/images/white.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: white;
+	text-align: justify;
+	padding: 1%;
+}
 
+#scores{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 27.3%;
+	height: 45%;
+	margin-top: 12%;
+	margin-left: 29%;
+	display: none;
+	background-image: url("/images/white.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
 
+#classement{
+	border: 0px;
+	color: white;
+	background-image: url("/images/white.png");
+	background-size: cover;
+	margin-top: 50%;
+	margin-right: 10%;
+	/*background-color: white;*/
+	overflow: auto;
+	max-height: 40%;
+}
 
+#place{
+	width: 10%;
+}
 
-
-
+#scoreJ ,#victoiresJ{
+	width: 23%;
+}
 
 
 

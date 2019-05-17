@@ -89,9 +89,18 @@ var updatePwd = function(username,mail,rand,send){
     return true;
 };
 
+var score = function (socket) {
+	var sql = "SELECT Username, GamesPlayed, GamesWon, Points FROM Score ORDER BY Points DESC LIMIT 5";
+
+	con.query(sql, function (err, result) {
+		if (err) throw err;
+		socket.emit("scoreResult",result);
+	});
+};
 
 io.sockets.on('connection', function (socket) {
 
+	score(socket);
 
     /*
 
@@ -172,11 +181,19 @@ io.sockets.on('connection', function (socket) {
                 gameFunctions.startTimerMemorization(socket);
 
                 setTimeout(function() {
-                    gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].hisTurn = true;
-                    gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
-                }, 13000);
+                    gameFunctions.discardTime(socket);
+
+                    setTimeout(function() {
+                        socket.emit("endDiscardTime");
+                        socket.broadcast.emit("endDiscardTime");
+
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].hisTurn = true;
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
+                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
+                    }, 6500);
+                }, 14000);
               }, 5050);
-            }, 10050));
+            }, 11050));
         }
     });
 
@@ -387,7 +404,7 @@ io.sockets.on('connection', function (socket) {
                 if(!usernameIsTaken && !emailIsTaken) {
                     rand=Math.floor((Math.random() * 1000000) + (Math.random() * 10000) + (Math.random() * 100));
                     updatePwd(data.username, data.email,rand,1);
-					socket.emit("mdpChange");
+                    socket.emit("mdpChange");
                 }
                 else {
                     var alertMessage;
@@ -422,7 +439,6 @@ io.sockets.on('connection', function (socket) {
             bcrypt.compare(data.password, result[0].Password , function(err, res) {
                 if (res) {
                     updatePwd(data.username, result[0].Mail,data.newpwd,0);
-					socket.emit("newMdpOk");
                 }
                 else {
                     alertMessage = "Mot de passe incorrect !";
@@ -439,9 +455,18 @@ io.sockets.on('connection', function (socket) {
     // { gameName : { turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on('askCardValue', function (data) {
         var card = gamesList[data.gameName].players[data.pseudo].playerHand[data.index];
+
         socket.emit("cardValueAsked", { cardName: card,
                                         cardIndex: data.index,
                                         pseudo: data.pseudo });
+
+        if (data.pseudo == socket.pseudo) {
+            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de sa main");
+        }
+        else {
+            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de " + data.pseudo); 
+        }
+
     });
 
 
@@ -457,6 +482,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         socket.emit("cardDrawn", card);
+        socket.broadcast.emit("infosMsg2", "A pioché une carte du paquet");
     });
 
 
@@ -467,6 +493,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('drawTas',function (gameName) {
         gamesList[gameName].tas.pop();
         socket.broadcast.emit('updateTas', gamesList[gameName].tas);
+        socket.broadcast.emit("infosMsg2", "A pioché une carte de la défausse");
     });
 
 
@@ -475,8 +502,6 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('endGame', function (data){
-
-
         socket.broadcast.emit("finalResult", resultGame);
         socket.emit("finalResult", resultGame);
     });
@@ -504,6 +529,7 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].tas.push(data.cardToPut);
 
         socket.broadcast.emit("updateTas", gamesList[data.gameName].tas);
+        socket.broadcast.emit("infosMsg2", "A défaussé la carte piochée");
 
         if (gamesList[data.gameName].packet.length == 0) {
             socket.emit("deckEmpty");
@@ -517,19 +543,12 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on("valet", function (data) {
-        console.log("Valet 1 :" + gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] + " / " + gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2]);
-
         var card = gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1];
         gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] = gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2];
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
 
-        socket.broadcast.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
-                              "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
-                              "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
-
-        socket.emit("newMessage", "<p> La carte <b>" + (data.index1 + 1).toString() + "</b> du joueur <b>" + data.pseudo1 +
-                                  "</b> a été changée avec la carte <b>" + (data.index2 + 1).toString() +
-                                  "</b> du joueur <b>" + data.pseudo2 + "</b></p>");
+        socket.broadcast.emit("infosMsg2", "Carte " + (data.index1 + 1).toString() + " de " + data.pseudo1 +
+                              "changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2);
 
         gamesList[data.gameName].players[data.pseudo1].playerSocket.emit("modifyCard", { cardIndex: data.index1,
                                                                                          cardName: gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] });
@@ -555,28 +574,30 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { isFinished: false, turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on("nextPlayer", function(gameName) {
-        if (gamesList[gameName].isFinished) {
+      gameFunctions.discardTime(socket);
 
+      setTimeout(function() {
+        socket.emit("endDiscardTime");
+        socket.broadcast.emit("endDiscardTime");
+
+        if (gamesList[gameName].isFinished) {
+            gameFunctions.calculateResults(gamesList[gameName].players, false);
         }
         else {
-            gameFunctions.discardTime(socket);
+          var players = Object.keys(gamesList[gameName].players);
+          var indexPlayer = players.indexOf(socket.pseudo);
 
-            setTimeout(function() {
-              socket.emit("endDiscardTime");
-              socket.broadcast.emit("endDiscardTime");
-
-              var players = Object.keys(gamesList[gameName].players);
-              var indexPlayer = players.indexOf(socket.pseudo);
-
-              if (indexPlayer == players.length - 1) {
-                  gamesList[gameName].turnNumber += 1;
-                  gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
-              }
-              else {
-                  gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
-              }
-            }, 7000);
+          if (indexPlayer == players.length - 1) {
+              gamesList[gameName].turnNumber += 1;
+              gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
+              gamesList[gameName].players[players[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[0]);
+          }
+          else {
+              gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
+              gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[indexPlayer + 1]);
+          }
         }
+      }, 5800);
     });
 
 
@@ -586,6 +607,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("handModified", function(data) {
         gamesList[data.gameName].players[socket.pseudo].playerHand[data.cardIndex] = data.cardToPut;
+        socket.broadcast.emit("infosMsg2", "A pris la carte piochée à la place de sa " + data.cardIndex.toString() + "ème carte");
     });
 
 
@@ -603,36 +625,25 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit("cardRemoved", { pseudo: socket.pseudo,
                                                indexToRemove: data.cardIndex });
     });
-	
-	socket.on("cardBack", function(data) {
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg2", function(msg) {
+      socket.broadcast.emit("infosMsg2", msg);
+    });
+
+    /*
+
+     */
+    socket.on("cardBack", function(data) {
         socket.broadcast.emit("changeCardBack", {pseudo: data.pseudo,
-												 cardBack: data.cardBack});
-		socket.emit("changeCardBack", {pseudo: data.pseudo,
-									   cardBack: data.cardBack});										 
+            cardBack: data.cardBack});
+        socket.emit("changeCardBack", {pseudo: data.pseudo,
+            cardBack: data.cardBack});
     });
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

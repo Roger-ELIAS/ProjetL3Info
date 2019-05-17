@@ -20,6 +20,15 @@
     <div class="row" id="M" style="height: 100%;">
         <!-- Colonne principale gauche -->
         <div class="col-sm-4">
+			<!-- Tableau rejoindre partie -->
+            <table class="table rounded" id="classement">
+                <tr>
+                    <th id="place">Place</th>
+                    <th id="nomJ">Nom</th>
+                    <th id="scoreJ">Score</th>
+					<th id="victoiresJ">Ratio victoires</th>
+                </tr>
+            </table>
         </div>
         <!-- Colonne principale centrale -->
         <div class="col-sm-4" style="height: 100%;">
@@ -51,7 +60,7 @@
                             <input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
                         </div>
                         <!-- Affichage pseudo -->
-						<div class="input-group mb-3" id="pseudoDisplay" style="display: none;">
+                        <div class="input-group mb-3" id="pseudoDisplay" style="display: none;">
                             <!-- Logo cadenas -->
                             <div class="input-group-prepend">
 								<span class="input-group-text">
@@ -62,24 +71,24 @@
                             </div>
                             <!-- Input mot de passe -->
                             <input type="text" id="affichagePseudo" class="form-control" placeholder="TEST" disabled>
-							<!--<button type="button" class="create mb-3 btn btn-secondary form-control" id="affichagePseudo" style="display: none;" disabled>
-							</button> -->
+                            <!--<button type="button" class="create mb-3 btn btn-secondary form-control" id="affichagePseudo" style="display: none;" disabled>
+                            </button> -->
                         </div>
                         <!-- Boutons creer/rejoindre -->
                         <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
                         <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
                     </form>
-                    <button id="updateBtn" class="create btn mb-3 btn-danger" style="display: none">Modifier mot de passe</button>
-					<form id="newPwd" style="display: none" >
+                    <button id="updateBtn" class="signin btn btn-danger" style="display: none">Modifier mot de passe</button>
+                    <form id="newPwd" style="display: none" >
                         <!-- Mot de passe -->
                         <div class="input-group mb-3">
                             <!-- Logo cadenas -->
                             <div class="input-group-prepend">
-								<span class="input-group-text">
-								  <i class="material-icons">
-									lock
-								  </i>
-								</span>
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
                             </div>
                             <!-- Input mot de passe -->
                             <input type="password" id="oldpassword" class="form-control" placeholder="Mot de passe actuel">
@@ -115,7 +124,7 @@
                             <button type="submit" class="login btn btn-danger" style="margin-bottom: 1em;">Valider</button>
                         </div>
                     </form>
-					<button id="decoBtn" class="create btn mb-3 btn-danger" style="display: none">Deconnexion</button>
+                    <button id="decoBtn" class="create btn mb-3 btn-danger" style="display: none">Deconnexion</button>
                     <!-- Boutons inscription/connexion -->
                     <div class="button-container mb-3" id="btnsInscrCo">
                         <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
@@ -213,30 +222,30 @@
                         </div>
                     </form>
                     <!-- Formulaire mot de passe oublié -->
-					<form id="mdpoublie">
-						<!-- Pseudo -->
-						<div class="input-group mb-3">
-							<!-- Logo bonhomme -->
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="material-icons">perm_identity</i></span>
-							</div>
-							<!-- Input pseudo -->
-							<input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
-						</div>
-						<!-- Email -->
-						<div class="input-group mb-3">
-							<!-- Logo email -->
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="material-icons">alternate_email</i></span>
-							</div>
-							<!-- Input email -->
-							<input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
-						</div>
-						<!-- Boutons mot de passe oublié/valider -->
-						<div id="button-container mb-3">
-							<button type="submit" class="login btn btn-danger">Valider</button>
-						</div>
-					</form>
+                    <form id="mdpoublie">
+                        <!-- Pseudo -->
+                        <div class="input-group mb-3">
+                            <!-- Logo bonhomme -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">perm_identity</i></span>
+                            </div>
+                            <!-- Input pseudo -->
+                            <input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
+                        </div>
+                        <!-- Email -->
+                        <div class="input-group mb-3">
+                            <!-- Logo email -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">alternate_email</i></span>
+                            </div>
+                            <!-- Input email -->
+                            <input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
+                            <button type="submit" class="login btn btn-danger">Valider</button>
+                        </div>
+                    </form>
                     <!-- Formulaire confirmation -->
                     <form id="confirmation" style="display:none">
                         <!-- Code confirmation -->
@@ -310,7 +319,7 @@
 
 <div class="container-fluid" id="board" style="display:none">
     <!-- Menu de jeu -->
-	<img id="fond" src="images/fond.png">
+    <img id="fond" src="images/fond.png">
     <div class="row playingCards fourColours" style="height: 100%;">
         <!-- Colonne 1 -->
         <div class="col-sm-2">
@@ -454,7 +463,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="playerArea" id="info"><p>A VOTRE TOUR</p></div>
+            <div class="playerArea" id="info">
+              <p id="infosMsg1"></p>
+              <p id="infosMsg2"></p>
+            </div>
             <!-- Joueur principal -->
             <div class="playerArea" id="mainPlayer">
                 <!-- Pseudo -->
@@ -586,41 +598,41 @@
                 <div class="col-sm-12">
                     <!-- Menu de jeu -->
                     <div id="ingameMenu">
-                        <input value="Accueil" class="btn btn-primary">
-                        <input value="Règles" class="btn btn-primary">
-								<!-- Style de cartes -->
-						<div class="input-group mb-3">
-							<!-- Texte style de cartes -->
-							<div class="input-group-prepend">
+                        <input type="button" id="accueilBtn" value="Accueil" class="btn btn-primary">
+                        <input type="button" id="reglesBtn" value="Règles" class="btn btn-primary">
+                        <!-- Style de cartes -->
+                        <div class="input-group mb-3">
+                            <!-- Texte style de cartes -->
+                            <div class="input-group-prepend">
 								<span class="input-group-text">
 								  Style de cartes
 								</span>
-							</div>
-							<!-- Choix style de cartes -->
-							<select class="form-control" id="cardBack">
-								<option value="red" selected>Rouge</option>
-								<option value="blue">Bleu</option>
-								<option value="gray">Gris</option>
-								<option value="green">Vert</option>
-								<option value="purple">Violet</option>
-								<option value="yellow">Jaune</option>
-							</select>
-						</div>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <select class="form-control" id="cardBack">
+                                <option value="red" selected>Rouge</option>
+                                <option value="blue">Bleu</option>
+                                <option value="gray">Gris</option>
+                                <option value="green">Vert</option>
+                                <option value="purple">Violet</option>
+                                <option value="yellow">Jaune</option>
+                            </select>
+                        </div>
                         <br>
                         <!-- Rotation des cartes en main -->
-						<div class="input-group mb-3">
-							<!-- Texte rotation cartes -->
-							<div class="input-group-prepend">
+                        <div class="input-group mb-3">
+                            <!-- Texte rotation cartes -->
+                            <div class="input-group-prepend">
 								<span class="input-group-text">
 								  Rotation cartes
 								</span>
-							</div>
-							<!-- Choix style de cartes -->
-							<label class="switch">
-							  <input id="rotation" type="checkbox">
-							  <span class="slider round"></span>
-							</label>
-						</div>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <label class="switch">
+                                <input id="rotation" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
                     <div class="panel panel-default" id="chat"><!--style="display:none">-->
                         <div class="panel-heading top-bar">
@@ -646,6 +658,38 @@
             </div>
         </div>
     </div>
+	<div id="regles">
+		<p><br><b>Objectif d'une partie</b><br><br>
+		L'objectif d'une partie de blitz est de se débarrasser d'un maximum de cartes afin d'avoir un minimum de points lorsque 
+		la partie se termine, ce qui arrive lorsque une main d'un des joueurs où que le paquet de cartes est vide.
+
+		<br><br><b>Déroulement d'une partie</b><br><br>
+		
+		Une partie se déroule en plusieurs étapes, et se joue au tour par tour entre chaque joueurs. En premier lieu, et ce après
+		avoir distribué les cartes, une première période de défausse est entamée, cette dernière durant 5 secondes. Pendant ce laps 
+		de temps, les joueurs ayant dans leur jeu une carte d'une valeur similaire à celle sur le haut de la défausse peuvent s'en 
+		débarrasser. Cela étant, il verront leurs scores s’alourdir de 5 unités en cas d'erreur.
+		<br><br>
+		Vient ensuite le tour du premier joueur qui a deux choix potentiels : piocher la première carte de la défausse ou du paquet. 
+		Une fois cette action réalisée, il a de nouveau deux choix qui s'offrent à lui : défausser cette carte ou la mettre dans son 
+		jeu à la place d'une de ses cartes qui sera alors défaussée.
+		Lorsqu'une carte est défaussée, il se peut qu'un pouvoir soit activé, ces derniers étant au nombre de 2 :
+			- Les cartes 7 et 8 : elles permettent de voir la valeur d'une carte de sa main ou de la main d'un autre joueur
+			- Le valet : il permet d'échanger la position de deux cartes, qu'elles soient dans la main du joueur qui active le pouvoir ou dans
+            la main d'un autre joueur
+		<br><br>
+		A la fin de la partie, les points sont comptés, et en cas d'égalité, le nombre de cartes permet de départager les joueurs, celui en 
+		ayant le moins étant logiquement le mieux placé.
+		<br><br><b>
+		Pour ce qui est des points, vous pouvez retrouver la valeur des cartes ci-dessous :<br>
+			<b>- De 1 à 10 : autant de points que la valeur de la carte (1 pour l'as, 2 pour la carte deux de cœur ...)<br>
+			- Valet et Dame : ces deux cartes valent 10 points<br>
+			- Roi rouge : cette carte est spéciale car elle ne vaut pas de points (0 points)<br>
+			- Roi noir : débarrassez-vous rapidement de cette carte qui vaut 15 points !<br></b>
+		</p>
+	</div>
+	<div id="scores">
+	</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -659,7 +703,7 @@
     var rejoindreDisplayed = false; // état du menu des parties en cours
     var confirmationDisplayed = false;
     var updateDisplayed = false;
-	var mdpoublieDisplayed = false;
+    var mdpoublieDisplayed = false;
 
     var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
@@ -681,7 +725,7 @@
     var pseudos;
 
     var cardBackStyle = "red_back.png";
-	var canChangeStyle = false;
+    var canChangeStyle = false;
 
 
     /*
@@ -732,7 +776,7 @@
                     if (inscriptionDisplayed) {
                         displayMenu("inscription");
                     }
-					if (mdpoublieDisplayed) {
+                    if (mdpoublieDisplayed) {
                         displayMenu("mdpoublie");
                     }
 
@@ -750,7 +794,7 @@
                     if (connexionDisplayed) {
                         displayMenu("connexion");
                     }
-					if (mdpoublieDisplayed) {
+                    if (mdpoublieDisplayed) {
                         displayMenu("mdpoublie");
                     }
 
@@ -762,13 +806,13 @@
                     inscriptionDisplayed = false;
                 }
                 break;
-				
-			case "mdpoublie":
+
+            case "mdpoublie":
                 if (!mdpoublieDisplayed) {
                     if (connexionDisplayed) {
                         displayMenu("connexion");
                     }
-					if (inscriptionDisplayed) {
+                    if (inscriptionDisplayed) {
                         displayMenu("inscription");
                     }
                     $("#mdpoublie").show();
@@ -984,17 +1028,6 @@
 
     */
 
-    function fadeInPseudosLoop(pseudos, nbToAdd) {
-        pseudos.forEach(function(pseudo, index) {
-            fadeInPseudo(pseudo, 1, "#player" + (index + nbToAdd).toString() + " p");
-        });
-    }
-
-
-    /*
-
-    */
-
     function dealOtherCards(numPlayer, index) {
         var src = "/images/cards/";
         var li = $('<li />');
@@ -1039,7 +1072,7 @@
           src = "/images/cards/" + hand[index] + ".png";
       }
       else {
-          src = "/images/cards/" + cardBackStyle;
+          src = "/images/cards/red_back.png";
       }
 
       var cardImg = $('<img />');
@@ -1054,17 +1087,6 @@
               dealMyCards(hand, index + 1);
           }, 1000)
       }
-    }
-
-
-    /*
-
-    */
-
-    function dealCardsLoop(startIndex, nbPlayers) {
-        for (var i = 0; i < nbPlayers; i++) {
-            dealOtherCards(i + startIndex, 0);
-        }
     }
 
 
@@ -1097,7 +1119,7 @@
 
     */
 
-function startGame(pseudos, hand, nbPlayers, cardsTas) {
+    function startGame(pseudos, hand, nbPlayers, cardsTas) {
         setPioche();
         setTas(cardsTas);
         fadeInPseudo(pseudo, 1, "#mainPlayer p");
@@ -1159,27 +1181,6 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
 
     */
 
-    function powerValet() {
-        console.log("valet");
-    }
-
-
-    /*
-
-    */
-
-    function power78() {
-        /* var playerPseudo = getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1, 1));
-        socket.emit("askCardValue", { gameName: actualGameName,
-                                      pseudo: playerPseudo,
-                                      index: li.index() }); */
-    }
-
-
-    /*
-
-    */
-
     function getCardName(card) {
         return card.substring(0, card.length - 1);
     }
@@ -1222,11 +1223,10 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
                     hasPower = false;
 
                     setTimeout(function() {
-                        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
                         isDiscardTime = true;
 
                         socket.emit("nextPlayer", actualGameName);
-                    }, 1000);
+                    }, 3000);
                 }
                 else {
                     cardPower11 = { pseudo: pseudoToSend,
@@ -1275,7 +1275,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
 
                     socket.emit("handModified", { gameName: actualGameName,
                                                   cardIndex: li.index(),
-                                                  cardToPut: $(this).data("cardName") });
+                                                  cardToPut: cardDrawn });
 
                     socket.emit('depositeOnTas', { gameName: actualGameName,
                                                    cardToPut: $(this).data("cardName") });
@@ -1283,28 +1283,37 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
                     $(this).data("cardName", cardDrawn);
                 }
 
-                switch (getCardName(tas[tas.length - 1])) {
-                  case "7":
-                  case "8":
-                    hasPower = true;
-                    power = 78;
-                    break;
+                setTimeout(function() {
+                  switch (getCardName(tas[tas.length - 1])) {
+                    case "7":
+                    case "8":
+                      hasPower = true;
+                      power = 78;
 
-                  case "11":
-                    hasPower = true;
-                    power = 11;
-                    break;
-                }
+                      $("#infosMsg1", "Utilisez le pouvoir de votre carte pour regarder une des cartes retournée !");
+                      socket.broadcast.emit("infosMsg2", "Regarde une carte retournée (pouvoir 7/8)");
 
-                hasDrawnCard = false;
-                hisMyTurn = false;
+                      break;
 
-                if (!hasPower)  {
-                    appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
-                    isDiscardTime = true;
+                    case "11":
+                      hasPower = true;
+                      power = 11;
 
-                    socket.emit("nextPlayer", actualGameName);
-                }
+                      $("#infosMsg1", "Utilisez le pouvoir de votre carte pour échangez les positions de deux cartes !");
+                      socket.broadcast.emit("infosMsg2", "Échange les positions de deux cartes (pouvoir 11)");
+
+                      break;
+                  }
+
+                  hasDrawnCard = false;
+                  hisMyTurn = false;
+
+                  if (!hasPower)  {
+                      isDiscardTime = true;
+
+                      socket.emit("nextPlayer", actualGameName);
+                  }
+                }, 1000)
             }
             else if (idClicked == undefined) {
                 hasDrawnCard = true;
@@ -1334,18 +1343,36 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
     */
 
     function getPseudoWithPlayerNumber (playerNumber) {
-        console.log("playerNumber : " + playerNumber);
         switch (pseudos.length) {
           case 1:
+            return pseudos[playerNumber - 3];
+            break;
+
           case 2:
+            if (playerNumber == 2) {
+                return pseudos[0];
+            }
+            else {
+                return pseudos[1];
+            }
+
+            break;
+
           case 3:
-            console.log("1 : " + pseudos[playerNumber - 2]);
             return pseudos[playerNumber - 2];
             break;
 
         case 4:
+            if (playerNumber == 1 || playerNumber == 2) {
+                return pseudos[playerNumber - 1];
+            }
+            else {
+                return pseudos[playerNumber - 2];
+            }
+
+            break;
+
         case 5:
-            console.log("2 : " + pseudos[playerNumber - 1]);
             return pseudos[playerNumber - 1];
             break;
         }
@@ -1392,7 +1419,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
             return index + 1;
             break;
         }
-    } 
+    }
 
     /*
         --------------- LISTEN EVENTS ---------------
@@ -1462,6 +1489,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
     })
 
 
+
     /*
 
     */
@@ -1476,7 +1504,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
         $("#updateBtn").show();
-		$("#decoBtn").show();
+        $("#decoBtn").show();
 
         displayMenu("connexion");
         if(confirmed == false){
@@ -1484,48 +1512,49 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
             displayMenu("confirmation");
         }
         $('#btnsInscrCo').hide();
-		$.notify("Vous êtes connecté, bienvenue !", "success");
+        $.notify("Vous êtes connecté, bienvenue !", "success");
     });
 
 
     /*
 
-    */
+*/
 
     socket.on('confirmationOK', function() {
         displayMenu("confirmation");
         $('#formBtnsMenu').show();
-		$.notify("Compte confirmé, bienvenue !", "success");
+        $.notify("Compte confirmé, bienvenue !", "success");
     });
-	
-	/*
+
+    /*
 
     */
 
     socket.on('mdpChange', function() {
         $("#mdpoublie").hide();
-		$.notify("Un mail contenant le nouveau mot de passe a été envoyé !", "success");
-		$('#mdpoublie')[0].reset();  
+        $.notify("Un mail contenant le nouveau mot de passe a été envoyé !", "success");
+        $('#mdpoublie')[0].reset();
     });
-	
-	/*
-	
-	*/
-	
-	socket.on('newMdpOk', function() {
+
+    /*
+
+    */
+
+    socket.on('newMdpOk', function() {
         displayMenu("updatePwd");
-		$.notify("Mot de passe mis à jour !", "success");
-		$('#newPwd')[0].reset();  
+        $.notify("Mot de passe mis à jour !", "success");
+        $('#newPwd')[0].reset();
     });
-	
-	/*
-	
-	*/
-	
-	socket.on('newMdpIncorrect', function(message) {
-		$.notify(message, "warn");
-		$('#newPwd')[0].reset();  
+
+    /*
+
+    */
+
+    socket.on('newMdpIncorrect', function(message) {
+        $.notify(message, "warn");
+        $('#newPwd')[0].reset();
     });
+
 
     /*
 
@@ -1554,7 +1583,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
             var imgList = $("#mainPlayer ul .card img");
 
             for (var img of imgList) {
-              img.src = "/images/cards/" + cardBackStyle;
+                img.src = "/images/cards/" + cardBackStyle;
             }
 
             $("#mainPlayer ul").fadeIn();
@@ -1567,7 +1596,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
     */
 
     socket.on('yourTurn', function() {
-        appendMessage("<p><b>C'EST TON TOUR DE JOUER !</b></p>");
+        $("#infosMsg1").html("C'EST TON TOUR DE JOUER !");
         hisMyTurn = true;
     });
 
@@ -1616,7 +1645,8 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
     */
 
     socket.on("discardTime", function() {
-        appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
+        $("#infosMsg1").html("DÉFAUSSEZ VOS CARTES !");
+
         isDiscardTime = true;
     });
 
@@ -1626,7 +1656,9 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
     */
 
     socket.on("endDiscardTime", function() {
-        appendMessage("<p><b>Fin de la période de défausse, place au joueur suivant !</p></b>");
+        $("#infosMsg1").html("");
+        $("#infosMsg2").html("");
+
         isDiscardTime = false;
     });
 
@@ -1654,11 +1686,10 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
             hasPower = false;
 
             setTimeout(function() {
-                appendMessage("<p><b>Vous avez 6 secondes pour défausser de potentielles cartes !</p></b>");
                 isDiscardTime = true;
 
                 socket.emit("nextPlayer", actualGameName);
-            }, 1000);
+            }, 3000);
         }, 3000);
     });
 
@@ -1669,7 +1700,7 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
 
     socket.on("modifyCard", function(data) {
         var aList = $("#mainPlayer div ul a");
-        var a = imgList[data.cardIndex];
+        var a = aList[data.cardIndex];
 
         $(a).data("cardName", data.cardName);
     });
@@ -1681,6 +1712,24 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
 
     socket.on("deckEmpty", function(data) {
         $("#pioche").hide();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg1", function(msg) {
+        $("#infosMsg1").html(msg);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg2", function(msg) {
+        $("#infosMsg2").html(msg);
     });
 
 
@@ -1788,12 +1837,12 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
                 password : $('#pwd').val() });
 
             displayMenu("inscription");
-            $('#inscription')[0].reset();  
-			$.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
+            $('#inscription')[0].reset();
+            $.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
         }
         else {
             $.notify("Les mots de passes sont différents !", "warn");
-			$('#inscription')[0].reset();  
+            $('#inscription')[0].reset();
         }
 
         return false;
@@ -1834,18 +1883,10 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
 
         return false;
     });
-	
-	/*
-
-    */
 
     $("#btnMdpOublie").click(function(e) {
         displayMenu("mdpoublie");
     });
-	
-	/*
-
-    */
 
     $("#newPwd").submit(function() {
         if ($('#newpassword').val() == $('#confirmationnewpwd').val()) {
@@ -1857,67 +1898,109 @@ function startGame(pseudos, hand, nbPlayers, cardsTas) {
         }
         else {
             $.notify("Les mots de passes sont différents !", "warn");
-			$('#newPwd')[0].reset();  
         }
         return false;
     });
-	
-	/*
+
+
+    /*
 
     */
 
-	var isRotated = false;
-	$("#rotation").click(function() {
-		if(!isRotated){
-			$("#board").children(":nth-child(2)").addClass("rotateHand");
-			isRotated = true;
-		} else{
-			$("#board").children(":nth-child(2)").removeClass("rotateHand");
-			isRotated = false;
-		}
+    var isRotated = false;
+    $("#rotation").click(function() {
+        if(!isRotated){
+            $("#board").children(":nth-child(2)").addClass("rotateHand");
+            isRotated = true;
+        } else{
+            $("#board").children(":nth-child(2)").removeClass("rotateHand");
+            isRotated = false;
+        }
     });
 
-	/*
+    /*
 
-    */
+*/
 
-	$("#cardBack").change(function() {
-		if(canChangeStyle){
-			cardBackStyle = $('#cardBack').val() + "_back.png"
-			socket.emit('cardBack', {
-					cardBack: cardBackStyle,
-					pseudo: pseudo
-			});
-		}else{
-			$.notify("Attendre la fin de la distribution des cartes!", "warn");
-		}
-	});
-	
-	socket.on("changeCardBack", function(data){
-		var idPlayer;
-		
+    $("#cardBack").change(function() {
+        if(canChangeStyle){
+            cardBackStyle = $('#cardBack').val() + "_back.png"
+            socket.emit('cardBack', {
+                cardBack: cardBackStyle,
+                pseudo: pseudo
+            });
+        }else{
+            $.notify("Attendre la fin de la distribution des cartes!", "warn");
+        }
+    });
+
+    socket.on("changeCardBack", function(data){
+        var idPlayer;
+
         if (data.pseudo == pseudo) {
             idPlayer = "#mainPlayer";
         }
         else {
             idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
         }
-		
-		var imgList = $(idPlayer + " div ul img");
-		
-		for(var img of imgList){
-			img.src = "/images/cards/" + data.cardBack;
+
+        var imgList = $(idPlayer + " div ul img");
+
+        for(var img of imgList){
+            img.src = "/images/cards/" + data.cardBack;
+        }
+    });
+	
+	$("#accueilBtn").click(function(){
+		location.reload();
+	});
+	
+	var reglesDisplayed = false;
+	$("#reglesBtn").click(function(){
+		if(!reglesDisplayed){
+			$("#regles").show();
+			reglesDisplayed = true;
+		} else {
+			$("#regles").hide();
+			reglesDisplayed = false;
 		}
 	});
+	
+	socket.on("generalScore",function () {
+        var sql = "SELECT * FROM Score ORDER BY Points LIMIT 5";
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            socket.broadcast.emit("scoreResult",result);
+        });
+    });
+	
+	function appendScoreGame (pos,  pseudo, score, ratio) {
+        let tr = $('<tr />').attr('id', pos);
+
+        let tdPlace= $('<td />');
+        tr.append(tdPlace.html(pos));
+
+        let tdNomJ= $('<td />');
+        tr.append(tdNomJ.html(pseudo));
+
+		let tdScoreJ= $('<td />');
+        tr.append(tdScoreJ.html(score));
+
+        let tdVictoiresJ= $('<td />');
+        tr.append(tdVictoiresJ.html(ratio));
+
+        $('#classement').append(tr);
+    };
+
+	socket.on("scoreResult",function (data) {
+        for (var i = 0; i<data.length; i++){
+            appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
+        }
+    });
 </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
