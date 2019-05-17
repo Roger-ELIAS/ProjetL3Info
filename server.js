@@ -33,8 +33,8 @@ var gamesList = {}; // { gameName : { hasStarted: false, timeouts: [], packet: [
 var transporter = nodemailer.createTransport({
     service: 'outlook',
     auth: {
-        user: 'jeudecartel3@outlook.fr',
-        pass: 'projetl3'
+        user: 'cardsl3@laposte.net',
+        pass: 'projetL3'
     }
 });
 
@@ -74,8 +74,8 @@ var updatePwd = function(username,mail,rand,send){
             var mailOptions = {
                 from: 'jeudecartel3@outlook.fr',
                 to: mail,
-                subject: "CARDS, verification email",
-                html : "Bienvenue sur CARDS,<br> Votre nouveau mdp est <br><p><b>" + rand + "</b></p> veuillez le saisir site lors de votre prochaine connexion pour confirmer votre compte."
+                subject: "CARDS, mot de passe oublié",
+                html : "Bonjour,<br> Votre nouveau mot de passe est <br><p><b>" + rand + "</b></p> veuillez le saisir sur le site lors de votre prochaine connexion. <br> Une fois connecté, vous pourrez le modifier en allant dans \"Modifier mot de passe\"."
             };
             transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -190,7 +190,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName] = { isFinished: false, hasStarted: false, turnNumber: 1, timeouts: [], packet: [], tas: [], nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: {} };
-        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { isGuest : data.isGuest, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         newGame = { gameName: data.gameName, nbPlayersMax: data.nbPlayersMax };
         socket.broadcast.emit('newGame', newGame)
@@ -205,7 +205,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName].nbPlayers += 1;
-        gamesList[data.gameName].players[socket.pseudo] = { playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { isGuest : data.isGuest, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         var message = "<p>Le joueur <b>" +
             data.pseudo +
@@ -673,13 +673,16 @@ io.sockets.on('connection', function (socket) {
             var pointsToAdd = 1;
             var points = 0;
             var win =0;
-            console.log(arrayPlayers);
+			socket.emit("tableauScore", arrayPlayers);
+			socket.broadcast.emit("tableauScore", arrayPlayers);
             for (i = arrayPlayers.length -1 ; i >= 0; i--) {
-                if(i == 0)
-                    win = 1;
-                updatePoints(points + pointsToAdd, arrayPlayers[i].pseudo,win);
-                points = points + pointsToAdd;
-                pointsToAdd += 1;
+				if(!gamesList[gameName].players[arrayPlayers[i].pseudo].isGuest){
+					if(i == 0)
+						win = 1;
+					updatePoints(points + pointsToAdd, arrayPlayers[i].pseudo,win);
+				}
+				points = points + pointsToAdd;
+				pointsToAdd += 1;
             }
         }
         else {
