@@ -90,8 +90,28 @@ var updatePwd = function(username,mail,rand,send){
 };
 
 
-io.sockets.on('connection', function (socket) {
+/*
 
+*/
+
+var emitToLobby = function(players, eventName, content, socket) {
+      if (content == "nothing") {
+          for (var playerName in players) {
+              if (players[playerName].isConnected && playerName !== socket.pseudo) {
+                  players[playerName].playerSocket.emit(eventName);
+              }
+          }
+      }
+      else {
+        for (var playerName in players) {
+            if (players[playerName].isConnected && playerName !== socket.pseudo) {
+                players[playerName].playerSocket.emit(eventName, content);
+            }
+        }
+      }
+}
+
+io.sockets.on('connection', function (socket) {
 
     /*
 
@@ -116,7 +136,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName] = { isFinished: false, hasStarted: false, turnNumber: 1, timeouts: [], packet: [], tas: [], nbPlayers: 1, nbPlayersMax: data.nbPlayersMax, players: {} };
-        gamesList[data.gameName].players[socket.pseudo] = { hasBlitzed: false, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { isConnected: true, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         newGame = { gameName: data.gameName, nbPlayersMax: data.nbPlayersMax };
         socket.broadcast.emit('newGame', newGame)
@@ -131,7 +151,7 @@ io.sockets.on('connection', function (socket) {
         socket.pseudo = data.pseudo; // temporaire, penser à le modifier
 
         gamesList[data.gameName].nbPlayers += 1;
-        gamesList[data.gameName].players[socket.pseudo] = { hasBlitzed: false, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
+        gamesList[data.gameName].players[socket.pseudo] = { isConnected: true, playerSocket: socket, playerHand: [], hisTurn: false, points: 0 }
 
         var message = "<p>Le joueur <b>" +
             data.pseudo +
@@ -152,7 +172,7 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('updateGame', gameUpdated);
 
         if (gamesList[data.gameName].nbPlayers == gamesList[data.gameName].nbPlayersMax) {
-            gameFunctions.startGame(socket, 10, gamesList[data.gameName]);
+            gameFunctions.startGame(socket, 10, gamesList[data.gameName], gamesList[data.gameName].players);
 
             gamesList[data.gameName].timeouts.push(setTimeout(function() {
               gamesList[data.gameName].hasStarted = true;
@@ -169,18 +189,23 @@ io.sockets.on('connection', function (socket) {
               }
 
               setTimeout(function() {
-                gameFunctions.startTimerMemorization(socket);
+                gameFunctions.startTimerMemorization(socket, gamesList[data.gameName].players);
 
                 setTimeout(function() {
-                    gameFunctions.discardTime(socket);
+                    gameFunctions.discardTime(socket, gamesList[data.gameName].players);
 
                     setTimeout(function() {
+                        emitToLobby(gamesList[data.gameName].players, "endDiscardTime", "nothing", socket);
                         socket.emit("endDiscardTime");
-                        socket.broadcast.emit("endDiscardTime");
 
                         gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].hisTurn = true;
                         gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
-                        gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
+
+                        for (var playerName in gamesList[data.gameName].players) {
+                            if (playerName !== Object.keys(gamesList[data.gameName].players)[0] && gamesList[data.gameName].players[playerName].isConnected) {
+                                gamesList[data.gameName].players[playerName].playerSocket.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
+                            }
+                        }
                     }, 6500);
                 }, 14000);
               }, 5050);
@@ -312,29 +337,34 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('disconnect', function() {
-      console.log('Got disconnect!');
-
       if (socket.pseudo !== undefined) {
           for (var game in gamesList) {
               for (var player in gamesList[game].players) {
                   if (player == socket.pseudo) {
                       if (gamesList[game].nbPlayers < gamesList[game].nbPlayersMax) {
                           gamesList[game].nbPlayers -= 1;
-                          var message = "<p>Le joueur <b>" +
-                                        socket.pseudo +
-                                        "</b> vient de se déconnecter !  <b>" +
-                                        gamesList[game].nbPlayers +
-                                        "/" + gamesList[game].nbPlayersMax + "</b></p>";
 
-                          gameUpdated = { gameName: game,
-                                          nbPlayers: gamesList[game].nbPlayers,
-                                          nbPlayersMax: gamesList[game].nbPlayersMax };
+                          if (gamesList[game].nbPlayers == 0) {
+                              gamesList[game].delete;
+                              socket.broadcast.emit("deleteGame", game);
+                          }
+                          else {
+                            var message = "<p>Le joueur <b>" +
+                                          socket.pseudo +
+                                          "</b> vient de se déconnecter !  <b>" +
+                                          gamesList[game].nbPlayers +
+                                          "/" + gamesList[game].nbPlayersMax + "</b></p>";
 
-                          for (var player in gamesList[game].players) {
-                              if (player != socket.pseudo) {
-                                  gamesList[game].players[player].playerSocket.emit("newMessage", message);
-                                  gamesList[game].players[player].playerSocket.emit('updateGame', gameUpdated);
-                              }
+                            gameUpdated = { gameName: game,
+                                            nbPlayers: gamesList[game].nbPlayers,
+                                            nbPlayersMax: gamesList[game].nbPlayersMax };
+
+                            for (var player in gamesList[game].players) {
+                                if (player != socket.pseudo) {
+                                    gamesList[game].players[player].playerSocket.emit("newMessage", message);
+                                    gamesList[game].players[player].playerSocket.emit('updateGame', gameUpdated);
+                                }
+                            }
                           }
                       }
                       else if (!gamesList[game].hasStarted) {
@@ -362,7 +392,23 @@ io.sockets.on('connection', function (socket) {
                         }
                       }
                       else {
-                          // gérer la déconnexion en cours de partie
+                          var playersConnected = [];
+                          gamesList[game].players[socket.pseudo].isConnected = false;
+
+                          gamesList[game].players.forEach(function(p) {
+                              if (p.isConnected) {
+                                  playersConnected.push({ pseudo: p.pseudo, socket: p.playerSocket });
+                              }
+                          });
+
+                          if (playersConnected.length < 2) {
+                              playersConnected[0].socket.emit("notEnoughPlayers");
+                          }
+                          else {
+                              playersConnected.forEach(function(p) {
+                                  p.socket.emit("newMessage", "<p>Le joueur " + socket.pseudo + " a quitté la partie ...");
+                              })
+                          }
                       }
                   }
               }
@@ -451,13 +497,32 @@ io.sockets.on('connection', function (socket) {
                                         cardIndex: data.index,
                                         pseudo: data.pseudo });
 
+        var infosMsg;
+
         if (data.pseudo == socket.pseudo) {
-            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de sa main");
+            if (gamesList[data.gameName].players[data.pseudo].playerHand.length == 1) {
+                infosMsg = "A regardé sa carte";
+            }
+            else if (data.index == 0) {
+                infosMsg = "A regardé la première carte de sa main";
+            }
+            else {
+                infosMsg = "A regardé la " + (data.index + 1).toString() + "ème carte de sa main";
+            }
         }
         else {
-            socket.broadcast.emit("infosMsg2", "A regardé la " + data.index + "ème carte de " + data.pseudo); 
+            if (gamesList[data.gameName].players[data.pseudo].playerHand.length == 1) {
+                infosMsg = "A regardé la carte de " + data.pseudo;
+            }
+            else if (data.index == 0) {
+                infosMsg = "A regardé la première carte de " + data.pseudo;
+            }
+            else {
+                infosMsg = "A regardé la " + (data.index + 1).toString() + "ème carte de " + data.pseudo;
+            }
         }
 
+        emitToLobby(gamesList[data.gameName].players, "infosMsg2", infosMsg, socket);
     });
 
 
@@ -473,7 +538,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         socket.emit("cardDrawn", card);
-        socket.broadcast.emit("infosMsg2", "A pioché une carte du paquet");
+        emitToLobby(gamesList[gameName].players, "infosMsg2", "A pioché une carte du paquet", socket);
     });
 
 
@@ -483,8 +548,8 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('drawTas',function (gameName) {
         gamesList[gameName].tas.pop();
-        socket.broadcast.emit('updateTas', gamesList[gameName].tas);
-        socket.broadcast.emit("infosMsg2", "A pioché une carte de la défausse");
+        emitToLobby(gamesList[gameName].players, "updateTas", gamesList[gameName].tas, socket);
+        emitToLobby(gamesList[gameName].players, "infosMsg2", "A pioché une carte de la défausse", socket);
     });
 
 
@@ -498,20 +563,6 @@ io.sockets.on('connection', function (socket) {
     });
 
 
-    /* var getCardName = function(card) {
-        var cardName;
-
-        if (card.length == 3) {
-            cardName = card.substring(0, 2);
-        }
-        else {
-            cardName = card.substring(0, 1);
-        }
-
-        return cardName;
-    } */
-
-
     /*
 
     */
@@ -519,12 +570,11 @@ io.sockets.on('connection', function (socket) {
     socket.on('depositeOnTas', function (data) {
         gamesList[data.gameName].tas.push(data.cardToPut);
 
-        socket.broadcast.emit("updateTas", gamesList[data.gameName].tas);
-        socket.broadcast.emit("infosMsg2", "A défaussé la carte piochée");
+        emitToLobby(gamesList[data.gameName].players, "updateTas", gamesList[data.gameName].tas, socket);
 
         if (gamesList[data.gameName].packet.length == 0) {
             socket.emit("deckEmpty");
-            socket.broadcast.emit("deckEmpty");
+            emitToLobby(gamesList[data.gameName].players, "deckEmpty", "nothing", socket);
         }
     });
 
@@ -538,8 +588,8 @@ io.sockets.on('connection', function (socket) {
         gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] = gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2];
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
 
-        socket.broadcast.emit("infosMsg2", "Carte " + (data.index1 + 1).toString() + " de " + data.pseudo1 +
-                              "changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2);
+        emitToLobby(gamesList[data.gameName].players, "infosMsg2", "Carte " + (data.index1 + 1).toString() + " de " + data.pseudo1 +
+                                                                                 "changée avec carte " + (data.index2 + 1).toString() + " de " + data.pseudo2, socket);
 
         gamesList[data.gameName].players[data.pseudo1].playerSocket.emit("modifyCard", { cardIndex: data.index1,
                                                                                          cardName: gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] });
@@ -581,11 +631,11 @@ io.sockets.on('connection', function (socket) {
           if (indexPlayer == players.length - 1) {
               gamesList[gameName].turnNumber += 1;
               gamesList[gameName].players[players[0]].playerSocket.emit("yourTurn");
-              gamesList[gameName].players[players[0]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[0]);
+              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[0], socket);
           }
           else {
               gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.emit("yourTurn");
-              gamesList[gameName].players[players[indexPlayer + 1]].playerSocket.broadcast.emit("infosMsg1", "Tour de " + players[indexPlayer + 1]);
+              emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[indexPlayer + 1], socket);
           }
         }
       }, 5800);
@@ -598,7 +648,20 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("handModified", function(data) {
         gamesList[data.gameName].players[socket.pseudo].playerHand[data.cardIndex] = data.cardToPut;
-        socket.broadcast.emit("infosMsg2", "A pris la carte piochée à la place de sa " + data.cardIndex.toString() + "ème carte");
+
+        var infosMsg;
+
+        if (gamesList[data.gameName].players[socket.pseudo].playerHand.length == 1) {
+            infosMsg = "A pris la carte piochée à la place de sa carte";
+        }
+        else if (data.cardIndex == 0) {
+            infosMsg = "A pris la carte piochée à la place de sa première carte";
+        }
+        else {
+            infosMsg = "A pris la carte piochée à la place de sa " + (data.cardIndex + 1).toString() + "ème carte";
+        }
+
+        emitToLobby(gamesList[data.gameName].players, "infosMsg2", infosMsg, socket);
     });
 
 
@@ -622,8 +685,8 @@ io.sockets.on('connection', function (socket) {
 
     */
 
-    socket.on("infosMsg2", function(msg) {
-      socket.broadcast.emit("infosMsg2", msg);
+    socket.on("infosMsg2", function(data) {
+      emitToLobby(gamesList[data.gameName].players, "infosMsg2", data.msg, socket);
     });
 
     /*
@@ -632,6 +695,7 @@ io.sockets.on('connection', function (socket) {
     socket.on("cardBack", function(data) {
         socket.broadcast.emit("changeCardBack", {pseudo: data.pseudo,
             cardBack: data.cardBack});
+
         socket.emit("changeCardBack", {pseudo: data.pseudo,
             cardBack: data.cardBack});
     });
