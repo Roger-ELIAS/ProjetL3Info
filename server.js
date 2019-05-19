@@ -256,7 +256,7 @@ io.sockets.on('connection', function (socket) {
                         gamesList[data.gameName].players[Object.keys(gamesList[data.gameName].players)[0]].playerSocket.emit("yourTurn");
 
                         for (var playerName in gamesList[data.gameName].players) {
-                            if (playerName !== Object.keys(gamesList[data.gameName].players)[0] && gamesList[data.gameName].players[playerName].isConnected) {
+                            if (playerName !== Object.keys(gamesList[data.gameName].players)[0]) {
                                 gamesList[data.gameName].players[playerName].playerSocket.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
                             }
                         }
@@ -399,7 +399,7 @@ io.sockets.on('connection', function (socket) {
                           gamesList[game].nbPlayers -= 1;
 
                           if (gamesList[game].nbPlayers == 0) {
-                              gamesList[game].delete;
+                              delete gamesList[game];
                               socket.broadcast.emit("deleteGame", game);
                           }
                           else {
@@ -438,24 +438,35 @@ io.sockets.on('connection', function (socket) {
                                           nbPlayers: gamesList[game].nbPlayers,
                                           nbPlayersMax: gamesList[game].nbPlayersMax };
 
+                        socket.broadcast.emit('updateGame', gameUpdated);
+
                         for (var player in gamesList[game].players) {
                             if (player != socket.pseudo) {
                                 gamesList[game].players[player].playerSocket.emit("newMessage", message);
-                                gamesList[game].players[player].playerSocket.emit('updateGame', gameUpdated);
+                                gamesList[game].players[player].playerSocket.emit('infosMsg2', "");
+                                gamesList[game].players[player].playerSocket.emit('infosMsg1', "EN ATTENTE DE JOUEURS");
                             }
                         }
                       }
                       else {
+                          gamesList[game].packet.concat(gamesList[game].players[socket.pseudo].playerHand);
                           delete gamesList[game].players[socket.pseudo];
-                          var players = Object.keys(gamesList[game].players);
 
-                          if (players.length < 2) {
-                              gamesList[game].players[players[0]].playerSocket.emit("notEnoughPlayers");
-                              // delete game here
+                          if (Object.keys(gamesList[game].players).length == 0) {
+                              socket.broadcast.emit("deleteGame", game);
+                              delete gamesList[game];
+                          }
+                          else if (Object.keys(gamesList[game].players).length == 1) {
+                              gamesList[game].players[Object.keys(gamesList[game].players)[0]].playerSocket.emit("playerLeft", { pseudo: socket.pseudo,
+                                                                                                                                 isEndGame: true });
+
+                              socket.broadcast.emit("deleteGame", game);
+                              delete gamesList[game];
                           }
                           else {
-                              for (var p of players) {
-                                  gamesList[game].players[p].playerSocket.emit("playerLeft", socket.pseudo);
+                              for (var p of Object.keys(gamesList[game].players)) {
+                                  gamesList[game].players[p].playerSocket.emit("playerLeft", { pseudo: socket.pseudo,
+                                                                                               isEndGame: false });
                               }
                           }
                       }
@@ -757,6 +768,27 @@ io.sockets.on('connection', function (socket) {
 
         socket.emit("changeCardBack", {pseudo: data.pseudo,
             cardBack: data.cardBack});
+    });
+
+
+    /*
+
+     */
+
+    socket.on("cardDiscarded", function(data) {
+          var infosMsg;
+
+          if (gamesList[data.gameName].players[socket.pseudo].playerHand.length == 1) {
+              infosMsg = "<p>Le joueur <b>" + socket.pseudo + "</b> a défaussé sa dernière carte !</p>";
+          }
+          else if (data.cardIndex == 0) {
+              infosMsg = "<p>Le joueur <b>" + socket.pseudo + "</b> a défaussé sa première carte</p>";;
+          }
+          else {
+              infosMsg = "<p>Le joueur <b>" + socket.pseudo + "</b> a défaussé sa "  + (data.cardIndex + 1).toString() + "ème carte</p>";
+          }
+
+          emitToLobby(gamesList[data.gameName].players, "newMessage", infosMsg, socket);
     });
 });
 

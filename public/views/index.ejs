@@ -464,7 +464,7 @@
                 </div>
             </div>
             <div class="playerArea" id="info">
-              <p id="infosMsg1"></p>
+              <p id="infosMsg1">EN ATTENTE DE JOUEURS</p>
               <p id="infosMsg2"></p>
             </div>
             <!-- Joueur principal -->
@@ -1225,14 +1225,13 @@
           }
 
           hasDrawnCard = false;
-          hisMyTurn = false;
 
           if (!hasPower)  {
               isDiscardTime = true;
 
               socket.emit("nextPlayer", actualGameName);
           }
-        }, 3000);
+        }, 2500);
     }
 
 
@@ -1294,11 +1293,17 @@
                 $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
                 $("#cardTas").data("cardName", $(this).data("cardName"));
 
-                socket.emit("depositeOnTas", { indexCardToPut: li.index(),
-                                               cardToPut: $(this).data("cardName"),
-                                               gameName: actualGameName });
+                socket.emit("cardDiscarded", { gameName: actualGameName,
+                                               cardIndex: li.index() });
 
-                li.remove();
+                setTimeout(function() {
+                  socket.emit("depositeOnTas", { indexCardToPut: li.index(),
+                                                 cardToPut: $(this).data("cardName"),
+                                                 gameName: actualGameName });
+                  li.remove();                               
+                }, 50);
+
+
             }
             else {
                 appendMessage("<p><b> FAIL ! Les cartes ne sont pas identiques, 5 points en plus ajoutés à ton score ! </b></p>");
@@ -1322,7 +1327,7 @@
 
 
                     tas.push(cardDrawn);
-
+                    hisMyTurn = false;
                     searchForPower();
                 }
                 else if (idClicked == "mainPlayer") {
@@ -1341,7 +1346,7 @@
                                                    cardToPut: $(this).data("cardName") });
 
                     $(this).data("cardName", cardDrawn);
-
+                    hisMyTurn = false;
                     searchForPower();
                 }
             }
@@ -1484,7 +1489,7 @@
 
 
     /*
-        Évènement reçu lorsque des informations sur une parties doivent être modifiées,
+        Évènement reçu lorsque des informations sur une partie doivent être modifiées,
         lorsqu'un joueur s'est connecté à cette dernière.
 
         À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
@@ -1786,22 +1791,19 @@
 
     */
 
-    socket.on("playerLeft", function(player) {
-        appendMessage("<p>Le joueur <b>" + player + "</b> a quitté la partie ...");
-        var playerNumber = getPlayerNumberWithPseudo(player);
+    socket.on("playerLeft", function(data) {
+        appendMessage("<p>Le joueur <b>" + data.pseudo + "</b> a quitté la partie ...</p>");
+        var playerNumber = getPlayerNumberWithPseudo(data.pseudo);
         var idPlayer = "#player" + playerNumber.toString();
 
-        $(idPlayer + " p").html(player + " déconnecté");
+        $(idPlayer + " p").html(data.pseudo + " (déconnecté)");
         $(idPlayer + " li").remove();
-    });
 
-
-    /*
-
-    */
-
-    socket.on("notEnoughPlayers", function(msg) {
-
+        setTimeout(function() {
+          if (data.isEndGame) {
+             appendMessage("<p>Vous êtes le dernier joueur en ligne dans la partie, elle va s'arrêter d'ici quelques secondes ...</p>");
+          }
+        }, 500);
     });
 
 
