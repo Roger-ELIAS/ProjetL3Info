@@ -794,6 +794,63 @@ io.sockets.on('connection', function (socket) {
 
           emitToLobby(gamesList[data.gameName].players, "newMessage", infosMsg, socket);
     });
+
+    socket.on("newFriendRequest", function(data) {
+        var sql = "SELECT Username FROM User WHERE Username = \'" + data.targetedUser + "\'";
+        var usernameExists;
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            usernameExists = (result.length == 1);
+            if(usernameExists){
+                sql = "INSERT INTO FriendRequest (Username1, Username2) VALUES ('"
+                    + data.username + "', '" + data.targetedUser + "')";
+                con.query(sql, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        socket.emit("newAlertMessage", "Une demande a déjà été envoyée à cet utilisateur");
+                    }
+                    else
+                        socket.emit("newSucessMessage", "Demande envoyée à " + data.targetedUser);
+                });
+            }
+            else{
+                socket.emit("newAlertMessage", "L'utilisateur n'existe pas");
+            }
+        });
+    });
+
+    socket.on("friendRequestShowClick", function(pseudo){
+       var sql = "SELECT Username1 FROM FriendRequest WHERE Username2 = \'" + pseudo + "\'";
+       console.log(sql);
+       con.query(sql, function(err, result){
+          if(err) throw err;
+          socket.emit("friendRequestShowClickResponse", result);
+       });
+    });
+
+    socket.on("friendRequestAnswer", function(data){
+        var sql;
+        if(data.accept){
+            sql = "INSERT INTO Friends (Username1, Username2) VALUES ('" + data.Username1 + "', '" + data.Username2 + "')";
+            con.query(sql, function(err){
+               if(err) throw err;
+               else
+                   socket.emit("newSucessMessage", "Demande acceptée avec succès");
+            });
+        }
+        else
+            socket.emit("newSucessMessage", "Demande refusée avec succès");
+        sql = "DELETE FROM FriendRequest WHERE Username1 = '" + data.Username1 + "' AND Username2 ='" + data.Username2 + "'";
+        con.query(sql, function(err){
+            if(err) throw err;
+        });
+
+    });
+
+
+
+
 });
 
 server.listen(8080); // 8100,"0.0.0.0" - 8080

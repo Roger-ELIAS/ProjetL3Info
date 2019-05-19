@@ -16,6 +16,22 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div id="friendList">
+    <button id="friendListDisplayButton" type="submit" style="display:none">Users</button>
+    <br>
+    <div id="usersList" style="display:none">
+        <button id="friendDisplayButton" type="submit"> Friends </button>
+        <button id="worldDisplayButton" type="submit"> World </button>
+        <button id="friendRequestDisplayButton" type="submit"> Request </button>
+        <ul id="listOfElements">
+
+        </ul>
+        <form id="addFriendForm">
+        <input type="text" id="friendName" placeholder="Pseudo de l'ami à ajouter">
+        <button id="sendFriendRequestButton" type="submit"> Send </button>
+    </div>
+    </form>
+</div>
 <div class="container-fluid" id="menu">
     <div class="row" id="M" style="height: 100%;">
         <!-- Colonne principale gauche -->
@@ -714,6 +730,7 @@
     var confirmationDisplayed = false;
     var updateDisplayed = false;
     var mdpoublieDisplayed = false;
+    var friendListDisplay = 0;
 
     var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
 
@@ -1553,6 +1570,10 @@
         $.notify(message, "warn");
     })
 
+    socket.on('newSucessMessage', function(message){
+        $.notify(message, "success");
+    })
+
 
 
     /*
@@ -1565,6 +1586,8 @@
         isConnected = true;
 
         $("#inputPseudo").hide();
+
+        $("#friendListDisplayButton").show();
 
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
@@ -2117,6 +2140,61 @@
 			location.reload();
 		}, 10000);
 	});
+
+	$("#friendListDisplayButton").click(function() {
+        if(friendListDisplay%2==0){
+            $("#usersList").show();
+        }
+        else{
+            $("#usersList").hide();
+        }
+        ++friendListDisplay;
+    });
+
+    $("#addFriendForm").submit(function() {
+     if($("#friendName").val() == pseudo){
+        $.notify("Attention tu ne peux pas t'ajouter en ami", "warn");
+     }
+     else{
+        socket.emit("newFriendRequest", {
+        username: pseudo,
+        targetedUser: $('#friendName').val(),
+        });
+     }
+
+     return false;
+     });
+
+     $("#friendRequestDisplayButton").click(function(){
+        socket.emit("friendRequestShowClick", pseudo);
+        return false;
+     });
+
+
+
+     socket.on("friendRequestShowClickResponse", function(data){
+        data.forEach(function(element) {
+          $("#listOfElements").append('<li>'+ element.Username1 + '<span class="addFriend"> O </span> <span class="deleteFriend"> X </span> </li>');
+        });
+     });
+
+    $("#listOfElements").on('click','.addFriend', function(){
+        var liString = $(this).parent().text();
+        var targetedUser = liString.substring(0,liString.length-8);
+        socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : true });
+        $(this).parent().remove();
+        return false;
+    });
+
+    $("#listOfElements").on('click','.deleteFriend', function(){
+        var liString = $(this).parent().text();
+        var targetedUser = liString.substring(0,liString.length-8);
+        socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : false });
+        $(this).parent().remove();
+        return false;
+    });
+
+
 </script>
 </body>
 </html>
