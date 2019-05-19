@@ -78,7 +78,7 @@
                         <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
                         <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
                     </form>
-                    <button id="updateBtn" class="signin btn btn-danger" style="display: none">Modifier mot de passe</button>
+                    <button id="updateBtn" class="create btn btn-danger mb-3" style="display: none">Modifier mot de passe</button>
                     <form id="newPwd" style="display: none" >
                         <!-- Mot de passe -->
                         <div class="input-group mb-3">
@@ -682,13 +682,23 @@
             ayant le moins étant logiquement le mieux placé.
             <br><br><b>
                 Pour ce qui est des points, vous pouvez retrouver la valeur des cartes ci-dessous :<br>
-                <b>- De 1 à 10 : autant de points que la valeur de la carte (1 pour l'as, 2 pour la carte deux de cœur ...)<br>
+					- De 1 à 10 : autant de points que la valeur de la carte (1 pour l'as, 2 pour la carte deux de cœur ...)<br>
                     - Valet et Dame : ces deux cartes valent 10 points<br>
                     - Roi rouge : cette carte est spéciale car elle ne vaut pas de points (0 points)<br>
                     - Roi noir : débarrassez-vous rapidement de cette carte qui vaut 15 points !<br></b>
         </p>
     </div>
-    <div id="scores">
+    <div id="finPartie" style="display: none;">
+		<h1 style="text-align: center; margin-top: .5em">Fin de la partie</h1>
+		<!-- Tableau scores -->
+		<table class="table rounded" id="scores">
+			<tr>
+				<th id="positionFin">Position</th>
+                <th id="nomJFin">Nom</th>
+                <th id="scoreJFin">Score</th>
+                <th id="nbCartesFin">Cartes</th>
+			</tr>
+		</table>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
@@ -727,6 +737,7 @@
     var cardBackStyle = "red_back.png";
     var canChangeStyle = false;
 
+	var isGuest = false;
 
     /*
         --------------- FUNCTIONS ---------------
@@ -905,7 +916,9 @@
             socket.emit("joinGame", { gameName: $(this).attr("gameName"),
                 nbPlayers: $(this).attr("nbPlayers"),
                 nbPlayersMax: $(this).attr("nbPlayersMax"),
-                pseudo: pseudo });
+                pseudo: pseudo,
+				isGuest: !isConnected				
+			});
         }
     };
 
@@ -1555,15 +1568,17 @@
 
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
-        $("#updateBtn").show();
-        $("#decoBtn").show();
-
+        
         displayMenu("connexion");
         if(confirmed == false){
             $('#formBtnsMenu').hide();
+			$("#updateBtn").hide();
+			$("#decoBtn").hide();
             displayMenu("confirmation");
         }
         $('#btnsInscrCo').hide();
+		$("#updateBtn").show();
+        $("#decoBtn").show();
         $.notify("Vous êtes connecté, bienvenue !", "success");
     });
 
@@ -1888,7 +1903,9 @@
             actualGameName = $('#gameName').val();
             socket.emit('newGame', { gameName: $('#gameName').val(),
                 nbPlayersMax: parseInt($('#nbPlayersMax').val()),
-                pseudo: pseudo });
+                pseudo: pseudo,
+				isGuest: !isConnected
+			});
 
             $("#menu").fadeOut(function() {
                 $('#gameName').val('');
@@ -2072,6 +2089,57 @@
             appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
         }
     });
+	
+	function appendTableauScore (pos,  pseudo, score, cartes) {
+        let tr = $('<tr />').attr('id', pos);
+
+        let tdPlace= $('<td />');
+        tr.append(tdPlace.html(pos));
+
+        let tdNomJ= $('<td />');
+        tr.append(tdNomJ.html(pseudo));
+
+        let tdScoreJ= $('<td />');
+        tr.append(tdScoreJ.html(score));
+
+        let tdVictoiresJ= $('<td />');
+        tr.append(tdVictoiresJ.html(cartes));
+
+        $('#scores').append(tr);
+    };
+	
+	socket.on("tableauScore", function(data){
+		for(var i = 0; i< data.length; i++){
+			appendTableauScore(i+1, data[i].pseudo, data[i].points, data[i].nbCards);
+		}
+		$('#finPartie').show();
+		setTimeout(function() {
+			location.reload();
+		}, 10000);
+	});
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
