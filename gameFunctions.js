@@ -5,18 +5,18 @@
 var generatePacket = function () {
   var paquet = [];
 
-  for (let k = 1; k <= 10; ++k)
+  for (let k = 1; k <= 13; ++k)
       paquet.push(k + "D");
-/*
+
   for (let k = 1; k <= 13; ++k)
       paquet.push(k + "C");
 
   for (let k = 1; k <= 13; ++k)
       paquet.push(k + "H");
 
-  for (let k = 1; k <= 10; ++k)
+  for (let k = 1; k <= 13; ++k)
       paquet.push(k + "S");
-*/
+
   return paquet;
 }
 

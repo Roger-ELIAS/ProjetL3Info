@@ -397,6 +397,7 @@ io.sockets.on('connection', function (socket) {
                   if (player == socket.pseudo) {
                       if (gamesList[game].nbPlayers < gamesList[game].nbPlayersMax) {
                           gamesList[game].nbPlayers -= 1;
+                          delete gamesList[game].players[player];
 
                           if (gamesList[game].nbPlayers == 0) {
                               delete gamesList[game];
