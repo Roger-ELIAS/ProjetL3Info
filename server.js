@@ -28,7 +28,7 @@ app.use(function(req, res, next){
 
 var io = require('socket.io').listen(server);
 var gamesList = {}; // { gameName : { hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
-
+var connectedUsers = [];
 
 var transporter = nodemailer.createTransport({
     service: 'outlook',
@@ -348,6 +348,7 @@ io.sockets.on('connection', function (socket) {
                 bcrypt.compare(data.pwd_con, result[0].Password , function(err, res) {
                     if (res) {
                         socket.pseudo = result[0].Username;
+                        connectedUsers.push(result[0].Username);
                         socket.confirmed = result[0].Confirmed;
                         socket.emit("connexionOk", { pseudo: socket.pseudo, confirmed: socket.confirmed });
                     }
@@ -391,6 +392,9 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('disconnect', function() {
+      connectedUsers = connectedUsers.filter(function(element){
+         return element != socket.pseudo;
+      });
       if (socket.pseudo !== undefined) {
           for (var game in gamesList) {
               for (var player in gamesList[game].players) {
@@ -822,7 +826,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("friendRequestShowClick", function(pseudo){
        var sql = "SELECT Username1 FROM FriendRequest WHERE Username2 = \'" + pseudo + "\'";
-       console.log(sql);
        con.query(sql, function(err, result){
           if(err) throw err;
           socket.emit("friendRequestShowClickResponse", result);
@@ -846,6 +849,79 @@ io.sockets.on('connection', function (socket) {
             if(err) throw err;
         });
 
+    });
+
+    socket.on("friendListShowClick", function(pseudo){
+        var sql = "SELECT Username1 FROM Friends WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM Friends WHERE Username1 = \'" + pseudo + "\'";
+        con.query(sql, function(err, result){
+            if(err) throw err;
+            else {
+                var finalResult=[];
+                result.forEach(function(element) {
+                    if(element.Username1){
+                        finalResult.push({friendName : element.Username1, connectedFriend : connectedUsers.includes(element.Username1)})
+                    }
+                    else if((element.Username2)){
+                        finalResult.push({friendName : element.Username2, connectedFriend : connectedUsers.includes(element.Username1)})
+                    }
+                });
+                socket.emit("friendListShowClickResponse", finalResult);
+            }
+        });
+    });
+
+    socket.on("deleteFriend", function(data){
+        var sql = "DELETE FROM Friends WHERE Username1 = '" + data.Username1 + "' AND Username2 = '" + data.Username2 + "'";
+        con.query(sql, function(err, result){
+           if(err) throw err;
+           sql = "DELETE FROM Friends WHERE Username1 = '" + data.Username2 + "' AND Username2 = '" + data.Username1 + "'";
+           con.query(sql, function (err, result) {
+               if (err) throw (err);
+               else
+                   socket.emit("newSucessMessage", "Suppression effectuée avec succès");
+               });
+
+
+        });
+    });
+
+    socket.on("worldListShowClick", function(pseudo){
+       var list = connectedUsers.filter(function(element){
+           return element != pseudo;
+       });
+
+       var friendList = [];
+
+       var finalList = [];
+
+       var sql = "SELECT Username1 FROM Friends WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM Friends WHERE Username1 = \'" + pseudo + "\'";
+       con.query(sql, function(err, result){
+           if(err) throw err;
+           result.forEach(function(element){
+               if(element.Username1)
+                   friendList.push(element.Username1);
+               else if(element.Username2)
+                   friendList.push(element.Username2);
+           });
+           var sql = "SELECT Username1 FROM FriendRequest WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM FriendRequest WHERE Username1 = \'" + pseudo + "\'";
+
+           con.query(sql, function(err, result){
+               if(err) throw err;
+               result.forEach(function(element){
+                   if(element.Username1) {
+                       friendList.push(element.Username1);
+                   }
+                   else if(element.Username2) {
+                       friendList.push(element.Username2);
+                   }
+               });
+               list.forEach(function(element){
+                   finalList.push({Username : element, isFriend : friendList.includes(element)});
+               });
+               socket.emit("worldListShowClickResponse", finalList);
+           });
+
+       });
     });
 
 

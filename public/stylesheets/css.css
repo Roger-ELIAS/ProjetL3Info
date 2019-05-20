@@ -531,7 +531,15 @@ label{
 }
 
 #friendList{
+	background-color:white;
 	position:absolute;
-	height:100%;
 	z-index:1;
+}
+
+.friendListConnectedUser{
+	color:green;
+}
+
+.friendListDisconnectedUser{
+	color:red;
 }
