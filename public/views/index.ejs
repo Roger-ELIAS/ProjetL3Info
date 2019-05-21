@@ -2212,7 +2212,10 @@
         });
 
         connectedFriendList.forEach(function(element) {
-            $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend"> X </span></li>');
+            if(element.inGame)
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername">'+ element.friendName + '</span> <span class="deleteFriend"> X </span> <span class="joinFriend"> J </span></li>');
+            else
+                $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend"> X </span> </li>');
         });
 
         disconnectedFriendList.forEach(function(element){
@@ -2227,6 +2230,19 @@
         socket.emit("deleteFriend", {Username1 : pseudo, Username2 : targetedUser});
         $(this).parent().remove();
         return false;
+    });
+
+    $("#listOfElements").on('click', '.joinFriend',function(){
+        var targetedUser  = $(this).parent().find(".friendUsername").text();
+        socket.emit("joinFriend", {targetedUser : targetedUser, pseudo : pseudo});
+        return false;
+    });
+
+    socket.on("joinFriendResponse", function(data){
+        $("#menu").fadeOut(function() {
+            $("#board").fadeIn();
+        });
+        socket.emit("joinGame", data);
     });
 
 

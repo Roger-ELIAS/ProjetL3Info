@@ -543,3 +543,7 @@ label{
 .friendListDisconnectedUser{
 	color:red;
 }
+
+.friendUsername{
+	color : blue;
+}

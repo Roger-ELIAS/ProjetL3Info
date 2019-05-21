@@ -857,13 +857,23 @@ io.sockets.on('connection', function (socket) {
             if(err) throw err;
             else {
                 var finalResult=[];
+                var playersInGame = [];
+
+                var allGames = Object.keys(gamesList);
+                allGames.forEach(function(element){
+                    var tmpGames = Object.keys(gamesList[element].players);
+                    tmpGames.forEach(function(element2){
+                        playersInGame.push(element2);
+                    });
+                });
+
                 result.forEach(function(element) {
-                    if(element.Username1){
-                        finalResult.push({friendName : element.Username1, connectedFriend : connectedUsers.includes(element.Username1)})
-                    }
-                    else if((element.Username2)){
-                        finalResult.push({friendName : element.Username2, connectedFriend : connectedUsers.includes(element.Username1)})
-                    }
+                    var tmpUsername;
+                    if(element.Username1)
+                        tmpUsername = element.Username1;
+                    else if((element.Username2))
+                        tmpUsername = element.Username2;
+                    finalResult.push({friendName : tmpUsername, connectedFriend : connectedUsers.includes(tmpUsername), inGame : playersInGame.includes(tmpUsername)});
                 });
                 socket.emit("friendListShowClickResponse", finalResult);
             }
@@ -925,7 +935,21 @@ io.sockets.on('connection', function (socket) {
     });
 
 
-
+    socket.on("joinFriend", function(data){
+        var allGames = Object.keys(gamesList);
+        var game;
+        allGames.forEach(function(element){
+            var tmpGames = Object.keys(gamesList[element].players);
+            if(tmpGames.includes(data.targetedUser)) {
+                game = {gameName : element,
+                        nbPlayers : gamesList[element].nbPlayers,
+                        nbPlayersMax : gamesList[element].nbPlayersMax,
+                        pseudo : data.pseudo,
+                        isGuest : false};
+            }
+        });
+        socket.emit("joinFriendResponse", game);
+    });
 
 });
 
