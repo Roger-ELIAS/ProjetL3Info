@@ -530,8 +530,14 @@ label{
 	margin-bottom: 0;
 }
 
+
+
+
+
+
 #friendList{
-	background-color:white;
+	margin-top: 1em;
+	margin-left: 1em;
 	position:absolute;
 	z-index:1;
 }
@@ -540,10 +546,61 @@ label{
 	color:green;
 }
 
-.friendListDisconnectedUser{
-	color:red;
+.friendListDisconnectedUser span:first-child{
+	border-radius: 12px;
+	color: red;
+	font-size: 0.5em;
+	margin-top: 6px;
+	margin-right: 7px;
+}
+
+.friendListDisconnectedUser span:last-child{
+	margin-left: 1em;
+	cursor: pointer;
+	float: right;
+	margin-top: .25em;
+	margin-right: .25em;
 }
 
 .friendUsername{
 	color : blue;
 }
+
+#listOfElements{
+	background-color: white;
+	border-radius: 3px;
+	list-style: none;
+	padding-left: .4em;
+}
+
+.addFriend{
+	margin-top: .25em;
+	margin-right: .25em;
+	right: 0;
+	cursor: pointer;
+	float: right;
+}
+
+.deleteFriendRequest{
+	margin-top: .25em;
+	margin-right: .25em;
+	right: 0;
+	cursor: pointer;
+	float: right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -17,20 +17,24 @@
 </head>
 <body>
 <div id="friendList">
-    <button id="friendListDisplayButton" type="submit" style="display:none">Users</button>
+    <button id="friendListDisplayButton" class="btn btn-danger mb-3" type="submit" style="display:none">Utilisateurs</button>
     <br>
     <div id="usersList" style="display:none">
-        <button id="friendDisplayButton" type="submit"> Friends </button>
-        <button id="worldDisplayButton" type="submit"> World </button>
-        <button id="friendRequestDisplayButton" type="submit"> Request </button>
+        <button id="friendDisplayButton" class="btn btn-danger mb-3" type="submit">Amis</button>
+        <button id="worldDisplayButton" class="btn btn-danger mb-3" type="submit">Tous</button>
+        <button id="friendRequestDisplayButton" class="btn btn-danger mb-3" type="submit">Demandes</button>
         <ul id="listOfElements">
 
         </ul>
         <form id="addFriendForm">
-        <input type="text" id="friendName" placeholder="Pseudo de l'ami à ajouter">
-        <button id="sendFriendRequestButton" type="submit"> Send </button>
+			<div class="input-group mb-3">
+				<input class="form-control" type="text" id="friendName" placeholder="Pseudo">
+				<div clas="input-group-append">
+					<button class="btn btn-danger" id="sendFriendRequestButton" type="submit">Envoyer</button>
+				</div>
+			</div>
+		</form>
     </div>
-    </form>
 </div>
 <div class="container-fluid" id="menu">
     <div class="row" id="M" style="height: 100%;">
@@ -2184,7 +2188,7 @@
 
      socket.on("friendRequestShowClickResponse", function(data){
         data.forEach(function(element) {
-          $("#listOfElements").append('<li>'+ element.Username1 + '<span class="addFriend"> O </span> <span class="deleteFriendRequest"> X </span> </li>');
+          $("#listOfElements").append('<li>'+ element.Username1 + '<span class="deleteFriendRequest badge badge-danger">X</span> <span class="addFriend badge badge-success">O</span></li>');
         });
      });
 
@@ -2224,13 +2228,13 @@
 
         connectedFriendList.forEach(function(element) {
             if(element.inGame)
-                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername">'+ element.friendName + '</span> <span class="deleteFriend"> X </span> <span class="joinFriend"> J </span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername">'+ element.friendName + '</span><span class="deleteFriend">X</span><span class="joinFriend">J</span></li>');
             else
-                $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend"> X </span> </li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend">X</span></li>');
         });
 
         disconnectedFriendList.forEach(function(element){
-            $("#listOfElements").append('<li class="friendListDisconnectedUser">'+ element.friendName + '<span class="deleteFriend"> X </span> </li>');
+            $("#listOfElements").append('<li class="friendListDisconnectedUser"><span class="badge badge-danger align-top">O</span>'+ element.friendName + '<span class="deleteFriend badge badge-danger">X</span> </li>');
         });
 
     });
