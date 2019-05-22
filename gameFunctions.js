@@ -33,8 +33,6 @@ var generatePacketTest = function () {
     paquet.push("1H");
     return paquet;
 }
-
-
 /*
 
 */
@@ -150,23 +148,23 @@ var startGame = function (socket, time, gameObj) {
 
 */
 
-var timerMemorization = function(socket, time, gameObj) {
-  emitToLobby(gameObj.players, "infosMsg2", time.toString());
+var timerMemorization = function(socket, time, players) {
+  emitToLobby(players, "infosMsg2", time.toString());
 
   if (time - 1 > 0) {
-      gameObj.timeouts.push(setTimeout(function() {
-          timerMemorization(socket, time - 1, gameObj);
-      }, 1000));
+      setTimeout(function() {
+          timerMemorization(socket, time - 1, players);
+      }, 1000);
   }
   else {
-    gameObj.timeouts.push(setTimeout(function() {
-        emitToLobby(gameObj.players, "infosMsg1", "LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !");
-        emitToLobby(gameObj.players, "infosMsg2", "");
+    setTimeout(function() {
+        emitToLobby(players, "infosMsg1", "LANCEMENT DU BLITZ, PUISSE LE SORT VOUS ÊTRE FAVORABLE !");
+        emitToLobby(players, "infosMsg2", "");
 
         setTimeout(function() {
-          emitToLobby(gameObj.players, "hideCards", "nothing");
+          emitToLobby(players, "hideCards", "nothing");
         }, 1000);
-    }, 1000));
+    }, 1000);
   }
 }
 
@@ -175,12 +173,12 @@ var timerMemorization = function(socket, time, gameObj) {
 
 */
 
-var startTimerMemorization = function (socket, gameObj) {
-    emitToLobby(gameObj.players, "infosMsg1", "MÉMORISEZ VOS CARTES !");
+var startTimerMemorization = function (socket, players) {
+    emitToLobby(players, "infosMsg1", "MÉMORISEZ VOS CARTES !");
 
-    gameObj.timeouts.push(setTimeout(function() {
-        timerMemorization(socket, 10, gameObj);
-    }, 1000));
+    setTimeout(function() {
+        timerMemorization(socket, 10, players);
+    }, 1000);
 }
 
 
@@ -188,13 +186,13 @@ var startTimerMemorization = function (socket, gameObj) {
 
 */
 
-var discardTimer = function (socket, time, gameObj) {
-    emitToLobby(gameObj.players, "infosMsg2", time.toString());
+var discardTimer = function (socket, time, players) {
+    emitToLobby(players, "infosMsg2", time.toString());
 
     if (time - 1 > 0) {
-        gameObj.timeouts.push(setTimeout(function() {
-            discardTimer(socket, time - 1, gameObj);
-        }, 1000));
+        setTimeout(function() {
+            discardTimer(socket, time - 1, players);
+        }, 1000);
     }
 }
 
@@ -203,12 +201,12 @@ var discardTimer = function (socket, time, gameObj) {
 
 */
 
-var discardTime = function (socket, gameObj) {
-    emitToLobby(gameObj.players, "discardTime", "nothing");
+var discardTime = function (socket, players) {
+    emitToLobby(players, "discardTime", "nothing");
 
-    gameObj.timeouts.push(setTimeout(function() {
-        discardTimer(socket, 5, gameObj);
-    }, 700));
+    setTimeout(function() {
+        discardTimer(socket, 5, players);
+    }, 700);
 }
 
 
@@ -251,9 +249,6 @@ var calculateResults = function (players, isBlitz) {
             scoresList.forEach(function (obj, i) {
                 if ((obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
                     scoresList.splice(i, 0, scoreObj);
-                }
-                else if (i == scoresList.length - 1) {
-                    scoresList.push(scoreObj);
                 }
             });
         }

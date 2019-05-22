@@ -724,7 +724,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('https://jeudecarte.alwaysdata.net/'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
+    var socket = io.connect('localhost:8080'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
     var pseudo = "";
 
     var connexionDisplayed = false; // état du menu de connexion
@@ -938,7 +938,7 @@
                 nbPlayers: $(this).attr("nbPlayers"),
                 nbPlayersMax: $(this).attr("nbPlayersMax"),
                 pseudo: pseudo,
-				isGuest: !isConnected
+				isGuest: !isConnected				
 			});
         }
     };
@@ -1033,11 +1033,7 @@
             else if (index == 2) {
                 if (nbPlayers == nbPlayersMax) {
                     $(this).children(":first").attr("disabled", true)
-                           .attr("class", "validate btn btn-secondary");
-                }
-                else {
-                   $(this).children(":first").attr("disabled", false)
-                          .attr("class", "validate btn btn-danger");
+                        .attr("class", "validate btn btn-secondary");
                 }
                 $(this).attr("nbPlayers", nbPlayers);
             }
@@ -1334,13 +1330,14 @@
                 socket.emit("cardDiscarded", { gameName: actualGameName,
                                                cardIndex: li.index() });
 
-                socket.emit("depositeOnTas", { indexCardToPut: li.index(),
-                                               cardToPut: $(this).data("cardName"),
-                                               gameName: actualGameName });
-
                 setTimeout(function() {
-                  li.remove();
+                  socket.emit("depositeOnTas", { indexCardToPut: li.index(),
+                                                 cardToPut: $(this).data("cardName"),
+                                                 gameName: actualGameName });
+                  li.remove();                               
                 }, 50);
+
+
             }
             else {
                 appendMessage("<p><b> FAIL ! Les cartes ne sont pas identiques, 5 points en plus ajoutés à ton score ! </b></p>");
@@ -1598,7 +1595,7 @@
 
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
-
+        
         displayMenu("connexion");
         if(confirmed == false){
             $('#formBtnsMenu').hide();
@@ -1846,11 +1843,7 @@
 
         setTimeout(function() {
           if (data.isEndGame) {
-             appendMessage("<p><b>Vous êtes le dernier joueur en ligne dans la partie, elle va s'arrêter d'ici quelques secondes ...</b></p>");
-
-             setTimeout(function() {
-                location.reload();
-             }, 3500);
+             appendMessage("<p>Vous êtes le dernier joueur en ligne dans la partie, elle va s'arrêter d'ici quelques secondes ...</p>");
           }
         }, 500);
     });
@@ -2134,7 +2127,7 @@
             appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
         }
     });
-
+	
 	function appendTableauScore (pos,  pseudo, score, cartes) {
         let tr = $('<tr />').attr('id', pos);
 
@@ -2152,7 +2145,7 @@
 
         $('#scores').append(tr);
     };
-
+	
 	socket.on("tableauScore", function(data){
 		for(var i = 0; i< data.length; i++){
 			appendTableauScore(i+1, data[i].pseudo, data[i].points, data[i].nbCards);
@@ -2292,3 +2285,26 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

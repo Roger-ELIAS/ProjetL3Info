@@ -10,44 +10,12 @@ var app = express();
 var server = require('http').createServer(app);
 
 
-/* var con = mysql.createConnection({
+var con = mysql.createConnection({
     host: "mysql-projetl3.alwaysdata.net",
     user: "176620",
     password: "projetjeudecarte",
     database: "jeudecarte_bd"
-}); */
-
-var db_config = {
-    host: "mysql-projetl3.alwaysdata.net",
-    user: "176620",
-    password: "projetjeudecarte",
-    database: "jeudecarte_bd"
-};
-
-var con;
-
-function handleDisconnect() {
-  con = mysql.createConnection(db_config); // Recreate the connection, since
-                                                  // the old one cannot be reused.
-
-  con.connect(function(err) {              // The server is either down
-    if(err) {                                     // or restarting (takes a while sometimes).
-      console.log('error when connecting to db:', err);
-      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-    }                                     // to avoid a hot loop, and to allow our node script to
-  });                                     // process asynchronous requests in the meantime.
-                                          // If you're also serving http, display a 503 error.
-  con.on('error', function(err) {
-    console.log('db error', err);
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-      handleDisconnect();                         // lost due to either server restart, or a
-    } else {                                      // connnection idle timeout (the wait_timeout
-      throw err;                                  // server variable configures this)
-    }
-  });
-}
-
-handleDisconnect();
+});
 
 
 app.use(express.static(__dirname + '/public'));
@@ -60,7 +28,7 @@ app.use(function(req, res, next){
 
 var io = require('socket.io').listen(server);
 var gamesList = {}; // { gameName : { hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
-
+var connectedUsers = [];
 
 var transporter = nodemailer.createTransport({
     service: 'outlook',
@@ -149,6 +117,9 @@ var emitToLobby = function(players, eventName, content, socket) {
 */
 
 var updatePoints = function(points,pseudo,win){
+   console.log(pseudo);
+   console.log(points);
+   console.log(win);
    var sql = "SELECT Points,GamesPlayed,GamesWon FROM Score Where Username = \"" + pseudo + "\"";
    con.query(sql, function (err, result) {
        if (err) throw err;
@@ -271,13 +242,13 @@ io.sockets.on('connection', function (socket) {
                   index += 1;
               }
 
-              gamesList[data.gameName].timeouts.push(setTimeout(function() {
-                gameFunctions.startTimerMemorization(socket, gamesList[data.gameName]);
+              setTimeout(function() {
+                gameFunctions.startTimerMemorization(socket, gamesList[data.gameName].players);
 
-                gamesList[data.gameName].timeouts.push(setTimeout(function() {
-                    gameFunctions.discardTime(socket, gamesList[data.gameName]);
+                setTimeout(function() {
+                    gameFunctions.discardTime(socket, gamesList[data.gameName].players);
 
-                    gamesList[data.gameName].timeouts.push(setTimeout(function() {
+                    setTimeout(function() {
                         emitToLobby(gamesList[data.gameName].players, "endDiscardTime", "nothing", socket);
                         socket.emit("endDiscardTime");
 
@@ -289,9 +260,9 @@ io.sockets.on('connection', function (socket) {
                                 gamesList[data.gameName].players[playerName].playerSocket.emit("infosMsg1", "Tour de " + Object.keys(gamesList[data.gameName].players)[0]);
                             }
                         }
-                    }, 6500));
-                }, 14000));
-              }, 5050));
+                    }, 6500);
+                }, 14000);
+              }, 5050);
             }, 11050));
         }
     });
@@ -337,18 +308,19 @@ io.sockets.on('connection', function (socket) {
 
                 if(!usernameIsTaken && !emailIsTaken) {
                     createAccount(data.username, data.email, data.password)
+                    socket.emi("inscriptionMessage");
                 }
                 else {
                     var alertMessage;
 
                     if (emailIsTaken && usernameIsTaken) {
-                        message = "Pseudo et email déjà pris, veuillez en choisir d'autres !";
+                        alertMessage = "Pseudo et email déjà pris, veuillez en choisir d'autres !";
                     }
                     else if (emailIsTaken) {
-                        message = "Email déjà pris, veuillez en choisir un autre !";
+                        alertMessage = "Email déjà pris, veuillez en choisir une autre !";
                     }
                     else {
-                        message = "Pseudo déjà pris, veuillez en choisir un autre !";
+                        alertMessage = "Pseudo déjà pris, veuillez en choisir un autre !";
                     }
 
                     socket.emit("newAlertMessage", alertMessage);
@@ -377,6 +349,7 @@ io.sockets.on('connection', function (socket) {
                 bcrypt.compare(data.pwd_con, result[0].Password , function(err, res) {
                     if (res) {
                         socket.pseudo = result[0].Username;
+                        connectedUsers.push(result[0].Username);
                         socket.confirmed = result[0].Confirmed;
                         socket.emit("connexionOk", { pseudo: socket.pseudo, confirmed: socket.confirmed });
                     }
@@ -420,6 +393,9 @@ io.sockets.on('connection', function (socket) {
     */
 
     socket.on('disconnect', function() {
+      connectedUsers = connectedUsers.filter(function(element){
+         return element != socket.pseudo;
+      });
       if (socket.pseudo !== undefined) {
           for (var game in gamesList) {
               for (var player in gamesList[game].players) {
@@ -484,12 +460,6 @@ io.sockets.on('connection', function (socket) {
 
                           if (Object.keys(gamesList[game].players).length == 0) {
                               socket.broadcast.emit("deleteGame", game);
-
-                              for (var i = 0; i < gamesList[game].timeouts.length; i++) {
-                                  clearTimeout(gamesList[game].timeouts[i]);
-                              }
-
-
                               delete gamesList[game];
                           }
                           else if (Object.keys(gamesList[game].players).length == 1) {
@@ -497,11 +467,6 @@ io.sockets.on('connection', function (socket) {
                                                                                                                                  isEndGame: true });
 
                               socket.broadcast.emit("deleteGame", game);
-
-                              for (var i = 0; i < gamesList[game].timeouts.length; i++) {
-                                  clearTimeout(gamesList[game].timeouts[i]);
-                              }
-
                               delete gamesList[game];
                           }
                           else {
@@ -546,13 +511,13 @@ io.sockets.on('connection', function (socket) {
                     var alertMessage;
 
                     if (emailIsTaken && usernameIsTaken) {
-                        alertMessage = "Pseudo et email inexistant";
+                        alertMessage = "Pseudo et email inexistants";
                     }
                     else if (emailIsTaken) {
                         alertMessage = "Email incorrecte";
                     }
                     else {
-                        alertMessage = "Pseudo incorrecte";
+                        alertMessage = "Pseudo incorrect";
                     }
 
                     socket.emit("newAlertMessage", alertMessage);
@@ -684,7 +649,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on("valet", function (data) {
         var card = gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1];
-
         gamesList[data.gameName].players[data.pseudo1].playerHand[data.index1] = gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2];
         gamesList[data.gameName].players[data.pseudo2].playerHand[data.index2] = card;
 
@@ -715,9 +679,9 @@ io.sockets.on('connection', function (socket) {
     */
     // { gameName : { isFinished: false, turnNumber: 1, hasStarted: false, timeouts: [], packet: [], tas: [], nbPlayers: nb, nbPlayersMax: nb, players: { playerName: { playerSocket: socket, playerHand: hand[], hisTurn: bool }, playerName2 ... },  }, gameName2 ..... }
     socket.on("nextPlayer", function(gameName) {
-      gameFunctions.discardTime(socket, gamesList[gameName]);
+      gameFunctions.discardTime(socket, gamesList[gameName].players);
 
-      gamesList[gameName].timeouts.push(setTimeout(function() {
+      setTimeout(function() {
         socket.emit("endDiscardTime");
         socket.broadcast.emit("endDiscardTime");
 
@@ -725,7 +689,7 @@ io.sockets.on('connection', function (socket) {
             var arrayPlayers = gameFunctions.calculateResults(gamesList[gameName].players, false);
             var pointsToAdd = 1;
             var points = 0;
-            var win = 0;
+            var win =0;
 			socket.emit("tableauScore", arrayPlayers);
 			socket.broadcast.emit("tableauScore", arrayPlayers);
             for (i = arrayPlayers.length -1 ; i >= 0; i--) {
@@ -752,7 +716,7 @@ io.sockets.on('connection', function (socket) {
               emitToLobby(gamesList[gameName].players, "infosMsg1", "Tour de " + players[indexPlayer + 1], gamesList[gameName].players[players[indexPlayer + 1]].playerSocket);
           }
         }
-      }, 5800));
+      }, 5800);
     });
 
 
@@ -835,6 +799,159 @@ io.sockets.on('connection', function (socket) {
 
           emitToLobby(gamesList[data.gameName].players, "newMessage", infosMsg, socket);
     });
+
+    socket.on("newFriendRequest", function(data) {
+        var sql = "SELECT Username FROM User WHERE Username = \'" + data.targetedUser + "\'";
+        var usernameExists;
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            usernameExists = (result.length == 1);
+            if(usernameExists){
+                sql = "INSERT INTO FriendRequest (Username1, Username2) VALUES ('"
+                    + data.username + "', '" + data.targetedUser + "')";
+                con.query(sql, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        socket.emit("newAlertMessage", "Une demande a déjà été envoyée à cet utilisateur");
+                    }
+                    else
+                        socket.emit("newSucessMessage", "Demande envoyée à " + data.targetedUser);
+                });
+            }
+            else{
+                socket.emit("newAlertMessage", "L'utilisateur n'existe pas");
+            }
+        });
+    });
+
+    socket.on("friendRequestShowClick", function(pseudo){
+       var sql = "SELECT Username1 FROM FriendRequest WHERE Username2 = \'" + pseudo + "\'";
+       con.query(sql, function(err, result){
+          if(err) throw err;
+          socket.emit("friendRequestShowClickResponse", result);
+       });
+    });
+
+    socket.on("friendRequestAnswer", function(data){
+        var sql;
+        if(data.accept){
+            sql = "INSERT INTO Friends (Username1, Username2) VALUES ('" + data.Username1 + "', '" + data.Username2 + "')";
+            con.query(sql, function(err){
+               if(err) throw err;
+               else
+                   socket.emit("newSucessMessage", "Demande acceptée avec succès");
+            });
+        }
+        else
+            socket.emit("newSucessMessage", "Demande refusée avec succès");
+        sql = "DELETE FROM FriendRequest WHERE Username1 = '" + data.Username1 + "' AND Username2 ='" + data.Username2 + "'";
+        con.query(sql, function(err){
+            if(err) throw err;
+        });
+
+    });
+
+    socket.on("friendListShowClick", function(pseudo){
+        var sql = "SELECT Username1 FROM Friends WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM Friends WHERE Username1 = \'" + pseudo + "\'";
+        con.query(sql, function(err, result){
+            if(err) throw err;
+            else {
+                var finalResult=[];
+                var playersInGame = [];
+
+                var allGames = Object.keys(gamesList);
+                allGames.forEach(function(element){
+                    var tmpGames = Object.keys(gamesList[element].players);
+                    tmpGames.forEach(function(element2){
+                        playersInGame.push(element2);
+                    });
+                });
+
+                result.forEach(function(element) {
+                    var tmpUsername;
+                    if(element.Username1)
+                        tmpUsername = element.Username1;
+                    else if((element.Username2))
+                        tmpUsername = element.Username2;
+                    finalResult.push({friendName : tmpUsername, connectedFriend : connectedUsers.includes(tmpUsername), inGame : playersInGame.includes(tmpUsername)});
+                });
+                socket.emit("friendListShowClickResponse", finalResult);
+            }
+        });
+    });
+
+    socket.on("deleteFriend", function(data){
+        var sql = "DELETE FROM Friends WHERE Username1 = '" + data.Username1 + "' AND Username2 = '" + data.Username2 + "'";
+        con.query(sql, function(err, result){
+           if(err) throw err;
+           sql = "DELETE FROM Friends WHERE Username1 = '" + data.Username2 + "' AND Username2 = '" + data.Username1 + "'";
+           con.query(sql, function (err, result) {
+               if (err) throw (err);
+               else
+                   socket.emit("newSucessMessage", "Suppression effectuée avec succès");
+               });
+
+
+        });
+    });
+
+    socket.on("worldListShowClick", function(pseudo){
+       var list = connectedUsers.filter(function(element){
+           return element != pseudo;
+       });
+
+       var friendList = [];
+
+       var finalList = [];
+
+       var sql = "SELECT Username1 FROM Friends WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM Friends WHERE Username1 = \'" + pseudo + "\'";
+       con.query(sql, function(err, result){
+           if(err) throw err;
+           result.forEach(function(element){
+               if(element.Username1)
+                   friendList.push(element.Username1);
+               else if(element.Username2)
+                   friendList.push(element.Username2);
+           });
+           var sql = "SELECT Username1 FROM FriendRequest WHERE Username2 = \'" + pseudo + "' UNION SELECT Username2 FROM FriendRequest WHERE Username1 = \'" + pseudo + "\'";
+
+           con.query(sql, function(err, result){
+               if(err) throw err;
+               result.forEach(function(element){
+                   if(element.Username1) {
+                       friendList.push(element.Username1);
+                   }
+                   else if(element.Username2) {
+                       friendList.push(element.Username2);
+                   }
+               });
+               list.forEach(function(element){
+                   finalList.push({Username : element, isFriend : friendList.includes(element)});
+               });
+               socket.emit("worldListShowClickResponse", finalList);
+           });
+
+       });
+    });
+
+
+    socket.on("joinFriend", function(data){
+        var allGames = Object.keys(gamesList);
+        var game;
+        allGames.forEach(function(element){
+            var tmpGames = Object.keys(gamesList[element].players);
+            if(tmpGames.includes(data.targetedUser)) {
+                game = {gameName : element,
+                        nbPlayers : gamesList[element].nbPlayers,
+                        nbPlayersMax : gamesList[element].nbPlayersMax,
+                        pseudo : data.pseudo,
+                        isGuest : false};
+            }
+        });
+        socket.emit("joinFriendResponse", game);
+    });
+
 });
 
-server.listen(8100,"0.0.0.0"); // 8100,"0.0.0.0" - 8080
+server.listen(8080); // 8100,"0.0.0.0" - 8080
