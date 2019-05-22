@@ -248,12 +248,18 @@ var calculateResults = function (players, isBlitz) {
             scoresList.push(scoreObj);
         }
         else {
+            var hasBeenAdded = false;
+            
             scoresList.forEach(function (obj, i) {
-                if ((obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
-                    scoresList.splice(i, 0, scoreObj);
-                }
-                else if (i == scoresList.length - 1) {
-                    scoresList.push(scoreObj);
+                if (!hasBeenAdded) {
+                  if ((obj.points > scoreObj.points) || (obj.points == scoreObj.points && obj.nbCards > scoreObj.nbCards)) {
+                      scoresList.splice(i, 0, scoreObj);
+                      hasBeenAdded = true;
+                  }
+                  else if (i == scoresList.length - 1) {
+                      scoresList.push(scoreObj);
+                      hasBeenAdded = true;
+                  }
                 }
             });
         }
