@@ -938,7 +938,7 @@
                 nbPlayers: $(this).attr("nbPlayers"),
                 nbPlayersMax: $(this).attr("nbPlayersMax"),
                 pseudo: pseudo,
-				isGuest: !isConnected				
+				isGuest: !isConnected
 			});
         }
     };
@@ -1334,7 +1334,7 @@
                   socket.emit("depositeOnTas", { indexCardToPut: li.index(),
                                                  cardToPut: $(this).data("cardName"),
                                                  gameName: actualGameName });
-                  li.remove();                               
+                  li.remove();
                 }, 50);
 
 
@@ -1595,7 +1595,7 @@
 
         $("#affichagePseudo").val(pseudo);
         $("#pseudoDisplay").show();
-        
+
         displayMenu("connexion");
         if(confirmed == false){
             $('#formBtnsMenu').hide();
@@ -1844,6 +1844,10 @@
         setTimeout(function() {
           if (data.isEndGame) {
              appendMessage("<p>Vous êtes le dernier joueur en ligne dans la partie, elle va s'arrêter d'ici quelques secondes ...</p>");
+
+             setTimeout(function() {
+                location.reload();
+             }, 3000);
           }
         }, 500);
     });
@@ -2127,7 +2131,7 @@
             appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
         }
     });
-	
+
 	function appendTableauScore (pos,  pseudo, score, cartes) {
         let tr = $('<tr />').attr('id', pos);
 
@@ -2145,7 +2149,7 @@
 
         $('#scores').append(tr);
     };
-	
+
 	socket.on("tableauScore", function(data){
 		for(var i = 0; i< data.length; i++){
 			appendTableauScore(i+1, data[i].pseudo, data[i].points, data[i].nbCards);
@@ -2285,26 +2289,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
