@@ -2227,13 +2227,13 @@
 
         connectedFriendList.forEach(function(element) {
             if(element.inGame)
-                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend">X</span><span class="joinFriend">J</span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend badge badge-danger align-top">X</span><span class="joinFriend badge badge-success align-top"><i class="material-icons">play_arrow</i></span></li>');
             else
-                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend">X</span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span></li>');
         });
 
         disconnectedFriendList.forEach(function(element){
-            $("#listOfElements").append('<li class="friendListDisconnectedUser"><span class="badge badge-danger align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span><span class="deleteFriend badge badge-danger">X</span> </li>');
+            $("#listOfElements").append('<li class="friendListDisconnectedUser"> <span class="badge badge-danger align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span> </li>');
         });
 
     });
@@ -2271,7 +2271,7 @@
             if(element.isFriend)
                 $("#listOfElements").append('<li>'+ element.Username + '</li>');
             else
-                $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username + '</span><span class="addFriendFromList"> O </span> </li>');
+                $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username + '</span><span class="addFriendFromList badge badge-success align-top">O</span> </li>');
         });
     });
 

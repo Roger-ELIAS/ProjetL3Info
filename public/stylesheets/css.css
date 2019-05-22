@@ -542,10 +542,6 @@ label{
 	z-index:1;
 }
 
-.friendListConnectedUser{
-	color:green;
-}
-
 .friendListDisconnectedUser span:first-child{
 	border-radius: 12px;
 	color: red;
@@ -554,16 +550,12 @@ label{
 	margin-right: 7px;
 }
 
-.friendListDisconnectedUser span:last-child{
-	margin-left: 1em;
-	cursor: pointer;
-	float: right;
-	margin-top: .25em;
-	margin-right: .25em;
-}
-
-.friendUsername{
-	color : blue;
+.friendListConnectedUser span:first-child{
+	border-radius: 12px;
+	color: #28a745;
+	font-size: 0.5em;
+	margin-top: 6px;
+	margin-right: 7px;
 }
 
 #listOfElements{
@@ -573,7 +565,7 @@ label{
 	padding-left: .4em;
 }
 
-.addFriend{
+.deleteFriend, .joinFriend, .addFriendFromList, .deleteFriendRequest, .addFriend{
 	margin-top: .25em;
 	margin-right: .25em;
 	right: 0;
@@ -581,19 +573,9 @@ label{
 	float: right;
 }
 
-.deleteFriendRequest{
-	margin-top: .25em;
-	margin-right: .25em;
-	right: 0;
-	cursor: pointer;
-	float: right;
+.joinFriend .material-icons{
+	font-size: 1em;
 }
-
-
-
-
-
-
 
 
 
