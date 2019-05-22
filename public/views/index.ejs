@@ -2188,21 +2188,20 @@
 
      socket.on("friendRequestShowClickResponse", function(data){
         data.forEach(function(element) {
-          $("#listOfElements").append('<li>'+ element.Username1 + '<span class="deleteFriendRequest badge badge-danger">X</span> <span class="addFriend badge badge-success">O</span></li>');
+          $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username1 + '</span><span class="deleteFriendRequest badge badge-danger">X</span> <span class="addFriend badge badge-success">O</span></li>');
+
         });
      });
 
     $("#listOfElements").on('click','.addFriend', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-8);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : true });
         $(this).parent().remove();
         return false;
     });
 
     $("#listOfElements").on('click','.deleteFriendRequest', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-8);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : false });
         $(this).parent().remove();
         return false;
@@ -2234,14 +2233,13 @@
         });
 
         disconnectedFriendList.forEach(function(element){
-            $("#listOfElements").append('<li class="friendListDisconnectedUser"><span class="badge badge-danger align-top">O</span>'+ element.friendName + '<span class="deleteFriend badge badge-danger">X</span> </li>');
+            $("#listOfElements").append('<li class="friendListDisconnectedUser"><span class="badge badge-danger align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span><span class="deleteFriend badge badge-danger">X</span> </li>');
         });
 
     });
 
     $("#listOfElements").on('click', '.deleteFriend', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-4);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("deleteFriend", {Username1 : pseudo, Username2 : targetedUser});
         $(this).parent().remove();
         return false;
@@ -2272,13 +2270,12 @@
             if(element.isFriend)
                 $("#listOfElements").append('<li>'+ element.Username + '</li>');
             else
-                $("#listOfElements").append('<li>'+ element.Username + '<span class="addFriendFromList"> O </span> </li>');
+                $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username + '</span><span class="addFriendFromList"> O </span> </li>');
         });
     });
 
     $("#listOfElements").on('click','.addFriendFromList', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-4);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("newFriendRequest", { username: pseudo,targetedUser: targetedUser});
         $(this).parent().children('.addFriendFromList').remove();
         return false;
