@@ -1878,6 +1878,11 @@
         displayMenu("inscription");
     });
 
+    /*
+    */
+    $("#decoBtn").click(function () {
+        location.reload();
+    });
 
     /*
         Affiche le menu de connexion lorsque le bouton connexion est enclenché.
@@ -1952,7 +1957,6 @@
 
             displayMenu("inscription");
             $('#inscription')[0].reset();
-            $.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
         }
         else {
             $.notify("Les mots de passes sont différents !", "warn");
@@ -1962,6 +1966,13 @@
         return false;
     });
 
+    /*
+
+    */
+
+    socket.on('inscriptionMessage', function() {
+        $.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
+    });
 
     /*
 

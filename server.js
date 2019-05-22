@@ -308,18 +308,19 @@ io.sockets.on('connection', function (socket) {
 
                 if(!usernameIsTaken && !emailIsTaken) {
                     createAccount(data.username, data.email, data.password)
+                    socket.emi("inscriptionMessage");
                 }
                 else {
                     var alertMessage;
 
                     if (emailIsTaken && usernameIsTaken) {
-                        message = "Pseudo et email déjà pris, veuillez en choisir d'autres !";
+                        alertMessage = "Pseudo et email déjà pris, veuillez en choisir d'autres !";
                     }
                     else if (emailIsTaken) {
-                        message = "Email déjà pris, veuillez en choisir un autre !";
+                        alertMessage = "Email déjà pris, veuillez en choisir une autre !";
                     }
                     else {
-                        message = "Pseudo déjà pris, veuillez en choisir un autre !";
+                        alertMessage = "Pseudo déjà pris, veuillez en choisir un autre !";
                     }
 
                     socket.emit("newAlertMessage", alertMessage);
@@ -510,13 +511,13 @@ io.sockets.on('connection', function (socket) {
                     var alertMessage;
 
                     if (emailIsTaken && usernameIsTaken) {
-                        alertMessage = "Pseudo et email inexistant";
+                        alertMessage = "Pseudo et email inexistants";
                     }
                     else if (emailIsTaken) {
                         alertMessage = "Email incorrecte";
                     }
                     else {
-                        alertMessage = "Pseudo incorrecte";
+                        alertMessage = "Pseudo incorrect";
                     }
 
                     socket.emit("newAlertMessage", alertMessage);
