@@ -20,7 +20,19 @@ var generatePacket = function () {
   return paquet;
 }
 
-
+var generatePacketTest = function () {
+    var paquet = [];
+    var array = [7,8,11];
+    for(var i = 0; i<= array.length -1;i++){
+        paquet.push(array[i] + "D");
+        paquet.push(array[i] + "C");
+        paquet.push(array[i] + "H");
+        paquet.push(array[i] + "S");
+    }
+    paquet.push("1D");
+    paquet.push("1H");
+    return paquet;
+}
 /*
 
 */
@@ -38,7 +50,7 @@ var getRandomIntInclusive = function (min, max) {
 */
 
 var getCards = function (game) {
-  var packet = generatePacket();
+  var packet = generatePacketTest();
   var hands = [];
 
   for (let i = 0; i < game.nbPlayers; ++i) {
