@@ -17,20 +17,24 @@
 </head>
 <body>
 <div id="friendList">
-    <button id="friendListDisplayButton" type="submit" style="display:none">Users</button>
+    <button id="friendListDisplayButton" class="btn btn-danger mb-3" type="submit" style="display:none">Utilisateurs</button>
     <br>
     <div id="usersList" style="display:none">
-        <button id="friendDisplayButton" type="submit"> Friends </button>
-        <button id="worldDisplayButton" type="submit"> World </button>
-        <button id="friendRequestDisplayButton" type="submit"> Request </button>
+        <button id="friendDisplayButton" class="btn btn-danger mb-3" type="submit">Amis</button>
+        <button id="worldDisplayButton" class="btn btn-danger mb-3" type="submit">Tous</button>
+        <button id="friendRequestDisplayButton" class="btn btn-danger mb-3" type="submit">Demandes</button>
         <ul id="listOfElements">
 
         </ul>
         <form id="addFriendForm">
-        <input type="text" id="friendName" placeholder="Pseudo de l'ami à ajouter">
-        <button id="sendFriendRequestButton" type="submit"> Send </button>
+			<div class="input-group mb-3">
+				<input class="form-control" type="text" id="friendName" placeholder="Pseudo">
+				<div clas="input-group-append">
+					<button class="btn btn-danger" id="sendFriendRequestButton" type="submit">Envoyer</button>
+				</div>
+			</div>
+		</form>
     </div>
-    </form>
 </div>
 <div class="container-fluid" id="menu">
     <div class="row" id="M" style="height: 100%;">
@@ -720,7 +724,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('localhost:8080'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
+    var socket = io.connect('https://jeudecarte.alwaysdata.net/'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
     var pseudo = "";
 
     var connexionDisplayed = false; // état du menu de connexion
@@ -2191,21 +2195,20 @@
 
      socket.on("friendRequestShowClickResponse", function(data){
         data.forEach(function(element) {
-          $("#listOfElements").append('<li>'+ element.Username1 + '<span class="addFriend"> O </span> <span class="deleteFriendRequest"> X </span> </li>');
+          $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username1 + '</span><span class="deleteFriendRequest badge badge-danger">X</span> <span class="addFriend badge badge-success">O</span></li>');
+
         });
      });
 
     $("#listOfElements").on('click','.addFriend', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-8);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : true });
         $(this).parent().remove();
         return false;
     });
 
     $("#listOfElements").on('click','.deleteFriendRequest', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-8);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : false });
         $(this).parent().remove();
         return false;
@@ -2231,21 +2234,21 @@
 
         connectedFriendList.forEach(function(element) {
             if(element.inGame)
-                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername">'+ element.friendName + '</span> <span class="deleteFriend"> X </span> <span class="joinFriend"> J </span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend badge badge-danger align-top">X</span><span class="joinFriend badge badge-success align-top"><i class="material-icons">play_arrow</i></span></li>');
             else
-                $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend"> X </span> </li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span></li>');
         });
 
         disconnectedFriendList.forEach(function(element){
-            $("#listOfElements").append('<li class="friendListDisconnectedUser">'+ element.friendName + '<span class="deleteFriend"> X </span> </li>');
+            $("#listOfElements").append('<li class="friendListDisconnectedUser"> <span class="badge badge-danger align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span> </li>');
         });
 
     });
 
     $("#listOfElements").on('click', '.deleteFriend', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-4);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("deleteFriend", {Username1 : pseudo, Username2 : targetedUser});
+        console.log(targetedUser);
         $(this).parent().remove();
         return false;
     });
@@ -2275,13 +2278,12 @@
             if(element.isFriend)
                 $("#listOfElements").append('<li>'+ element.Username + '</li>');
             else
-                $("#listOfElements").append('<li>'+ element.Username + '<span class="addFriendFromList"> O </span> </li>');
+                $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username + '</span><span class="addFriendFromList badge badge-success align-top">O</span> </li>');
         });
     });
 
     $("#listOfElements").on('click','.addFriendFromList', function(){
-        var liString = $(this).parent().text();
-        var targetedUser = liString.substring(0,liString.length-4);
+        var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("newFriendRequest", { username: pseudo,targetedUser: targetedUser});
         $(this).parent().children('.addFriendFromList').remove();
         return false;
