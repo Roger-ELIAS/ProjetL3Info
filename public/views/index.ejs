@@ -2229,7 +2229,7 @@
             if(element.inGame)
                 $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend">X</span><span class="joinFriend">J</span></li>');
             else
-                $("#listOfElements").append('<li class="friendListConnectedUser">'+ element.friendName + ' <span class="deleteFriend">X</span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="targetedUser"> '+ element.friendName + '</span> <span class="deleteFriend">X</span></li>');
         });
 
         disconnectedFriendList.forEach(function(element){
