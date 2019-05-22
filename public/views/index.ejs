@@ -2229,7 +2229,7 @@
             if(element.inGame)
                 $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend">X</span><span class="joinFriend">J</span></li>');
             else
-                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="targetedUser"> '+ element.friendName + '</span> <span class="deleteFriend">X</span></li>');
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend">X</span></li>');
         });
 
         disconnectedFriendList.forEach(function(element){
@@ -2241,6 +2241,7 @@
     $("#listOfElements").on('click', '.deleteFriend', function(){
         var targetedUser = $(this).parent().find(".targetedUser").text();
         socket.emit("deleteFriend", {Username1 : pseudo, Username2 : targetedUser});
+        console.log(targetedUser);
         $(this).parent().remove();
         return false;
     });
