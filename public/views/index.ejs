@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Cards</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/stylesheets/css.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/cards.css" media="screen" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="friendList">
+    <button id="friendListDisplayButton" class="btn btn-danger mb-3" type="submit" style="display:none">Utilisateurs</button>
+    <br>
+    <div id="usersList" style="display:none">
+        <button id="friendDisplayButton" class="btn btn-danger mb-3" type="submit">Amis</button>
+        <button id="worldDisplayButton" class="btn btn-danger mb-3" type="submit">Tous</button>
+        <button id="friendRequestDisplayButton" class="btn btn-danger mb-3" type="submit">Demandes</button>
+        <ul id="listOfElements">
+
+        </ul>
+        <form id="addFriendForm">
+			<div class="input-group mb-3">
+				<input class="form-control" type="text" id="friendName" placeholder="Pseudo">
+				<div clas="input-group-append">
+					<button class="btn btn-danger" id="sendFriendRequestButton" type="submit">Envoyer</button>
+				</div>
+			</div>
+		</form>
+    </div>
+</div>
+<div class="container-fluid" id="menu">
+    <div class="row" id="M" style="height: 100%;">
+        <!-- Colonne principale gauche -->
+        <div class="col-sm-4">
+            <!-- Tableau des scores -->
+            <table class="table rounded" id="classement">
+                <tr>
+                    <th id="place">Place</th>
+                    <th id="nomJ">Nom</th>
+                    <th id="scoreJ">Score</th>
+                    <th id="victoiresJ">Ratio victoires</th>
+                </tr>
+            </table>
+        </div>
+        <!-- Colonne principale centrale -->
+        <div class="col-sm-4" style="height: 100%;">
+            <!-- Image logo -->
+            <img src="images/title.png" class="mx-auto d-block">
+            <!-- Texte logo -->
+            <div class="centered">
+                <p id="title">CARDS</p>
+            </div>
+            <div class="row">
+                <!-- Colonne secondaire gauche -->
+                <div class="col-sm-2">
+                </div>
+                <!-- Colonne secondaire centrale -->
+                <div class="col-sm-8">
+                    <!-- Formulaire pseudo + creer/rejoindre partie -->
+                    <form id="formBtnsMenu">
+                        <!-- Pseudo -->
+                        <div id="inputPseudo" class="input-group mb-3">
+                            <!-- Logo bonhomme -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            perm_identity
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input pseudo -->
+                            <input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
+                        </div>
+                        <!-- Affichage pseudo -->
+                        <div class="input-group mb-3" id="pseudoDisplay" style="display: none;">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  <i class="material-icons">
+									perm_identity
+								  </i>
+								</span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="text" id="affichagePseudo" class="form-control" placeholder="TEST" disabled>
+                            <!--<button type="button" class="create mb-3 btn btn-secondary form-control" id="affichagePseudo" style="display: none;" disabled>
+                            </button> -->
+                        </div>
+                        <!-- Boutons creer/rejoindre -->
+                        <button id="creationBtn" class="create btn mb-3 btn-danger">Créer une partie</button>
+                        <button id="rejoindreBtn" class="create btn mb-3 btn-danger">Rejoindre une partie</button>
+                    </form>
+                    <button id="updateBtn" class="create btn btn-danger mb-3" style="display: none">Modifier mot de passe</button>
+                    <form id="newPwd" style="display: none" >
+                        <!-- Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="oldpassword" class="form-control" placeholder="Mot de passe actuel">
+                        </div>
+                        <!-- New Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="newpassword" class="form-control" placeholder="Nouveau mot de passe">
+                        </div>
+                        <!-- Confirmation Nouveau mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="confirmationnewpwd" class="form-control" placeholder="Confirmation du nouveau mot de passe">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
+                            <button type="submit" class="login btn btn-danger" style="margin-bottom: 1em;">Valider</button>
+                        </div>
+                    </form>
+                    <button id="decoBtn" class="create btn mb-3 btn-danger" style="display: none">Deconnexion</button>
+                    <!-- Boutons inscription/connexion -->
+                    <div class="button-container mb-3" id="btnsInscrCo">
+                        <button id="inscriptionBtn" class="signin btn btn-danger">Inscription</button>
+                        <button id="connexionBtn" class="login btn btn-danger">Connexion</button>
+                    </div>
+                    <!-- Formulaire inscription -->
+                    <form id="inscription">
+                        <!-- Pseudo -->
+                        <div class="input-group mb-3">
+                            <!-- Logo bonhomme -->
+                            <div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="material-icons">
+									perm_identity
+								</i>
+							</span>
+                            </div>
+                            <!-- Input pseudo -->
+                            <input type="text" id="pseudoInscription" class="form-control" placeholder="Pseudo">
+                        </div>
+                        <!-- Email -->
+                        <div class="input-group mb-3">
+                            <!-- Logo email -->
+                            <div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="material-icons">
+									alternate_email
+								</i>
+							</span>
+                            </div>
+                            <!-- Input email -->
+                            <input type="text" id="email" class="form-control" placeholder="Email">
+                        </div>
+                        <!-- Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="material-icons">
+									lock
+								</i>
+							</span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="pwd" class="form-control" placeholder="Mot de passe">
+                        </div>
+                        <!-- Confirmation mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="material-icons">
+									lock
+								</i>
+							</span>
+                            </div>
+                            <!-- Input confirmation mot de passe -->
+                            <input type="password" id="conf_pwd" class="form-control" placeholder="Confirmation mot de passe">
+                        </div>
+                        <!-- Bouton valider -->
+                        <button type="submit" class="validate btn btn-danger">Valider</button>
+                    </form>
+                    <!-- Formulaire connexion -->
+                    <form id="connexion">
+                        <!-- Email -->
+                        <div class="input-group mb-3">
+                            <!-- Logo email -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            alternate_email
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input email -->
+                            <input type="text" id="email_con" class="form-control" placeholder="Email">
+                        </div>
+                        <!-- Mot de passe -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">
+                            lock
+                          </i>
+                        </span>
+                            </div>
+                            <!-- Input mot de passe -->
+                            <input type="password" id="pwd_con" class="form-control" placeholder="Mot de passe">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
+                            <button type="button" id="btnMdpOublie" class="forgot btn">Mot de passe oublié ?</button>
+                            <button type="submit" class="login btn btn-danger">Valider</button>
+                        </div>
+                    </form>
+                    <!-- Formulaire mot de passe oublié -->
+                    <form id="mdpoublie">
+                        <!-- Pseudo -->
+                        <div class="input-group mb-3">
+                            <!-- Logo bonhomme -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">perm_identity</i></span>
+                            </div>
+                            <!-- Input pseudo -->
+                            <input type="text" id="pseudoMdpOublie" class="form-control" placeholder="Pseudo">
+                        </div>
+                        <!-- Email -->
+                        <div class="input-group mb-3">
+                            <!-- Logo email -->
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="material-icons">alternate_email</i></span>
+                            </div>
+                            <!-- Input email -->
+                            <input type="text" id="emailMdpOublie" class="form-control" placeholder="Email">
+                        </div>
+                        <!-- Boutons mot de passe oublié/valider -->
+                        <div id="button-container mb-3">
+                            <button type="submit" class="login btn btn-danger">Valider</button>
+                        </div>
+                    </form>
+                    <!-- Formulaire confirmation -->
+                    <form id="confirmation" style="display:none">
+                        <!-- Code confirmation -->
+                        <div class="input-group mb-3">
+                            <!-- Logo cadenas -->
+                            <div class="input-group-prepend">
+							<span class="input-group-text">
+								<i class="material-icons">
+									lock
+								</i>
+							</span>
+                            </div>
+                            <!-- Input code confirmation -->
+                            <input type="text" id="codeConfirmation" class="form-control" placeholder="Code de confirmation">
+                        </div>
+                        <!-- Bouton valider -->
+                        <button type="submit" class="validate btn btn-danger">Valider</button>
+                    </form>
+                </div>
+                <!-- Colonne secondaire droite -->
+                <div class="col-sm-2">
+                </div>
+            </div>
+        </div>
+        <!-- Colonne principale droite -->
+        <div class="col-sm-4">
+            <!-- Formulaire creation partie -->
+            <form id="creation">
+                <!-- Nom de la partie -->
+                <div class="input-group mb-3">
+                    <!-- Texte nom de la partie -->
+                    <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Nom de la partie
+                    </span>
+                    </div>
+                    <!-- Choix type de jeu -->
+                    <input type="text" id="gameName" class="form-control" placeholder="Ex : ma partie" required>
+                </div>
+                <!-- Nombre de joueurs -->
+                <div class="input-group mb-3">
+                    <!-- Texte nombre de joueurs -->
+                    <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      Nombre de joueurs
+                    </span>
+                    </div>
+                    <!-- Choix nombre de joueurs -->
+                    <select class="form-control" id="nbPlayersMax">
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                    </select>
+                </div>
+                <!-- Bouton valider -->
+                <button type="submit" class="validate btn btn-danger">Valider</button>
+            </form>
+            <!-- Tableau rejoindre partie -->
+            <table class="table rounded" id="rejoindre">
+                <tr>
+                    <th id="nomPartie">Nom</th>
+                    <th id="joueurs">Joueurs</th>
+                    <th id="btnRejoindre"></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" id="board" style="display:none">
+    <!-- Menu de jeu -->
+    <img id="fond" src="images/fond.png">
+    <div class="row playingCards fourColours" style="height: 100%;">
+        <!-- Colonne 1 -->
+        <div class="col-sm-2">
+            <!-- Joueur 1 -->
+            <div class="playerArea" id="player1">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Colonne 2 -->
+        <div class="col-sm-2">
+            <!-- Joueur 2 -->
+            <div class="playerArea" id="player2">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <!-- Pioche -->
+            <div class="playerArea" id="pioche" style="display:none">
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="deck">
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <li>
+                            <img src="/images/cards/red_back.png" height="175">
+                        </li>
+                        <!-- Carte du dessus -->
+                        <li>
+                            <a href="#" id="cardPioche">
+                                <img src="/images/cards/red_back.png" height="175">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Colonne 3 -->
+        <div class="col-sm-2">
+            <!-- Joueur 3 -->
+            <div class="playerArea" id="player3">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <div class="playerArea" id="info">
+              <p id="infosMsg1">EN ATTENTE DE JOUEURS</p>
+              <p id="infosMsg2"></p>
+            </div>
+            <!-- Joueur principal -->
+            <div class="playerArea" id="mainPlayer">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Colonne 4 -->
+        <div class="col-sm-2">
+            <!-- Joueur 4 -->
+            <div class="playerArea" id="player4">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <!-- Tas -->
+            <div class="playerArea" id="tas" style="display:none">
+                <!-- Tas -->
+                <div class="cardDisplay">
+                    <ul class="deck">
+                        <li>
+                            <a href="#" id="cardTas">
+                                <img src="/images/cards/3C.png" height="175">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Colonne 5 -->
+        <div class="col-sm-2">
+            <!-- Joueur 5 -->
+            <div class="playerArea" id="player5">
+                <!-- Pseudo -->
+                <p class="playerName"></p>
+                <!-- Cartes -->
+                <div class="cardDisplay">
+                    <ul class="hand">
+                        <!--<li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#"  class="card">
+                            <img src="/images/cards/1C.png" height="175">
+                          </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 chat-window" id="chat_window_1" style="max-height: 100%;">
+            <!-- Chat -->
+            <div class="row" id="chat_row">
+                <div class="col-sm-12" style="max-height: 100%;">
+                    <!-- Menu de jeu -->
+                    <div id="ingameMenu">
+                        <input type="button" id="accueilBtn" value="Accueil" class="btn btn-primary">
+                        <input type="button" id="reglesBtn" value="Règles" class="btn btn-primary">
+                        <!-- Style de cartes -->
+                        <div class="input-group">
+                            <!-- Texte style de cartes -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  Style de cartes
+								</span>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <select class="form-control" id="cardBack">
+                                <option value="red" selected>Rouge</option>
+                                <option value="blue">Bleu</option>
+                                <option value="gray">Gris</option>
+                                <option value="green">Vert</option>
+                                <option value="purple">Violet</option>
+                                <option value="yellow">Jaune</option>
+                            </select>
+                        </div>
+                        <!-- Rotation des cartes en main -->
+                        <div class="input-group mb-3">
+                            <!-- Texte rotation cartes -->
+                            <div class="input-group-prepend">
+								<span class="input-group-text">
+								  Rotation cartes
+								</span>
+                            </div>
+                            <!-- Choix style de cartes -->
+                            <label class="switch">
+                                <input id="rotation" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" id="chat">
+                        <div class="panel-heading top-bar">
+                            <div class="col-sm-12">
+                                <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat de la partie</h3>
+                            </div>
+                        </div>
+                        <div class="panel-body msg_container_base">
+							<div id="messages">
+							</div>
+                        </div>
+						<div class="panel-footer">
+							<div class="input-group">
+								<form id="formSendMessage" style="width: 100%;">
+									<div class="input-group">
+										<input class="form-control" id="message" placeholder="Message..." />
+										<input type="submit" value="Envoyer" id="envoyerMessage" class="btn btn-primary active" />
+									</div>
+								</form>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="regles">
+        <p><br><b>Objectif d'une partie</b><br><br>
+            L'objectif d'une partie de blitz est de se débarrasser d'un maximum de cartes afin d'avoir un minimum de points lorsque
+            la partie se termine, ce qui arrive lorsque une main d'un des joueurs où que le paquet de cartes est vide.
+
+            <br><br><b>Déroulement d'une partie</b><br><br>
+
+            Une partie se déroule en plusieurs étapes, et se joue au tour par tour entre chaque joueurs. En premier lieu, et ce après
+            avoir distribué les cartes, une première période de défausse est entamée, cette dernière durant 5 secondes. Pendant ce laps
+            de temps, les joueurs ayant dans leur jeu une carte d'une valeur similaire à celle sur le haut de la défausse peuvent s'en
+            débarrasser. Cela étant, il verront leurs scores s’alourdir de 5 unités en cas d'erreur.
+            <br><br>
+            Vient ensuite le tour du premier joueur qui a deux choix potentiels : piocher la première carte de la défausse ou du paquet.
+            Une fois cette action réalisée, il a de nouveau deux choix qui s'offrent à lui : défausser cette carte ou la mettre dans son
+            jeu à la place d'une de ses cartes qui sera alors défaussée.
+            Lorsqu'une carte est défaussée, il se peut qu'un pouvoir soit activé, ces derniers étant au nombre de 2 :
+            - Les cartes 7 et 8 : elles permettent de voir la valeur d'une carte de sa main ou de la main d'un autre joueur
+            - Le valet : il permet d'échanger la position de deux cartes, qu'elles soient dans la main du joueur qui active le pouvoir ou dans
+            la main d'un autre joueur
+            <br><br>
+            A la fin de la partie, les points sont comptés, et en cas d'égalité, le nombre de cartes permet de départager les joueurs, celui en
+            ayant le moins étant logiquement le mieux placé.
+            <br><br><b>
+                Pour ce qui est des points, vous pouvez retrouver la valeur des cartes ci-dessous :<br>
+					- De 1 à 10 : autant de points que la valeur de la carte (1 pour l'as, 2 pour la carte deux de cœur ...)<br>
+                    - Valet et Dame : ces deux cartes valent 10 points<br>
+                    - Roi rouge : cette carte est spéciale car elle ne vaut pas de points (0 points)<br>
+                    - Roi noir : débarrassez-vous rapidement de cette carte qui vaut 15 points !<br></b>
+        </p>
+    </div>
+    <div id="finPartie" style="display: none;">
+		<h1 style="text-align: center; margin-top: .5em">Fin de la partie</h1>
+		<!-- Tableau scores -->
+		<table class="table rounded" id="scores">
+			<tr>
+				<th id="positionFin">Position</th>
+                <th id="nomJFin">Nom</th>
+                <th id="scoreJFin">Score</th>
+                <th id="nbCartesFin">Cartes</th>
+			</tr>
+		</table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('localhost:8080'); // online : 'https://jeudecarte.alwaysdata.net/', {secure:true} - local : localhost:8080
+    var pseudo = "";
+
+    var connexionDisplayed = false; // état du menu de connexion
+    var inscriptionDisplayed = false; // état du menu d'inscription
+    var creationDisplayed = false; // état du menu de création de partie
+    var rejoindreDisplayed = false; // état du menu des parties en cours
+    var confirmationDisplayed = false;
+    var updateDisplayed = false;
+    var mdpoublieDisplayed = false;
+    var friendListDisplay = 0;
+
+    var isConnected = false; // pour le moment à false, il faudra le gérer après avec des cookies je pense.
+
+    var actualGameName = ""; // nom de la partie acutelle jouée
+
+    var hisMyTurn = false;
+    var isDiscardTime = false;
+    var hasDrawnCard = false;
+    var hasPower = false;
+    var power;
+
+    var cardPower11;
+    var hasCardPower11 = false;
+
+    var tas;
+
+    var cardDrawn;
+
+    var pseudos;
+
+    var cardBackStyle = "red_back.png";
+    var canChangeStyle = false;
+
+	var isGuest = false;
+
+    /*
+        --------------- FUNCTIONS ---------------
+    */
+
+
+    /*
+        Renvoie true si l'input correspondant au pseudo d'invité est rempli, et assigne à la var pseudo
+        la valeur correspondante.
+    */
+
+    function hasGuestPseudo() {
+        if ($("#pseudo").val().length == 0) {
+            $.notify("Renseignez votre pseudo guest ou connectez vous !", "warn");
+            return false;
+        }
+        else if ($("#pseudo").val().length >= 20) {
+            $.notify("Votre pseudo est un peu trop long !", "warn");
+            return false;
+        }
+
+        pseudo = "guest_" + $("#pseudo").val();
+        return true;
+    }
+
+
+    /*
+        Renvoie true si le joueur est connecté ou s'il a choisi un pseudo d'invité (ce qui signifie
+        que l'input correspondant au pseudo d'invité est rempli).
+    */
+
+    function hasPseudo() {
+        return isConnected || hasGuestPseudo();
+    }
+
+
+    /*
+        Fonction utilisée afin de gérer le menu principal : par exemple, l'ouverture
+        du menu de création de partie provoque la fermeture de celui destiné à rejoindre
+        une partie.
+    */
+
+    function displayMenu(action) {
+        switch (action) {
+            case "connexion":
+                if (!connexionDisplayed) {
+                    if (inscriptionDisplayed) {
+                        displayMenu("inscription");
+                    }
+                    if (mdpoublieDisplayed) {
+                        displayMenu("mdpoublie");
+                    }
+
+                    $("#connexion").show();
+                    connexionDisplayed = true;
+                }
+                else {
+                    $("#connexion").hide();
+                    connexionDisplayed = false;
+                }
+                break;
+
+            case "inscription":
+                if (!inscriptionDisplayed) {
+                    if (connexionDisplayed) {
+                        displayMenu("connexion");
+                    }
+                    if (mdpoublieDisplayed) {
+                        displayMenu("mdpoublie");
+                    }
+
+                    $("#inscription").show();
+                    inscriptionDisplayed = true;
+                }
+                else {
+                    $("#inscription").hide();
+                    inscriptionDisplayed = false;
+                }
+                break;
+
+            case "mdpoublie":
+                if (!mdpoublieDisplayed) {
+                    if (connexionDisplayed) {
+                        displayMenu("connexion");
+                    }
+                    if (inscriptionDisplayed) {
+                        displayMenu("inscription");
+                    }
+                    $("#mdpoublie").show();
+                    mdpoublieDisplayed = true;
+                }
+                else {
+                    $("#mdpoublie").hide();
+                    mdpoublieDisplayed = false;
+                }
+                break;
+
+            case "creation":
+                if (!creationDisplayed) {
+                    if (rejoindreDisplayed) {
+                        displayMenu("rejoindre");
+                    }
+
+                    $("#creation").show();
+                    creationDisplayed = true;
+                }
+                else {
+                    $("#creation").hide();
+                    creationDisplayed = false;
+                }
+                break;
+
+            case "rejoindre":
+                if (!rejoindreDisplayed) {
+                    if (creationDisplayed) {
+                        displayMenu("creation");
+                    }
+
+                    socket.emit("askGames");
+                    $("#rejoindre").show();
+                    rejoindreDisplayed = true;
+                }
+                else {
+                    $("#rejoindre").hide();
+                    $('.gameTr').remove();
+                    rejoindreDisplayed = false;
+                }
+                break;
+
+            case "confirmation":
+                if (!confirmationDisplayed) {
+                    if (creationDisplayed) {
+                        displayMenu("creation");
+                    }
+                    if (inscriptionDisplayed) {
+                        displayMenu("inscription");
+                    }
+
+                    $("#confirmation").show();
+                    confirmationDisplayed = true;
+                }
+                else {
+                    $("#confirmation").hide();
+                    confirmationDisplayed = false;
+                }
+                break;
+
+            case "updatePwd":
+                if (!updateDisplayed) {
+                    $("#newPwd").show();
+                    updateDisplayed = true;
+                }
+                else {
+                    $("#newPwd").hide();
+                    updateDisplayed = false;
+                }
+                break;
+        }
+    }
+
+
+    /*
+        Fonction appelée lorsque le bouton "rejoindre" est sollicité. Émet par conséquent au serveur
+        un event "joinGame" signifiant qu'une personne a rejoint une partie, et lui envoyant les informations
+        de cette partie contenues dans les attributs du bouton que sont "gameName", "nbPlayers" et "nbPlayersMax".
+    */
+
+    function joinGame () {
+        if (hasPseudo()) {
+            $("#menu").fadeOut(function() {
+                $("#board").fadeIn();
+            });
+
+            actualGameName = $(this).attr("gameName");
+
+            socket.emit("joinGame", { gameName: $(this).attr("gameName"),
+                nbPlayers: $(this).attr("nbPlayers"),
+                nbPlayersMax: $(this).attr("nbPlayersMax"),
+                pseudo: pseudo,
+				isGuest: !isConnected
+			});
+        }
+    };
+
+
+    /*
+        Fonction appelée lorqu'il est nécessaire de rajouter une partie à la liste des parties. L'idée est que
+        un tableau avec des lignes (tr) et des colonnes (td) est utilisé. Il y a 3 colonnes, utilisées
+        respectivement pour le nom de la partie, le nombre de joueurs et le placement du bouton rejoindre.
+
+        A noter que l'id de chaque ligne est le nom de la partie, chose qui nous servira plus tard afin
+        d'identifier chacunes des lignes et de récupérer des informations.
+
+        De plus, les informations de la parties sont "stockées" dans les attributs du boutons, de telle sorte que
+        lorsque ce-dernier est utilisé, nous puissions récupérer les différentes informations en faisant appel
+        à $(this).attr("nomAttributARecup").
+    */
+
+    function appendGame (gameName, nbPlayers, nbPlayersMax) {
+        let tr = $('<tr />').attr('id', gameName)
+            .attr('class', "gameTr");
+
+        let tdGamename = $('<td />');
+        tr.append(tdGamename.html(gameName));
+
+        let tdNbPlayers = $('<td />');
+        tr.append(tdNbPlayers.html(nbPlayers + "/" + nbPlayersMax));
+
+        let i = $('<i />').html("play_arrow")
+            .attr("class", "material-icons");
+        let button = $('<button />');
+
+        button.append(i);
+
+        if (nbPlayers == nbPlayersMax) {
+            button.attr("disabled", true)
+                .attr("class", "validate btn btn-secondary")
+        }
+        else {
+            button.attr("class", "validate btn btn-danger")
+        }
+
+        let tdButton = $('<td />');
+        tr.append(tdButton.append(button.attr("gameName", gameName)
+            .attr("nbPlayersMax", nbPlayersMax.toString())
+            .attr("nbPlayers", nbPlayers)
+            .click(joinGame)));
+
+        $('#rejoindre').append(tr);
+    };
+
+
+    /*
+        Fonction appelée lorsqu'un message doit être affiché dans le chat, dans le cas d'un event "newMessage".
+        Ce-dernier est simplement append dans le chat qui a ici pour id "messages".
+    */
+
+    function appendMessage (message) {
+        let div1 = $('<div />').attr("class", "row msg_container base_receive");
+        let div2 = $('<div />').attr("class", "col-sm-12");
+        let div3 = $('<div />').attr("class", "messages msg_receive");
+
+        div3.append(message);
+        div2.append(div3);
+        div1.append(div2);
+
+        $('#messages').append(div1);
+    };
+
+
+    /*
+        Fonction permettant de modifier les informations sur une game lorsque par exemple un nouveau joueur a rejoint
+        la partie, ou que cette-dernière est pleine et qu'il est nécessaire de al rendre inacessible a plus de joueurs.
+
+        L'idée est que seules les deux dernières colonnes sont à modifier. En effet, le nom de la partie qui est la première
+        colonne ne changera pas. Cependant, la deuxième colonne, qui est le nombre de joueurs, doit être modifié à chaque connexion
+        de joueurs. Enfin, la dernière colonne, qui est celle du bouton, doit être également modifiée. En effet, le bouton contient
+        dans ses attributs les informations de la partie, et il est donc nécessaire de modifier le nombre de joueurs.
+    */
+
+    function updateGameDatas (gameName, nbPlayers, nbPlayersMax) {
+        tr = "#" + gameName;
+        index = 0;
+
+        $(tr).find('td').each(function() {
+            if (index == 1) {
+                $(this).fadeOut(function() {
+                    $(this).html(nbPlayers.toString() + "/" + nbPlayersMax.toString());
+                    $(this).fadeIn();
+                })
+            }
+            else if (index == 2) {
+                if (nbPlayers == nbPlayersMax) {
+                    $(this).children(":first").attr("disabled", true)
+                        .attr("class", "validate btn btn-secondary");
+                }
+                $(this).attr("nbPlayers", nbPlayers);
+            }
+
+            index += 1;
+        });
+    };
+
+
+    /*
+
+    */
+
+    function deleteGame (gameName) {
+        var idGame = "#" + gameName;
+        $(idGame).remove();
+    }
+
+    /*
+
+    */
+
+    function fadeInPseudo(pseudo, index, idElement) {
+        $(idElement).html(pseudo.substring(0, index));
+
+        if (index + 1 <= pseudo.length) {
+            setTimeout(function() {
+                fadeInPseudo(pseudo, index + 1, idElement);
+            }, 50);
+        }
+    }
+
+
+    /*
+
+    */
+
+    function dealOtherCards(numPlayer, index) {
+        var src = "/images/cards/";
+        var li = $('<li />');
+
+        var a = $('<a />');
+        a.attr('href', "#")
+            .attr("class", "card")
+            .click(cardClicked);
+
+        var cardImg = $('<img />');
+        a.append(cardImg.attr("src", src + "red_back" + ".png")
+            .attr("height", 175));
+
+        li.append(a);
+
+        var handElement = "#player" + numPlayer.toString() + " div ul";
+        $(handElement).append(li);
+
+        if (index + 1 <= 3) {
+            setTimeout(function() {
+                dealOtherCards(numPlayer, index + 1);
+            }, 1000);
+        }
+    }
+
+
+    /*
+
+    */
+
+    function dealMyCards(hand, index) {
+      var li = $('<li />');
+
+      var a = $('<a />');
+      a.attr('href', "#")
+       .attr("class", "card")
+       .click(cardClicked)
+       .data("cardName", hand[index]);
+
+      var src;
+      if (index == 0 || index == 1) {
+          src = "/images/cards/" + hand[index] + ".png";
+      }
+      else {
+          src = "/images/cards/red_back.png";
+      }
+
+      var cardImg = $('<img />');
+      a.append(cardImg.attr("src", src)
+                      .attr("height", 175));
+
+      li.append(a);
+      $('#mainPlayer div ul').append(li);
+
+      if (index + 1 <= hand.length - 1) {
+          setTimeout(function() {
+              dealMyCards(hand, index + 1);
+          }, 1000)
+      }
+    }
+
+
+    /*
+
+    */
+
+    function setPioche() {
+        $("#cardPioche").click(cardClicked);
+    }
+
+
+    /*
+
+    */
+
+    function setTas(cardsTas) {
+        tas = cardsTas;
+        $("#cardTas img").attr("src", "/images/cards/" + cardsTas[0] + ".png")
+                         .click(cardClicked);
+
+        $("#cardTas").data("cardName", cardsTas[0]);
+
+        $("#pioche").fadeIn();
+        $("#tas").fadeIn();
+    }
+
+
+    /*
+
+    */
+
+    function startGame(pseudos, hand, nbPlayers, cardsTas) {
+        setPioche();
+        setTas(cardsTas);
+        fadeInPseudo(pseudo, 1, "#mainPlayer p");
+        dealMyCards(hand, 0);
+
+        switch (nbPlayers) {
+          case 5 :
+              for (var i = 1; i <= 5; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 1], 1, "#player" + i.toString() + " p");
+              }
+
+              break;
+
+          case 4 :
+              for (var i = 1; i <= 2 ; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 1], 1, "#player" + i.toString() + " p");
+              }
+
+              for (var i = 4; i <= 5 ; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 2], 1, "#player" + i.toString() + " p");
+              }
+
+              break;
+
+          case 3 :
+              for (var i = 2; i <= 4; i++) {
+                  dealOtherCards(i, 0);
+                  fadeInPseudo(pseudos[i - 2], 1, "#player" + i.toString() + " p");
+              }
+
+              break;
+
+          case 2 :
+              dealOtherCards(2, 0);
+              fadeInPseudo(pseudos[0], 1, "#player2 p");
+
+              dealOtherCards(4, 0);
+              fadeInPseudo(pseudos[1], 1, "#player4 p");
+
+              break;
+
+          case 1 :
+              dealOtherCards(3, 0);
+              fadeInPseudo(pseudos[0], 1, "#player3 p");
+
+              break;
+        }
+
+        setTimeout(function() {
+            canChangeStyle = true;
+        }, 16050);
+    }
+
+
+    /*
+
+    */
+
+    function getCardName(card) {
+        return card.substring(0, card.length - 1);
+    }
+
+
+    /*
+
+    */
+
+    function searchForPower() {
+        setTimeout(function() {
+          switch (getCardName(tas[tas.length - 1])) {
+            case "7":
+            case "8":
+              hasPower = true;
+              power = 78;
+
+              $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour regarder une des cartes retournée !");
+              socket.emit("infosMsg2", { msg: "Regarde une carte retournée (pouvoir 7/8)",
+                                         gameName: actualGameName });
+
+              break;
+
+            case "11":
+              hasPower = true;
+              power = 11;
+
+              $("#infosMsg1").html("Utilisez le pouvoir de votre carte pour échangez les positions de deux cartes !");
+              socket.emit("infosMsg2", { msg: "Échange les positions de deux cartes (pouvoir 11)",
+                                         gameName: actualGameName });
+
+              break;
+          }
+
+          hasDrawnCard = false;
+
+          if (!hasPower)  {
+              isDiscardTime = true;
+
+              socket.emit("nextPlayer", actualGameName);
+          }
+        }, 2500);
+    }
+
+
+    /*
+
+    */
+
+    function cardClicked () {
+        var li = $(this).parent();
+        var idClicked = li.parent().parent().parent().attr("id");
+
+        if (hasPower && idClicked !== undefined && idClicked !== "pioche") {
+            var pseudoToSend;
+
+            if (idClicked == "mainPlayer") {
+               pseudoToSend = pseudo;
+            }
+            else {
+               pseudoToSend = getPseudoWithPlayerNumber(idClicked.substring(idClicked.length - 1));
+            }
+
+            if (power == 78) {
+                socket.emit("askCardValue", { gameName: actualGameName,
+                                              pseudo: pseudoToSend,
+                                              index: li.index() });
+
+                hasPower = false;
+            }
+            else if (power == 11) {
+                if (hasCardPower11) {
+                    socket.emit("valet", { gameName: actualGameName,
+                                           pseudo1 : cardPower11.pseudo,
+                                           index1: cardPower11.index,
+                                           pseudo2: pseudoToSend,
+                                           index2: li.index() });
+
+                    hasCardPower11 = false;
+                    hasPower = false;
+
+                    setTimeout(function() {
+                        isDiscardTime = true;
+
+                        socket.emit("nextPlayer", actualGameName);
+                    }, 3000);
+                }
+                else {
+                    cardPower11 = { pseudo: pseudoToSend,
+                                    index: li.index() };
+
+                    hasCardPower11 = true;
+                }
+            }
+        }
+        else if (isDiscardTime && idClicked == "mainPlayer") {
+            if (getCardName($("#cardTas").data("cardName")) == getCardName($(this).data("cardName"))) {
+                socket.emit("cardRemoved", { gameName: actualGameName,
+                                             cardIndex: li.index() });
+
+                $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
+                $("#cardTas").data("cardName", $(this).data("cardName"));
+
+                socket.emit("cardDiscarded", { gameName: actualGameName,
+                                               cardIndex: li.index() });
+
+                socket.emit("depositeOnTas", { indexCardToPut: li.index(),
+                                               cardToPut: $(this).data("cardName"),
+                                               gameName: actualGameName });
+
+                setTimeout(function() {
+                  li.remove();
+                }, 50);
+
+
+            }
+            else {
+                appendMessage("<p><b> FAIL ! Les cartes ne sont pas identiques, 5 points en plus ajoutés à ton score ! </b></p>");
+                socket.emit("playerFail", actualGameName);
+            }
+
+        }
+        else if (hisMyTurn) {
+            if (hasDrawnCard) {
+                if (idClicked == undefined) {
+                    socket.emit("infosMsg2", { msg: "A défaussé la carte piochée",
+                                               gameName: actualGameName });
+                    socket.emit('depositeOnTas', { gameName: actualGameName,
+                                                   cardToPut: cardDrawn });
+
+                    $("#cardPioche img").attr("src", "/images/cards/" + cardBackStyle);
+
+                    $("#cardTas img").attr("src", "/images/cards/" + cardDrawn + ".png");
+                    $("#cardTas").data("cardName", cardDrawn);
+
+
+
+                    tas.push(cardDrawn);
+                    hisMyTurn = false;
+                    searchForPower();
+                }
+                else if (idClicked == "mainPlayer") {
+                    $("#cardPioche img").attr("src", "/images/cards/" + cardBackStyle);
+
+                    $("#cardTas img").attr("src", "/images/cards/" + $(this).data("cardName") + ".png");
+                    $("#cardTas").data("cardName", $(this).data("cardName"));
+
+                    tas.push($(this).data("cardName"));
+
+                    socket.emit("handModified", { gameName: actualGameName,
+                                                  cardIndex: li.index(),
+                                                  cardToPut: cardDrawn });
+
+                    socket.emit('depositeOnTas', { gameName: actualGameName,
+                                                   cardToPut: $(this).data("cardName") });
+
+                    $(this).data("cardName", cardDrawn);
+                    hisMyTurn = false;
+                    searchForPower();
+                }
+            }
+            else if (idClicked == undefined) {
+                hasDrawnCard = true;
+                cardDrawn = tas[tas.length - 1];
+
+                tas.splice(tas.length - 1, 1);
+
+                if (tas.length == 0) {
+                    $("#cardTas img").attr("src", "/images/cards/red_back.png");
+                }
+                else {
+                    $("#cardTas img").attr("src", "/images/cards/" + tas[tas.length - 1] + ".png");
+                }
+
+                socket.emit("drawTas", actualGameName);
+                $("#cardPioche img").attr("src", "/images/cards/" + cardDrawn + ".png");
+            }
+            else if (idClicked == "pioche") {
+                hasDrawnCard = true;
+                socket.emit("drawCard", actualGameName);
+            }
+        }
+    }
+
+
+    /*
+
+    */
+
+    function getPseudoWithPlayerNumber (playerNumber) {
+        switch (pseudos.length) {
+          case 1:
+            return pseudos[playerNumber - 3];
+            break;
+
+          case 2:
+            if (playerNumber == 2) {
+                return pseudos[0];
+            }
+            else {
+                return pseudos[1];
+            }
+
+            break;
+
+          case 3:
+            return pseudos[playerNumber - 2];
+            break;
+
+        case 4:
+            if (playerNumber == 1 || playerNumber == 2) {
+                return pseudos[playerNumber - 1];
+            }
+            else {
+                return pseudos[playerNumber - 2];
+            }
+
+            break;
+
+        case 5:
+            return pseudos[playerNumber - 1];
+            break;
+        }
+    }
+
+
+    /*
+
+    */
+
+    function getPlayerNumberWithPseudo (pseudoPlayer) {
+        var index = pseudos.indexOf(pseudoPlayer);
+
+        switch (pseudos.length) {
+          case 1:
+            return 3;
+            break;
+
+          case 2:
+            if (index == 0) {
+                return 2;
+            }
+            else {
+                return 4;
+            }
+
+            break;
+
+          case 3:
+            return index + 2;
+            break;
+
+        case 4:
+            if (index == 0 || index == 1) {
+                return index + 1;
+            }
+            else {
+                return index + 2;
+            }
+
+            break;
+
+        case 5:
+            return index + 1;
+            break;
+        }
+    }
+
+    /*
+        --------------- LISTEN EVENTS ---------------
+    */
+
+
+    /*
+        Évènement reçu lorsqu'un nouveau message est reçu. Ce-dernier est par conséquent ajouté
+        dans le chat.
+    */
+
+    socket.on('newMessage', function(message) {
+        appendMessage(message);
+        document.getElementById("messages").lastChild.scrollIntoView(false);
+    });
+
+
+    /*
+        Évènement reçu lorsqu'une nouvelle partie est créée. Cette dernière est ajoutée à la liste des parties.
+
+        À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
+        de ne pas réaliser des tâches en fonds pour des questions d'optimisation, bien que dans notre cas,
+        peu de parties seront jouées en simultanées.
+    */
+
+    socket.on('newGame', function(data) {
+        if (rejoindreDisplayed) {
+            appendGame(data.gameName, 1, data.nbPlayersMax);
+        }
+    });
+
+
+    /*
+        Évènement reçu lorsque des informations sur une partie doivent être modifiées,
+        lorsqu'un joueur s'est connecté à cette dernière.
+
+        À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
+        de ne pas réaliser des tâches en fonds pour des questions d'optimisation, bien que dans notre cas,
+        peu de parties seront jouées en simultanées.
+    */
+
+    socket.on('updateGame', function(data) {
+        if (rejoindreDisplayed)  {
+            updateGameDatas(data.gameName, data.nbPlayers, data.nbPlayersMax);
+        }
+    });
+
+
+    /*
+        Évènement reçu lorsque des informations sur une parties doivent être modifiées,
+        lorsqu'un joueur s'est connecté à cette dernière.
+
+        À noter que l'action n'est réalisée que lorsque le menu des parties en cours est affiché, afin
+        de ne pas réaliser des tâches en fonds pour des questions d'optimisation, bien que dans notre cas,
+        peu de parties seront jouées en simultanées.
+    */
+
+    socket.on('deleteGame', function(gameName) {
+        if (rejoindreDisplayed)  {
+            deleteGame(gameName);
+        }
+    });
+
+
+    /*
+        Évènement reçu lorsque les informations sur les parties actuelles ont été demandées. Permet
+        d'afficher la liste des parties en cours.
+    */
+
+    socket.on('gamesAsked', function(games) {
+        games.forEach(function(game) {
+            appendGame(game[0], game[1], game[2]);
+        });
+    });
+
+
+    /*
+
+    */
+
+    socket.on('newAlertMessage', function(message) {
+        $.notify(message, "warn");
+    })
+
+    socket.on('newSucessMessage', function(message){
+        $.notify(message, "success");
+    })
+
+
+
+    /*
+
+    */
+
+    socket.on('connexionOk', function(data) {
+        pseudo = data.pseudo;
+        var confirmed = data.confirmed;
+        isConnected = true;
+
+        $("#inputPseudo").hide();
+
+        $("#friendListDisplayButton").show();
+
+        $("#affichagePseudo").val(pseudo);
+        $("#pseudoDisplay").show();
+
+        displayMenu("connexion");
+        if(confirmed == false){
+            $('#formBtnsMenu').hide();
+			$("#updateBtn").hide();
+			$("#decoBtn").hide();
+            displayMenu("confirmation");
+        }
+        $('#btnsInscrCo').hide();
+		$("#updateBtn").show();
+        $("#decoBtn").show();
+        $.notify("Vous êtes connecté, bienvenue !", "success");
+    });
+
+
+    /*
+
+*/
+
+    socket.on('confirmationOK', function() {
+        displayMenu("confirmation");
+        $('#formBtnsMenu').show();
+        $.notify("Compte confirmé, bienvenue !", "success");
+    });
+
+    /*
+
+    */
+
+    socket.on('mdpChange', function() {
+        $("#mdpoublie").hide();
+        $.notify("Un mail contenant le nouveau mot de passe a été envoyé !", "success");
+        $('#mdpoublie')[0].reset();
+    });
+
+    /*
+
+    */
+
+    socket.on('newMdpOk', function() {
+        displayMenu("updatePwd");
+        $.notify("Mot de passe mis à jour !", "success");
+        $('#newPwd')[0].reset();
+    });
+
+    /*
+
+    */
+
+    socket.on('newMdpIncorrect', function(message) {
+        $.notify(message, "warn");
+        $('#newPwd')[0].reset();
+    });
+
+
+    /*
+
+    */
+
+    socket.on('dealingCards', function(data) {
+        var index = data.pseudos.indexOf(pseudo);    // <-- Not supported in <IE9
+        if (index !== -1) {
+            data.pseudos.splice(index, 1);
+        }
+
+        pseudos = data.pseudos;
+
+        setTimeout(function() {
+            startGame(data.pseudos, data.hand, data.nbPlayers - 1, data.cardsTas);
+        }, 1000);
+    });
+
+
+    /*
+
+    */
+
+    socket.on('hideCards', function() {
+        $("#mainPlayer ul").fadeOut(function() {
+            var imgList = $("#mainPlayer ul .card img");
+
+            for (var img of imgList) {
+                img.src = "/images/cards/" + cardBackStyle;
+            }
+
+            $("#mainPlayer ul").fadeIn();
+        });
+    });
+
+
+    /*
+
+    */
+
+    socket.on('yourTurn', function() {
+        $("#infosMsg1").html("C'EST TON TOUR DE JOUER !");
+        hisMyTurn = true;
+    });
+
+
+    /*
+
+    */
+
+    socket.on('cardDrawn', function(ccardDrawn) {
+        cardDrawn = ccardDrawn;
+        $("#cardPioche img").attr("src", "/images/cards/" + cardDrawn + ".png");
+    });
+
+
+    /*
+
+    */
+
+    socket.on("cardRemoved", function(data) {
+        var idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        var listLi = $(idPlayer + " div ul li");
+
+        listLi[data.indexToRemove].remove();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("updateTas", function(tasUpdated) {
+        tas = tasUpdated;
+
+        if (tas.length == 0) {
+            $("#cardTas img").attr("src", "/images/cards/red_back.png");
+        }
+        else {
+            $("#cardTas img").attr("src", "/images/cards/" + tas[tas.length - 1] + ".png");
+            $("#cardTas").data("cardName", tas[tas.length - 1]);
+        }
+    });
+
+
+    /*
+
+    */
+
+    socket.on("discardTime", function() {
+        $("#infosMsg1").html("DÉFAUSSEZ VOS CARTES !");
+        $("#infosMsg2").html("");
+
+        isDiscardTime = true;
+    });
+
+
+    /*
+
+    */
+
+    socket.on("endDiscardTime", function() {
+        $("#infosMsg1").html("");
+        $("#infosMsg2").html("");
+
+        isDiscardTime = false;
+    });
+
+
+    /*
+
+    */
+
+    socket.on("cardValueAsked", function(data) {
+        var idPlayer;
+
+        if (data.pseudo == pseudo) {
+            idPlayer = "#mainPlayer";
+        }
+        else {
+            idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        }
+
+        var imgList = $(idPlayer + " div ul img");
+        var img = imgList[data.cardIndex];
+        var previousSrc = img.src.substring(img.src.lastIndexOf("/"));
+
+        img.src = "/images/cards/" + data.cardName + ".png";
+        setTimeout(function() {
+            img.src = "/images/cards/" + previousSrc;
+            hasPower = false;
+
+            setTimeout(function() {
+                isDiscardTime = true;
+
+                socket.emit("nextPlayer", actualGameName);
+            }, 3000);
+        }, 3000);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("modifyCard", function(data) {
+        var aList = $("#mainPlayer div ul a");
+        var a = aList[data.cardIndex];
+
+        $(a).data("cardName", data.cardName);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("deckEmpty", function(data) {
+        $("#pioche").hide();
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg1", function(msg) {
+        $("#infosMsg1").html(msg);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("infosMsg2", function(msg) {
+        $("#infosMsg2").html(msg);
+    });
+
+
+    /*
+
+    */
+
+    socket.on("playerLeft", function(data) {
+        appendMessage("<p>Le joueur <b>" + data.pseudo + "</b> a quitté la partie ...</p>");
+        var playerNumber = getPlayerNumberWithPseudo(data.pseudo);
+        var idPlayer = "#player" + playerNumber.toString();
+
+        $(idPlayer + " p").html(data.pseudo + " (déconnecté)");
+        $(idPlayer + " li").remove();
+
+        setTimeout(function() {
+          if (data.isEndGame) {
+             appendMessage("<p>Vous êtes le dernier joueur en ligne dans la partie, elle va s'arrêter d'ici quelques secondes ...</p>");
+
+             setTimeout(function() {
+                location.reload();
+             }, 3000);
+          }
+        }, 500);
+    });
+
+
+    /*
+        --------------- LISTEN ACTIONS OF PLAYER ---------------
+    */
+
+
+    /*
+        Affiche le menu de création de partie lorsque le bouton creation est enclenché.
+    */
+
+    $("#creationBtn").click(function(e) {
+        displayMenu("creation");
+        return false;
+    });
+
+
+    /*
+        Affiche le menu des parties lorsque le bouton rejoindre est enclenché.
+    */
+
+    $("#rejoindreBtn").click(function(e) {
+        displayMenu("rejoindre");
+        return false;
+    });
+
+
+    /*
+        Affiche le menu d'inscription lorsque le bouton inscription est enclenché.
+    */
+
+    $("#inscriptionBtn").click(function(e) {
+        displayMenu("inscription");
+    });
+
+    /*
+    */
+    $("#decoBtn").click(function () {
+        location.reload();
+    });
+
+    /*
+        Affiche le menu de connexion lorsque le bouton connexion est enclenché.
+    */
+
+    $("#connexionBtn").click(function(e) {
+        displayMenu("connexion");
+    });
+
+    /*
+    */
+    $("#updateBtn").click(function(e) {
+        displayMenu("updatePwd");
+    });
+
+    /*
+        Appelé lorsque un message est envoyé, ce-dernier est transmis au serveur afin d'être distribué
+        à tous les uatres joueurs de la partie actuelle, et ajoute ce message au chat de la personne qui
+        l'envoie, sans passer par le serveur.
+    */
+
+    $('#formSendMessage').submit(function () {
+        if ($('#message').val().length > 0) {
+            socket.emit('newMessage', { gameName: actualGameName,
+                message: $('#message').val() });
+
+            var message = "<p><b>" + pseudo + "</b> : " + $('#message').val() + "</p>"
+            appendMessage(message);
+
+            document.getElementById("messages").lastChild.scrollIntoView(false);
+            $('#message').val('');
+        }
+
+        return false;
+    });
+
+
+    /*
+        Appelé lors de la création d'une partie lorsque le formulaire de création est submit.
+        Envoie l'information au serveur qu'une nouvelle partie a été crée, et switch l'écran actuel
+        du menu au plateau de jeu.
+    */
+
+    $('#creation').submit(function () {
+        if (hasPseudo()) {
+            actualGameName = $('#gameName').val();
+            socket.emit('newGame', { gameName: $('#gameName').val(),
+                nbPlayersMax: parseInt($('#nbPlayersMax').val()),
+                pseudo: pseudo,
+				isGuest: !isConnected
+			});
+
+            $("#menu").fadeOut(function() {
+                $('#gameName').val('');
+                $("#board").fadeIn();
+            });
+        }
+
+        return false;
+    });
+
+
+    /*
+
+    */
+
+    $("#inscription").submit(function() {
+        if ($('#pwd').val() == $('#conf_pwd').val()) {
+            socket.emit('createAccount', { username : $('#pseudoInscription').val() ,
+                email : $('#email').val() ,
+                password : $('#pwd').val() });
+
+            displayMenu("inscription");
+            $('#inscription')[0].reset();
+        }
+        else {
+            $.notify("Les mots de passes sont différents !", "warn");
+            $('#inscription')[0].reset();
+        }
+
+        return false;
+    });
+
+    /*
+
+    */
+
+    socket.on('inscriptionMessage', function() {
+        $.notify("Inscription réussi, vous allez recevoir un mail de confirmation", "success");
+    });
+
+    /*
+
+    */
+
+    $("#connexion").submit(function() {
+        socket.emit('connexion', { email_con : $('#email_con').val() ,
+            pwd_con : $('#pwd_con').val() });
+
+        return false;
+    });
+
+
+    /*
+
+    */
+
+    $("#confirmation").submit(function() {
+        socket.emit('confirmation', { pseudo : pseudo,
+            codeConfirmation : $('#codeConfirmation').val() });
+
+        return false;
+    });
+
+
+    /*
+
+    */
+
+    $("#mdpoublie").submit(function() {
+        socket.emit('updatePwd', { username : $('#pseudoMdpOublie').val(),
+            email : $('#emailMdpOublie').val() });
+
+        return false;
+    });
+
+    $("#btnMdpOublie").click(function(e) {
+        displayMenu("mdpoublie");
+    });
+
+    $("#newPwd").submit(function() {
+        if ($('#newpassword').val() == $('#confirmationnewpwd').val()) {
+            socket.emit('newPwd', {
+                username: pseudo,
+                password: $('#oldpassword').val(),
+                newpwd: $('#newpassword').val()
+            });
+        }
+        else {
+            $.notify("Les mots de passes sont différents !", "warn");
+        }
+        return false;
+    });
+
+
+    /*
+
+    */
+
+    var isRotated = false;
+    $("#rotation").click(function() {
+        if(!isRotated){
+            $("#board").children(":nth-child(2)").addClass("rotateHand");
+            isRotated = true;
+        } else{
+            $("#board").children(":nth-child(2)").removeClass("rotateHand");
+            isRotated = false;
+        }
+    });
+
+    /*
+
+*/
+
+    $("#cardBack").change(function() {
+        if(canChangeStyle){
+            cardBackStyle = $('#cardBack').val() + "_back.png"
+            socket.emit('cardBack', {
+                cardBack: cardBackStyle,
+                pseudo: pseudo
+            });
+        }else{
+            $.notify("Attendre la fin de la distribution des cartes!", "warn");
+        }
+    });
+
+    socket.on("changeCardBack", function(data){
+        var idPlayer;
+
+        if (data.pseudo == pseudo) {
+            idPlayer = "#mainPlayer";
+        }
+        else {
+            idPlayer = "#player" + getPlayerNumberWithPseudo(data.pseudo).toString();
+        }
+
+        var imgList = $(idPlayer + " div ul img");
+
+        for(var img of imgList){
+            img.src = "/images/cards/" + data.cardBack;
+        }
+    });
+
+    $("#accueilBtn").click(function(){
+        location.reload();
+    });
+
+    var reglesDisplayed = false;
+    $("#reglesBtn").click(function(){
+        if(!reglesDisplayed){
+            $("#regles").show();
+            reglesDisplayed = true;
+        } else {
+            $("#regles").hide();
+            reglesDisplayed = false;
+        }
+    });
+
+    socket.on("generalScore",function () {
+        var sql = "SELECT * FROM Score ORDER BY Points LIMIT 5";
+
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            socket.broadcast.emit("scoreResult",result);
+        });
+    });
+
+    function appendScoreGame (pos,  pseudo, score, ratio) {
+        let tr = $('<tr />').attr('id', pos);
+
+        let tdPlace= $('<td />');
+        tr.append(tdPlace.html(pos));
+
+        let tdNomJ= $('<td />');
+        tr.append(tdNomJ.html(pseudo));
+
+        let tdScoreJ= $('<td />');
+        tr.append(tdScoreJ.html(score));
+
+        let tdVictoiresJ= $('<td />');
+        tr.append(tdVictoiresJ.html(ratio));
+
+        $('#classement').append(tr);
+    };
+
+    socket.on("scoreResult",function (data) {
+        for (var i = 0; i<data.length; i++){
+            appendScoreGame(i+1,data[i].Username, data[i].Points,data[i].GamesWon+"/"+data[i].GamesPlayed);
+        }
+    });
+
+	function appendTableauScore (pos,  pseudo, score, cartes) {
+        let tr = $('<tr />').attr('id', pos);
+
+        let tdPlace= $('<td />');
+        tr.append(tdPlace.html(pos));
+
+        let tdNomJ= $('<td />');
+        tr.append(tdNomJ.html(pseudo));
+
+        let tdScoreJ= $('<td />');
+        tr.append(tdScoreJ.html(score));
+
+        let tdVictoiresJ= $('<td />');
+        tr.append(tdVictoiresJ.html(cartes));
+
+        $('#scores').append(tr);
+    };
+
+	socket.on("tableauScore", function(data){
+		for(var i = 0; i< data.length; i++){
+			appendTableauScore(i+1, data[i].pseudo, data[i].points, data[i].nbCards);
+		}
+		$('#finPartie').show();
+		setTimeout(function() {
+			location.reload();
+		}, 10000);
+	});
+
+	$("#friendListDisplayButton").click(function() {
+        if(friendListDisplay%2==0){
+            $("#usersList").show();
+        }
+        else{
+            $("#usersList").hide();
+        }
+        ++friendListDisplay;
+    });
+
+    $("#addFriendForm").submit(function() {
+     if($("#friendName").val() == pseudo){
+        $.notify("Attention tu ne peux pas t'ajouter en ami", "warn");
+     }
+     else{
+        socket.emit("newFriendRequest", {
+        username: pseudo,
+        targetedUser: $('#friendName').val(),
+        });
+     }
+
+     return false;
+     });
+
+     $("#friendRequestDisplayButton").click(function(){
+        $("#listOfElements").empty();
+        socket.emit("friendRequestShowClick", pseudo);
+        return false;
+     });
+
+     socket.on("friendRequestShowClickResponse", function(data){
+        data.forEach(function(element) {
+          $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username1 + '</span><span class="deleteFriendRequest badge badge-danger">X</span> <span class="addFriend badge badge-success">O</span></li>');
+
+        });
+     });
+
+    $("#listOfElements").on('click','.addFriend', function(){
+        var targetedUser = $(this).parent().find(".targetedUser").text();
+        socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : true });
+        $(this).parent().remove();
+        return false;
+    });
+
+    $("#listOfElements").on('click','.deleteFriendRequest', function(){
+        var targetedUser = $(this).parent().find(".targetedUser").text();
+        socket.emit("friendRequestAnswer", { Username1 : targetedUser, Username2 : pseudo, accept : false });
+        $(this).parent().remove();
+        return false;
+    });
+
+    $("#friendDisplayButton").click(function(){
+         $("#listOfElements").empty();
+         socket.emit("friendListShowClick", pseudo);
+         return false;
+    });
+
+    socket.on("friendListShowClickResponse", function(data){
+        var connectedFriendList = [];
+
+        var disconnectedFriendList = [];
+
+        data.forEach(function(element){
+            if(element.connectedFriend)
+                connectedFriendList.push(element);
+            else
+                disconnectedFriendList.push(element);
+        });
+
+        connectedFriendList.forEach(function(element) {
+            if(element.inGame)
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="friendUsername targetedUser">'+ element.friendName + '</span><span class="deleteFriend badge badge-danger align-top">X</span><span class="joinFriend badge badge-success align-top"><i class="material-icons">play_arrow</i></span></li>');
+            else
+                $("#listOfElements").append('<li class="friendListConnectedUser"> <span class="badge badge-success align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span></li>');
+        });
+
+        disconnectedFriendList.forEach(function(element){
+            $("#listOfElements").append('<li class="friendListDisconnectedUser"> <span class="badge badge-danger align-top">O</span> <span class ="targetedUser">'+ element.friendName + '</span> <span class="deleteFriend badge badge-danger align-top">X</span> </li>');
+        });
+
+    });
+
+    $("#listOfElements").on('click', '.deleteFriend', function(){
+        var targetedUser = $(this).parent().find(".targetedUser").text();
+        socket.emit("deleteFriend", {Username1 : pseudo, Username2 : targetedUser});
+        console.log(targetedUser);
+        $(this).parent().remove();
+        return false;
+    });
+
+    $("#listOfElements").on('click', '.joinFriend',function(){
+        var targetedUser  = $(this).parent().find(".friendUsername").text();
+        socket.emit("joinFriend", {targetedUser : targetedUser, pseudo : pseudo});
+        return false;
+    });
+
+    socket.on("joinFriendResponse", function(data){
+        $("#menu").fadeOut(function() {
+            $("#board").fadeIn();
+        });
+        socket.emit("joinGame", data);
+    });
+
+
+    $("#worldDisplayButton").click(function(){
+         $("#listOfElements").empty();
+         socket.emit("worldListShowClick", pseudo);
+         return false;
+    });
+
+    socket.on("worldListShowClickResponse", function(data){
+        data.forEach(function(element){
+            if(element.isFriend)
+                $("#listOfElements").append('<li>'+ element.Username + '</li>');
+            else
+                $("#listOfElements").append('<li><span class ="targetedUser">'+ element.Username + '</span><span class="addFriendFromList badge badge-success align-top">O</span> </li>');
+        });
+    });
+
+    $("#listOfElements").on('click','.addFriendFromList', function(){
+        var targetedUser = $(this).parent().find(".targetedUser").text();
+        socket.emit("newFriendRequest", { username: pseudo,targetedUser: targetedUser});
+        $(this).parent().children('.addFriendFromList').remove();
+        return false;
+    });
+
+</script>
+</body>
+</html>

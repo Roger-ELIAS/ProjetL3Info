@@ -1,0 +1,20 @@
+{
+  "name": "projetl3",
+  "version": "0.1.0",
+  "description": "Réalisation d'un petit chat super sympa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roger-ELIAS/ProjetL3Info.git"
+  },
+  "homepage": "https://github.com/Roger-ELIAS/ProjetL3Info#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cors": "^2.8.5",
+    "ejs": "^2.6.1",
+    "ent": "^2.2.0",
+    "express": "^4.16.4",
+    "mysql": "^2.17.1",
+    "nodemailer": "^6.1.1",
+    "socket.io": "^2.2.0"
+  }
+}
